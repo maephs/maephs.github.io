@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Basketball Rotation Planner</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#f5a623" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Rotations" />
+  <link rel="apple-touch-icon" href="./icon-192.svg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <style>
@@ -86,25 +96,30 @@
     .gs-cancel { flex: 1; padding: 8px; background: transparent; color: #888; border: 1px solid #333; border-radius: 6px; font-family: 'DM Mono',monospace; font-size: 12px; cursor: pointer; }
 
     /* ── Roster ── */
-    .roster-header { display: grid; grid-template-columns: 22px 1fr 108px 72px 24px; gap: 6px; padding: 0 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    /* Columns: dot | name (takes all spare space) | role buttons | avail circle */
+    .roster-header { display: grid; grid-template-columns: 20px 1fr 78px 28px; gap: 6px; padding: 0 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
     .roster-header span { font-size: 10px; color: #555; letter-spacing: 1px; }
     .roster-header span:nth-child(3), .roster-header span:nth-child(4) { text-align: center; }
-    .player-row { display: grid; grid-template-columns: 22px 1fr 108px 72px 24px; gap: 6px; align-items: center; padding: 7px 4px; border-radius: 6px; background: #1a1a1a; margin-bottom: 5px; transition: opacity 0.2s, background 0.2s; }
+    .player-row { display: grid; grid-template-columns: 20px 1fr 78px 28px; gap: 6px; align-items: center; padding: 6px 4px; border-radius: 6px; background: #1a1a1a; margin-bottom: 5px; transition: opacity 0.2s, background 0.2s; }
     .player-row.absent { opacity: 0.4; background: #131313; }
     .dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #111; transition: background 0.2s; flex-shrink: 0; }
-    .name-field { padding: 3px 7px; border-radius: 4px; border: 1px solid #2a2a2a; cursor: text; font-size: 13px; color: #ddd; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'DM Mono',monospace; }
+    .name-field { padding: 3px 6px; border-radius: 4px; border: 1px solid #2a2a2a; cursor: text; font-size: 13px; color: #ddd; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'DM Mono',monospace; min-width: 0; }
     .name-field:focus { outline: none; border-color: var(--accent); background: #222; }
-    .role-btns { display: flex; gap: 3px; }
-    .role-btn { flex: 1; padding: 4px 2px; border-radius: 4px; font-size: 9px; font-weight: 700; border: 1px solid #2a2a2a; background: transparent; color: #444; cursor: pointer; transition: all 0.15s; font-family: 'DM Mono',monospace; }
+    .role-btns { display: flex; gap: 2px; }
+    .role-btn { flex: 1; padding: 4px 0; border-radius: 4px; font-size: 8px; font-weight: 700; border: 1px solid #2a2a2a; background: transparent; color: #444; cursor: pointer; transition: all 0.15s; font-family: 'DM Mono',monospace; letter-spacing: 0.3px; }
     .role-btn.grd.active  { background: #1a3a5c; border-color: var(--blue);   color: var(--blue);   }
     .role-btn.fwd.active  { background: #3a1a5c; border-color: var(--purple); color: var(--purple); }
     .role-btn.big.active  { background: #7c2d2d; border-color: var(--red);    color: var(--red);    }
-    .avail-center { display: flex; justify-content: center; }
-    .avail-btn { width: 60px; padding: 4px 0; border-radius: 20px; border: none; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; font-family: 'DM Mono',monospace; }
-    .avail-btn.in  { background: #1a4a1a; color: var(--green); }
-    .avail-btn.out { background: #252525; color: #555; }
-    .del-btn { width: 22px; height: 22px; border-radius: 4px; border: none; background: transparent; color: #3a3a3a; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; padding: 0; }
-    .del-btn:hover { background: #3a1a1a; color: var(--red); }
+    .avail-center { display: flex; justify-content: center; align-items: center; }
+    /* Circle tick/cross — no text label */
+    .avail-btn {
+      width: 26px; height: 26px; border-radius: 50%; border: 2px solid;
+      font-size: 13px; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; padding: 0;
+      line-height: 1;
+    }
+    .avail-btn.in  { background: #1a4a1a; border-color: var(--green); color: var(--green); }
+    .avail-btn.out { background: #1e1e1e; border-color: #3a3a3a;      color: #3a3a3a; }
 
     /* ── Add player ── */
     .add-player-btn {
@@ -221,12 +236,17 @@
     </div>
 
     <div class="roster-header">
-      <span></span><span>NAME</span><span>ROLE</span><span>AVAILABLE</span><span></span>
+      <span></span><span>NAME</span><span>ROLE</span><span style="text-align:center">IN?</span>
     </div>
     <div id="rosterRows"></div>
-    <button class="add-player-btn" onclick="addPlayer()">
-      <span class="plus">+</span> Add player
-    </button>
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button class="add-player-btn" style="flex:1;" onclick="addPlayer()">
+        <span class="plus">+</span> Add player
+      </button>
+      <button class="add-player-btn" id="removePlayerBtn" style="flex:none;padding:8px 14px;gap:4px;" onclick="removeLastPlayer()">
+        <span style="font-size:18px;line-height:1;">−</span> Remove last
+      </button>
+    </div>
 
     <!-- Interchange mode -->
     <div class="settings-row">
@@ -369,15 +389,15 @@ function resetRoster() {
 
 function addPlayer() {
   const n = players.length + 1;
-  players.push({ name: `Player ${n}`, role: 'guard', available: true });
+  players.push({ name: 'Player ' + n, role: 'guard', available: true });
   saveRoster(); clearOutput(); renderRoster();
 }
 
-function deletePlayer(idx) {
+function removeLastPlayer() {
   if (players.length <= 1) return;
-  const name = players[idx] ? players[idx].name : 'this player';
-  if (!confirm('Remove ' + name + '?')) return;
-  players.splice(idx, 1);
+  const last = players[players.length - 1];
+  if (!confirm('Remove ' + last.name + '?')) return;
+  players.pop();
   saveRoster(); clearOutput(); renderRoster();
 }
 
@@ -676,24 +696,26 @@ function renderRoster() {
     availWrap.className = 'avail-center';
     const availBtn = document.createElement('button');
     availBtn.className = 'avail-btn ' + (p.available ? 'in' : 'out');
-    availBtn.textContent = p.available ? '✓ IN' : '✗ OUT';
+    availBtn.textContent = p.available ? '✓' : '✗';
+    availBtn.title = p.available ? 'Playing — tap to bench' : 'Benched — tap to include';
     availBtn.onclick = () => { players[i].available = !players[i].available; saveRoster(); clearOutput(); renderRoster(); };
     availWrap.appendChild(availBtn);
 
-    // Delete button
-    const delBtn = document.createElement('button');
-    delBtn.className = 'del-btn';
-    delBtn.innerHTML = '&#x2715;'; // ✕
-    delBtn.title = 'Remove player';
-    delBtn.onclick = (function(idx) {
-      return function() { deletePlayer(idx); };
-    })(i);
-
-    row.append(dot, nameField, roleBtns, availWrap, delBtn);
+    row.append(dot, nameField, roleBtns, availWrap);
     container.appendChild(row);
   });
 
+  updateRemoveBtn();
   updateWarnings();
+}
+
+function updateRemoveBtn() {
+  const btn = document.getElementById('removePlayerBtn');
+  if (btn) {
+    btn.disabled = players.length <= 1;
+    btn.style.opacity = players.length <= 1 ? '0.3' : '1';
+    btn.style.cursor  = players.length <= 1 ? 'default' : 'pointer';
+  }
 }
 
 function updateWarnings() {
@@ -910,6 +932,15 @@ function playerRowEl(name, rlabel, rcls, color, isNew) {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 renderRoster();
+
+// ── Register service worker ───────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="96" fill="#1c1c1e"/>
+  <!-- Basketball orange circle -->
+  <circle cx="96" cy="96" r="68" fill="#f5a623"/>
+  <!-- Basketball lines in dark -->
+  <!-- Vertical centre line -->
+  <line x1="96" y1="28" x2="96" y2="164" stroke="#c47d0a" stroke-width="4" stroke-linecap="round"/>
+  <!-- Horizontal centre line -->
+  <line x1="28" y1="96" x2="164" y2="96" stroke="#c47d0a" stroke-width="4" stroke-linecap="round"/>
+  <!-- Left curve -->
+  <path d="M96,28 Q60,60 60,96 Q60,132 96,164" fill="none" stroke="#c47d0a" stroke-width="4" stroke-linecap="round"/>
+  <!-- Right curve -->
+  <path d="M96,28 Q132,60 132,96 Q132,132 96,164" fill="none" stroke="#c47d0a" stroke-width="4" stroke-linecap="round"/>
+  <!-- Outer ring for definition -->
+  <circle cx="96" cy="96" r="68" fill="none" stroke="#c47d0a" stroke-width="4"/>
+</svg>
