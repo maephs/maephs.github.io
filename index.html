@@ -206,6 +206,38 @@
     .reset-btn:hover { border-color: var(--red); color: var(--red); }
     .saved-toast { font-size: 11px; color: #555; transition: opacity 0.5s; }
     .global-warn { background: #201a0a; border: 1px solid #f5a62344; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: #aaa; }
+
+    /* ── Fine-tune mode ── */
+    .finetune-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:10px 14px; background:#1a1a10; border:1px solid #f5a62355; border-radius:8px; }
+    .finetune-bar .ft-label { font-size:12px; color:#f5a623; flex:1; }
+    .ft-btn { padding:6px 16px; border-radius:6px; border:none; font-family:'DM Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .ft-btn.enter  { background:#f5a623; color:#111; }
+    .ft-btn.exit   { background:transparent; border:1px solid #555; color:#888; }
+    .ft-btn.reset  { background:transparent; border:1px solid #3a3a3a; color:#555; font-size:11px; }
+    .ft-btn.reset:hover { border-color:#e57373; color:#e57373; }
+    #finetuneTrigger { display:none; margin-bottom:16px; }
+    #finetuneTrigger button { padding:8px 20px; border-radius:6px; border:1px solid #444; background:transparent; color:#888; font-family:'DM Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    #finetuneTrigger button:hover { border-color:#f5a623; color:#f5a623; }
+
+    /* Player rows in edit mode */
+    .edit-mode .p-row { cursor:pointer; transition:background 0.15s, border-color 0.15s; }
+    .edit-mode .p-row:hover { background:#263626; border-color:#4fc3f7; }
+    .p-row.ft-edited { background:#1e1e10; border-color:#f5a62377; }
+    .p-row.ft-edited .p-dot::after { content:'✎'; font-size:7px; position:absolute; bottom:-2px; right:-2px; background:#f5a623; color:#111; border-radius:50%; width:9px; height:9px; display:flex; align-items:center; justify-content:center; }
+    .p-dot { position:relative; }
+
+    /* Swap picker popup */
+    .swap-overlay { display:none; position:fixed; inset:0; background:#000b; z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .swap-overlay.open { display:flex; }
+    .swap-box { background:#1a1a1c; border:1px solid #3a3a3a; border-radius:12px; padding:20px; max-width:320px; width:100%; }
+    .swap-box h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; color:#f5a623; letter-spacing:1px; margin-bottom:4px; }
+    .swap-box .swap-sub { font-size:11px; color:#666; margin-bottom:14px; }
+    .swap-option { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:6px; border:1px solid #2a2a2a; background:#1e1e1e; margin-bottom:6px; cursor:pointer; transition:all 0.15s; }
+    .swap-option:hover { border-color:#f5a623; background:#221e10; }
+    .swap-option .so-name { flex:1; font-size:13px; color:#ddd; }
+    .swap-option .so-mins { font-size:11px; color:#888; }
+    .swap-cancel { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid #333; background:transparent; color:#666; font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+    .swap-cancel:hover { border-color:#888; color:#aaa; }
   </style>
 </head>
 <body>
@@ -303,6 +335,19 @@
 
     <h3>Courtside Cheat Sheet</h3>
     <p>A compact summary at the bottom of the generated plan — perfect for reading at a glance during the game.</p>
+
+    <h3>Fine-Tuning Rotations</h3>
+    <p>After generating a plan, a <strong style="color:#f5a623">✎ Fine-tune</strong> button appears below the output. Use this to manually adjust the plan when the algorithm can't account for real-world factors — like a player carrying an injury, or someone who needs reduced minutes.</p>
+    <p style="margin-top:8px;">To make changes:</p>
+    <ul style="margin-top:6px;">
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap <strong style="color:#f5a623">✎ Fine-tune</strong> to enter edit mode — player rows will highlight when hovered or tapped</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap any player name in the rotation plan to swap them with a bench player</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">The swap picker shows only players currently on the bench for that segment, along with their current total minutes</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Manually changed slots are highlighted in amber with a <strong style="color:#f5a623">✎</strong> icon so you can see what's been adjusted</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">The minutes-per-player summary updates live after every change</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap <strong style="color:#eee">Done</strong> to exit edit mode when you're happy</li>
+    </ul>
+    <p style="margin-top:8px;">Use <strong style="color:#eee">↺ Reset changes</strong> at any time to restore the original generated plan. Your fine-tune edits are saved automatically and will survive a page refresh — but clicking <strong style="color:#eee">Generate</strong> again will wipe them and start fresh.</p>
 
     <h3>Installing as an App</h3>
     <p>This planner can be installed on your phone so it works offline and opens like a native app — no app store required.</p>
@@ -768,6 +813,205 @@ function updateWarnings() {
 function clearOutput() {
   const o = document.getElementById('output');
   o.style.display = 'none'; o.innerHTML = '';
+  document.getElementById('finetuneTrigger').style.display = 'none';
+  ftEdits = {};
+  ftActive = false;
+}
+
+// ── Fine-tune state ───────────────────────────────────────────────────────────
+// ftPlan: the live segment data (array of quarters, each with segs[].players)
+//   This is the mutable copy we edit in place.
+// ftEdits: { 'q-s-slot': true } — which player slots have been manually changed
+// ftActive: whether fine-tune edit mode is on
+// ftActivePlayers: reference to the active players array from last generate
+
+const FINETUNE_KEY = 'bball_finetune_v1';
+let ftPlan = null;        // live mutable plan
+let ftEdits = {};         // set of edited slot keys
+let ftActive = false;     // edit mode on/off
+let ftActivePlayers = []; // snapshot of activePlayers at generate time
+let ftTotalMinutes = 0;
+
+function saveFtState() {
+  try {
+    localStorage.setItem(FINETUNE_KEY, JSON.stringify({
+      plan: ftPlan,
+      edits: ftEdits,
+      activePlayers: ftActivePlayers,
+      totalMinutes: ftTotalMinutes,
+      numQuarters, quarterDuration, interchangeMode,
+    }));
+  } catch(e) {}
+}
+
+function loadFtState() {
+  try {
+    const raw = localStorage.getItem(FINETUNE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function clearFtState() {
+  try { localStorage.removeItem(FINETUNE_KEY); } catch(e) {}
+}
+
+// Compute minutes played from ftPlan
+function computeMinutes(plan, segDurations, segsPerQ) {
+  const n = ftActivePlayers.length;
+  const mins = Array(n).fill(0);
+  plan.forEach((q, qi) => {
+    q.segs.forEach((seg, si) => {
+      const dur = segDurations[si % segsPerQ];
+      seg.players.forEach(pi => { mins[pi] += dur; });
+    });
+  });
+  return mins;
+}
+
+function enterFinetuneMode() {
+  ftActive = true;
+  document.getElementById('output').classList.add('edit-mode');
+  renderFinetuneBar();
+  // Make player rows clickable
+  attachSwapHandlers();
+}
+
+function exitFinetuneMode() {
+  ftActive = false;
+  document.getElementById('output').classList.remove('edit-mode');
+  renderFinetuneBar();
+}
+
+function resetFinetuneEdits() {
+  if (!confirm('Reset all manual changes and restore the generated plan?')) return;
+  // Restore ftPlan from the original generated plan stored in ftOrigPlan
+  ftPlan = JSON.parse(JSON.stringify(ftOrigPlan));
+  ftEdits = {};
+  clearFtState();
+  reRenderOutput();
+  exitFinetuneMode();
+}
+
+let ftOrigPlan = null; // immutable original for reset
+
+function renderFinetuneBar() {
+  // Remove existing bar if any
+  const existing = document.getElementById('finetuneBar');
+  if (existing) existing.remove();
+
+  const bar = el('div', {class:'finetune-bar', style:'', id:'finetuneBar'});
+  if (ftActive) {
+    bar.appendChild(el('span', {class:'ft-label'}, '✎ Edit mode — tap any player to swap'));
+    const doneBtn = el('button', {class:'ft-btn exit'}, 'Done');
+    doneBtn.onclick = exitFinetuneMode;
+    const resetBtn = el('button', {class:'ft-btn reset'}, '↺ Reset changes');
+    resetBtn.onclick = resetFinetuneEdits;
+    bar.append(doneBtn, resetBtn);
+  } else {
+    bar.appendChild(el('span', {class:'ft-label'}, Object.keys(ftEdits).length > 0 ? `${Object.keys(ftEdits).length} manual change${Object.keys(ftEdits).length!==1?'s':''} applied` : 'Generated plan'));
+    const editBtn = el('button', {class:'ft-btn enter'}, '✎ Fine-tune');
+    editBtn.onclick = enterFinetuneMode;
+    if (Object.keys(ftEdits).length > 0) {
+      const resetBtn = el('button', {class:'ft-btn reset'}, '↺ Reset');
+      resetBtn.onclick = resetFinetuneEdits;
+      bar.append(editBtn, resetBtn);
+    } else {
+      bar.appendChild(editBtn);
+    }
+  }
+
+  const out = document.getElementById('output');
+  out.insertBefore(bar, out.firstChild);
+}
+
+// ── Swap picker ───────────────────────────────────────────────────────────────
+let swapContext = null; // { qi, si, slot (index within seg.players) }
+
+function openSwap(qi, si, slot, segDurations, segsPerQ) {
+  if (!ftActive) return;
+  swapContext = { qi, si, slot, segDurations, segsPerQ };
+
+  const seg = ftPlan[qi].segs[si];
+  const currentPi = seg.players[slot];
+  const currentName = ftActivePlayers[currentPi].name;
+
+  // Players on bench for this segment
+  const onCourt = seg.players;
+  const benchPis = ftActivePlayers.map((_, pi) => pi).filter(pi => !onCourt.includes(pi));
+
+  const mins = computeMinutes(ftPlan, segDurations, segsPerQ);
+
+  document.getElementById('swapTitle').textContent = 'SWAP PLAYER';
+  document.getElementById('swapSub').textContent = `Replacing: ${currentName} — choose who comes in`;
+
+  const optContainer = document.getElementById('swapOptions');
+  optContainer.innerHTML = '';
+
+  if (benchPis.length === 0) {
+    optContainer.appendChild(el('div', {style:'font-size:12px;color:#555;padding:8px 0;'}, 'No bench players available for this segment.'));
+  } else {
+    benchPis.forEach(pi => {
+      const p = ftActivePlayers[pi];
+      const opt = el('div', {class:'swap-option'});
+      const dot = el('div', {class:'p-dot', style:`background:${PLAYER_COLORS[p.originalIndex % PLAYER_COLORS.length]};flex-shrink:0;width:10px;height:10px;`});
+      const nm  = el('span', {class:'so-name'}, p.name);
+      const roleCls = p.role==='big'?'big':p.role==='forward'?'fwd':'grd';
+      const badge = el('span', {class:`role-badge ${roleCls}`, style:'flex-shrink:0;'}, p.role==='big'?'B':p.role==='forward'?'F':'G');
+      const minsEl = el('span', {class:'so-mins'}, mins[pi]+'m');
+      opt.append(dot, nm, badge, minsEl);
+      opt.onclick = () => applySwap(pi, segDurations, segsPerQ);
+      optContainer.appendChild(opt);
+    });
+  }
+
+  document.getElementById('swapOverlay').classList.add('open');
+}
+
+function closeSwap() {
+  document.getElementById('swapOverlay').classList.remove('open');
+  swapContext = null;
+}
+
+function applySwap(incomingPi, segDurations, segsPerQ) {
+  const { qi, si, slot } = swapContext;
+  const seg = ftPlan[qi].segs[si];
+  const outgoingPi = seg.players[slot];
+
+  // Record the edit key
+  const key = `${qi}-${si}-${outgoingPi}`;
+  ftEdits[key] = true;
+
+  // Apply swap in ftPlan
+  seg.players[slot] = incomingPi;
+
+  // Rebuild subs for this quarter from updated segs
+  rebuildSubs(qi);
+
+  closeSwap();
+  saveFtState();
+  reRenderOutput();
+  // Re-enter edit mode after re-render
+  ftActive = true;
+  document.getElementById('output').classList.add('edit-mode');
+  renderFinetuneBar();
+  attachSwapHandlers();
+}
+
+function rebuildSubs(qi) {
+  const q = ftPlan[qi];
+  q.subs = [];
+  for (let s = 1; s < q.segs.length; s++) {
+    const prev = q.segs[s-1].players, next = q.segs[s].players;
+    const exits  = prev.filter(p => !next.includes(p));
+    const enters = next.filter(p => !prev.includes(p));
+    if (exits.length > 0) q.subs.push({ at: q.segs[s].start, exits, enters });
+  }
+  q.totalSubCount = q.subs.reduce((a,x) => a + x.exits.length, 0);
+}
+
+function attachSwapHandlers() {
+  // Handled via data attributes set during render — see reRenderOutput
 }
 
 // ── Output render ─────────────────────────────────────────────────────────────
@@ -779,12 +1023,45 @@ function handleGenerate() {
 
   const {quarters, minutesPlayed, warnings, boundaries, segDurations} = result;
 
+  // Store mutable plan for fine-tuning
+  ftActivePlayers = activePlayers;
+  ftTotalMinutes  = numQuarters * quarterDuration;
+  ftPlan = quarters.map(q => ({
+    q: q.q,
+    segs: q.segs.map(s => ({ ...s, players: [...s.players] })),
+    subs: q.subs.map(s => ({ ...s, exits: [...s.exits], enters: [...s.enters] })),
+    totalSubCount: q.totalSubCount,
+  }));
+  ftOrigPlan = JSON.parse(JSON.stringify(ftPlan));
+  ftEdits = {};
+  ftActive = false;
+  clearFtState();
+
+  // Store segDurations/segsPerQ for re-renders
+  window._ftSegDurations = segDurations;
+  window._ftSegsPerQ     = segDurations.length;
+  window._ftWarnings     = warnings;
+
+  reRenderOutput();
+  document.getElementById('output').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function reRenderOutput() {
+  const activePlayers = ftActivePlayers;
+  const segDurations  = window._ftSegDurations;
+  const segsPerQ      = window._ftSegsPerQ;
+  const warnings      = window._ftWarnings;
+
   const getName  = i => activePlayers[i].name;
   const getOrig  = i => activePlayers[i].originalIndex;
   const getRole  = i => activePlayers[i].role;
   const pColor   = orig => PLAYER_COLORS[orig % PLAYER_COLORS.length];
-  const totalPlayerSubs = quarters.reduce((a,q)=>a+q.totalSubCount,0);
-  const totalSwapEvents = quarters.reduce((a,q)=>a+q.subs.length,0);
+
+  // Recompute minutes from live ftPlan
+  const minutesPlayed = computeMinutes(ftPlan, segDurations, segsPerQ);
+
+  const totalPlayerSubs = ftPlan.reduce((a,q)=>a+q.totalSubCount,0);
+  const totalSwapEvents = ftPlan.reduce((a,q)=>a+q.subs.length,0);
 
   const roleLabel   = r => r==='big'?'BIG':r==='forward'?'FWD':'GRD';
   const roleCls     = r => r==='big'?'big':r==='forward'?'fwd':'grd';
@@ -797,7 +1074,7 @@ function handleGenerate() {
            `<span style="color:${g>=1?'#81c784':'#e57373'}">${g}G</span>`;
   };
 
-  const totalMinutes = numQuarters * quarterDuration;
+  const totalMinutes = ftTotalMinutes;
   const out = document.getElementById('output');
   out.innerHTML = ''; out.style.display = 'block';
 
@@ -824,10 +1101,11 @@ function handleGenerate() {
   out.appendChild(summCard);
 
   // Quarter cards
-  quarters.forEach(q => {
+  ftPlan.forEach(q => {
     const allOnCourt = [...new Set(q.segs.flatMap(s=>s.players))];
     const bench = activePlayers.map((_,i)=>i).filter(i=>!allOnCourt.includes(i));
-    const segsPerQ = q.segs.length;
+    const qSegsPerQ = q.segs.length;
+    const qi = q.q - 1;
     const card = el('div', {class:'card'});
 
     // Header
@@ -889,14 +1167,14 @@ function handleGenerate() {
 
     const lineupsDiv = el('div');
 
-    if (segsPerQ === 1) {
+    if (qSegsPerQ === 1) {
       // No subs — just list the single segment
       const seg = q.segs[0];
       const wrap = el('div', {style:'margin-top:14px;'});
       const head = el('div', {class:'lineup-head'});
       head.innerHTML = `<span>MIN ${seg.start}–${seg.end}</span><span>${lineupInfo(seg.players)}</span>`;
       wrap.appendChild(head);
-      seg.players.forEach(pi => wrap.appendChild(playerRowEl(getName(pi), roleLabel(getRole(pi)), roleCls(getRole(pi)), pColor(getOrig(pi)))));
+      seg.players.forEach((pi, slot) => wrap.appendChild(playerRowEl(getName(pi), roleLabel(getRole(pi)), roleCls(getRole(pi)), pColor(getOrig(pi)), qi, 0, slot, pi)));
       lineupsDiv.appendChild(wrap);
 
     } else {
@@ -924,8 +1202,9 @@ function handleGenerate() {
           const rowGrid = el('div', {style:'display:grid;grid-template-columns:1fr 20px 1fr;gap:4px;margin-bottom:4px;align-items:center;'});
 
           // Left player
+          const leftSlot = segA.players.indexOf(leftPi);
           const leftEl = leftPi !== null
-            ? playerRowEl(getName(leftPi), roleLabel(getRole(leftPi)), roleCls(getRole(leftPi)), pColor(getOrig(leftPi)))
+            ? playerRowEl(getName(leftPi), roleLabel(getRole(leftPi)), roleCls(getRole(leftPi)), pColor(getOrig(leftPi)), qi, si, leftSlot, leftPi)
             : el('div', {style:'height:30px;'});
           leftEl.style.marginBottom = '0';
 
@@ -933,8 +1212,9 @@ function handleGenerate() {
           const arrowEl = el('div', {style:`display:flex;align-items:center;justify-content:center;font-size:14px;color:${hasArrow?'#f5a623':'transparent'};`}, '→');
 
           // Right player
+          const rightSlot = segB.players.indexOf(rightPi);
           const rightEl = rightPi !== null
-            ? playerRowEl(getName(rightPi), roleLabel(getRole(rightPi)), roleCls(getRole(rightPi)), pColor(getOrig(rightPi)))
+            ? playerRowEl(getName(rightPi), roleLabel(getRole(rightPi)), roleCls(getRole(rightPi)), pColor(getOrig(rightPi)), qi, si+1, rightSlot, rightPi)
             : el('div', {style:'height:30px;'});
           rightEl.style.marginBottom = '0';
 
@@ -984,7 +1264,7 @@ function handleGenerate() {
   const cheat = el('div', {class:'card'});
   cheat.appendChild(el('div', {class:'card-title'}, 'COURTSIDE CHEAT SHEET'));
   const grid = el('div', {class:'cheat-grid'});
-  quarters.forEach(q => {
+  ftPlan.forEach(q => {
     const cc = el('div', {class:'cheat-card'});
     cc.appendChild(el('div', {class:'cheat-q'}, `Q${q.q}`));
     cc.appendChild(el('div', {class:'cheat-start'}, `Start: ${q.segs[0].players.map(i=>getName(i)).join(', ')}`));
@@ -1003,7 +1283,15 @@ function handleGenerate() {
   });
   cheat.appendChild(grid);
   out.appendChild(cheat);
-  out.scrollIntoView({behavior:'smooth', block:'start'});
+
+  // Show fine-tune trigger button and bar
+  document.getElementById('finetuneTrigger').style.display = 'none'; // bar replaces it
+  renderFinetuneBar();
+  if (ftActive) {
+    out.classList.add('edit-mode');
+    attachSwapHandlers();
+  }
+  saveFtState();
 }
 
 // ── DOM helpers ───────────────────────────────────────────────────────────────
@@ -1024,16 +1312,57 @@ function statBlock(value, label, sub, color) {
   if (sub) d.appendChild(el('div', {class:'sub'}, sub));
   return d;
 }
-function playerRowEl(name, rlabel, rcls, color) {
-  const row = el('div', {class:'p-row'});
+function playerRowEl(name, rlabel, rcls, color, qi, si, slot, pi) {
+  const editKey = `${qi}-${si}-${pi}`;
+  const isEdited = ftEdits && ftEdits[editKey];
+  const row = el('div', {class:'p-row' + (isEdited ? ' ft-edited' : '')});
   row.appendChild(el('div', {class:'p-dot', style:`background:${color};`}));
   row.appendChild(el('span', {class:'p-name'}, name));
   row.appendChild(el('span', {class:`p-role ${rcls}`}, rlabel));
+  if (isEdited) row.appendChild(el('span', {style:'font-size:9px;color:#f5a623;flex-shrink:0;'}, '✎'));
+  // Wire up swap click — uses data attributes so handler survives re-render
+  if (qi !== undefined) {
+    row.dataset.qi   = qi;
+    row.dataset.si   = si;
+    row.dataset.slot = slot;
+    row.onclick = function() {
+      if (!ftActive) return;
+      const segDurs = window._ftSegDurations;
+      const sqpq    = window._ftSegsPerQ;
+      openSwap(parseInt(this.dataset.qi), parseInt(this.dataset.si), parseInt(this.dataset.slot), segDurs, sqpq);
+    };
+  }
   return row;
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 renderRoster();
+
+// Restore fine-tune state if present (e.g. after page refresh)
+(function restoreFtState() {
+  const saved = loadFtState();
+  if (!saved || !saved.plan || !saved.activePlayers) return;
+  // Only restore if game settings match
+  if (saved.numQuarters !== numQuarters || saved.quarterDuration !== quarterDuration || saved.interchangeMode !== interchangeMode) return;
+  ftPlan          = saved.plan;
+  ftOrigPlan      = JSON.parse(JSON.stringify(saved.plan));
+  ftEdits         = saved.edits || {};
+  ftActivePlayers = saved.activePlayers;
+  ftTotalMinutes  = saved.totalMinutes || (numQuarters * quarterDuration);
+
+  // Rebuild segDurations
+  const subPoints    = getSubPoints(quarterDuration, interchangeMode);
+  const boundaries   = [0, ...subPoints, quarterDuration];
+  const segDurations = boundaries.slice(1).map((b,i) => b - boundaries[i]);
+  window._ftSegDurations = segDurations;
+  window._ftSegsPerQ     = segDurations.length;
+  window._ftWarnings     = [];
+
+  // Re-apply subs in case they weren't stored correctly
+  for (let qi = 0; qi < ftPlan.length; qi++) rebuildSubs(qi);
+
+  reRenderOutput();
+})();
 
 // ── Register service worker ───────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
@@ -1044,5 +1373,21 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- ── Swap picker overlay ── -->
+<div class="swap-overlay" id="swapOverlay" onclick="if(event.target===this)closeSwap()">
+  <div class="swap-box">
+    <h3 id="swapTitle">SWAP PLAYER</h3>
+    <div class="swap-sub" id="swapSub"></div>
+    <div id="swapOptions"></div>
+    <button class="swap-cancel" onclick="closeSwap()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Fine-tune trigger (shown after generate) ── -->
+<div id="finetuneTrigger">
+  <button onclick="enterFinetuneMode()">✎ Fine-tune rotations</button>
+</div>
+
 </body>
 </html>
