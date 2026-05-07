@@ -176,15 +176,15 @@
     .lineups-2 { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; gap: 6px; align-items: start; margin-top: 14px; }
     .lineup-head { font-size: 10px; color: #888; margin-bottom: 6px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px; }
     .arrow-col { display: flex; align-items: center; justify-content: center; padding-top: 24px; font-size: 16px; }
-    .p-row { display: flex; align-items: center; gap: 6px; background: #1e2e1e; border: 1px solid #2a3d2a; border-radius: 6px; padding: 5px 10px; margin-bottom: 4px; }
+    .p-row { display: flex; align-items: center; gap: 6px; background: #1e2e1e; border: 1px solid #2a3d2a; border-radius: 6px; padding: 5px 10px; margin-bottom: 4px; overflow: hidden; }
     .p-row.is-new { background: #1e2a1e; border-color: #f5a62344; }
     .p-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .p-name { font-size: 12px; flex: 1; }
-    .p-role { font-size: 9px; padding: 1px 5px; border-radius: 3px; }
+    .p-name { font-size: 12px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .p-role { font-size: 9px; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; white-space: nowrap; }
     .p-role.big { background: #7c2d2d; color: var(--red);    }
     .p-role.fwd { background: #3a1a5c; color: var(--purple); }
     .p-role.grd { background: #1a3a5c; color: var(--blue);   }
-    .p-in { font-size: 9px; color: var(--accent); }
+    .p-in { font-size: 9px; color: var(--accent); flex-shrink: 0; white-space: nowrap; }
     .sub-banner { margin-top: 10px; padding: 9px 14px; background: #201a0a; border: 1px solid #f5a62333; border-radius: 8px; font-size: 12px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
     .sub-title { font-family: 'Bebas Neue',sans-serif; font-size: 14px; letter-spacing: 0.5px; color: var(--accent); }
     .bench-wrap { margin-top: 10px; }
@@ -240,10 +240,10 @@
     </div>
     <div id="rosterRows"></div>
     <div style="display:flex;gap:8px;margin-top:6px;">
-      <button class="add-player-btn" style="flex:1;" onclick="addPlayer()">
+      <button class="add-player-btn" style="flex:1;justify-content:center;" onclick="addPlayer()">
         <span class="plus">+</span> Add player
       </button>
-      <button class="add-player-btn" id="removePlayerBtn" style="flex:none;padding:8px 14px;gap:4px;" onclick="removeLastPlayer()">
+      <button class="add-player-btn" id="removePlayerBtn" style="flex:1;justify-content:center;" onclick="removeLastPlayer()">
         <span style="font-size:18px;line-height:1;">−</span> Remove last
       </button>
     </div>
@@ -683,9 +683,9 @@ function renderRoster() {
   const guards  = active.filter(p => p.role==='guard').length;
   document.getElementById('rosterSummary').innerHTML =
     `${active.length} available &nbsp;·&nbsp; `+
-    `<span style="color:#e57373">${bigs} big${bigs!==1?'s':''}</span> &nbsp;·&nbsp; `+
-    `<span style="color:#ba68c8">${fwds} fwd${fwds!==1?'s':''}</span> &nbsp;·&nbsp; `+
-    `<span style="color:#4fc3f7">${guards} guard${guards!==1?'s':''}</span>`;
+    `<span style="color:#4fc3f7">${guards} guard${guards!==1?'s':''}</span> &nbsp;·&nbsp; `+
+    `<span style="color:#ba68c8">${fwds} forward${fwds!==1?'s':''}</span> &nbsp;·&nbsp; `+
+    `<span style="color:#e57373">${bigs} big${bigs!==1?'s':''}</span>`;
 
   const container = document.getElementById('rosterRows');
   container.innerHTML = '';
@@ -863,23 +863,94 @@ function handleGenerate() {
     tlWrap.appendChild(tlLab);
     card.appendChild(tlWrap);
 
-    // Lineups
-    const lineupsDiv = el('div', {class: segsPerQ<=2?'lineups-1':'lineups-2'});
-    q.segs.forEach((seg, si) => {
-      const col = el('div');
+    // Lineups — each interchange rendered as a 3-column mini-grid:
+    //   [left seg players] | [per-row arrow column] | [right seg players]
+    //
+    // Players are ordered so the same player occupies the same row slot on
+    // both sides. Stayers: slots 0..(4-numChanges-1). Changers: bottom slots.
+    // An orange → arrow appears only in rows where a player is being swapped.
+
+    // Helper: build an ordered 5-slot display for a pair of adjacent segments
+    // Returns array of 5 objects: { leftPi, rightPi, hasArrow }
+    function buildSlots(segA, segB) {
+      const stayers  = segA.players.filter(pi => segB.players.includes(pi));
+      const exiting  = segA.players.filter(pi => !segB.players.includes(pi));
+      const entering = segB.players.filter(pi => !segA.players.includes(pi));
+      // Stayer slots first, then changer slots at bottom
+      const slots = [];
+      stayers.forEach(pi  => slots.push({ leftPi: pi, rightPi: pi, hasArrow: false }));
+      exiting.forEach((pi, i) => slots.push({ leftPi: pi, rightPi: entering[i] ?? null, hasArrow: true }));
+      return slots;
+    }
+
+    // For 1 interchange: one pair (seg0 → seg1)
+    // For 2 interchanges: two pairs (seg0 → seg1, seg1 → seg2)
+    // We render each pair as its own 3-col block, stacked vertically
+
+    const lineupsDiv = el('div');
+
+    if (segsPerQ === 1) {
+      // No subs — just list the single segment
+      const seg = q.segs[0];
+      const wrap = el('div', {style:'margin-top:14px;'});
       const head = el('div', {class:'lineup-head'});
       head.innerHTML = `<span>MIN ${seg.start}–${seg.end}</span><span>${lineupInfo(seg.players)}</span>`;
-      col.appendChild(head);
-      seg.players.forEach(pi => {
-        const isNew = si > 0 && q.segs[si-1] && !q.segs[si-1].players.includes(pi);
-        col.appendChild(playerRowEl(getName(pi), roleLabel(getRole(pi)), roleCls(getRole(pi)), pColor(getOrig(pi)), isNew));
-      });
-      lineupsDiv.appendChild(col);
-      if (si < q.segs.length - 1) {
-        const hasSub = q.subs.some(s => s.at === seg.end);
-        lineupsDiv.appendChild(el('div', {class:'arrow-col', style:`color:${hasSub?'#f5a623':'#333'}`}, '→'));
+      wrap.appendChild(head);
+      seg.players.forEach(pi => wrap.appendChild(playerRowEl(getName(pi), roleLabel(getRole(pi)), roleCls(getRole(pi)), pColor(getOrig(pi)))));
+      lineupsDiv.appendChild(wrap);
+
+    } else {
+      // For each consecutive pair of segments, render a 3-col interchange block
+      for (let si = 0; si < q.segs.length - 1; si++) {
+        const segA = q.segs[si];
+        const segB = q.segs[si + 1];
+        const slots = buildSlots(segA, segB);
+        const hasSub = q.subs.some(s => s.at === segA.end);
+
+        const block = el('div', {style:'margin-top:14px;'});
+
+        // Two header labels side by side
+        const headers = el('div', {style:'display:grid;grid-template-columns:1fr 20px 1fr;gap:4px;margin-bottom:6px;'});
+        const hA = el('div', {class:'lineup-head', style:'margin-bottom:0;'});
+        hA.innerHTML = `<span>MIN ${segA.start}–${segA.end}</span><span>${lineupInfo(segA.players)}</span>`;
+        const hSpacer = el('div');
+        const hB = el('div', {class:'lineup-head', style:'margin-bottom:0;'});
+        hB.innerHTML = `<span>MIN ${segB.start}–${segB.end}</span><span>${lineupInfo(segB.players)}</span>`;
+        headers.append(hA, hSpacer, hB);
+        block.appendChild(headers);
+
+        // 5 rows, each a 3-col grid: left player | arrow | right player
+        slots.forEach(({leftPi, rightPi, hasArrow}) => {
+          const rowGrid = el('div', {style:'display:grid;grid-template-columns:1fr 20px 1fr;gap:4px;margin-bottom:4px;align-items:center;'});
+
+          // Left player
+          const leftEl = leftPi !== null
+            ? playerRowEl(getName(leftPi), roleLabel(getRole(leftPi)), roleCls(getRole(leftPi)), pColor(getOrig(leftPi)))
+            : el('div', {style:'height:30px;'});
+          leftEl.style.marginBottom = '0';
+
+          // Arrow cell — orange if changing, invisible spacer if staying
+          const arrowEl = el('div', {style:`display:flex;align-items:center;justify-content:center;font-size:14px;color:${hasArrow?'#f5a623':'transparent'};`}, '→');
+
+          // Right player
+          const rightEl = rightPi !== null
+            ? playerRowEl(getName(rightPi), roleLabel(getRole(rightPi)), roleCls(getRole(rightPi)), pColor(getOrig(rightPi)))
+            : el('div', {style:'height:30px;'});
+          rightEl.style.marginBottom = '0';
+
+          rowGrid.append(leftEl, arrowEl, rightEl);
+          block.appendChild(rowGrid);
+        });
+
+        lineupsDiv.appendChild(block);
+
+        // Divider between interchange blocks (for 2-interchange quarters)
+        if (si < q.segs.length - 2) {
+          lineupsDiv.appendChild(el('hr', {style:'border:none;border-top:1px solid #2a2a2a;margin:12px 0 0;'}));
+        }
       }
-    });
+    }
+
     card.appendChild(lineupsDiv);
 
     // Sub banners
@@ -953,12 +1024,11 @@ function statBlock(value, label, sub, color) {
   if (sub) d.appendChild(el('div', {class:'sub'}, sub));
   return d;
 }
-function playerRowEl(name, rlabel, rcls, color, isNew) {
-  const row = el('div', {class:'p-row'+(isNew?' is-new':'')});
+function playerRowEl(name, rlabel, rcls, color) {
+  const row = el('div', {class:'p-row'});
   row.appendChild(el('div', {class:'p-dot', style:`background:${color};`}));
   row.appendChild(el('span', {class:'p-name'}, name));
   row.appendChild(el('span', {class:`p-role ${rcls}`}, rlabel));
-  if (isNew) row.appendChild(el('span', {class:'p-in'}, 'IN ↑'));
   return row;
 }
 
