@@ -1424,7 +1424,7 @@ function reRenderOutput() {
       out.appendChild(div);
     }
     const allOnCourt = [...new Set(q.segs.flatMap(s=>s.players))];
-    const bench = activePlayers.map((_,i)=>i).filter(i=>!allOnCourt.includes(i));
+    const bench = ftActivePlayers.map((_,i)=>i).filter(i=>!allOnCourt.includes(i));
     const qSegsPerQ = q.segs.length;
     const qi = q.q - 1;
     const isPlayed = q.played === true;
