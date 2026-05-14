@@ -10,27 +10,49 @@ jobs:
   fetch-data:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # needed to commit JSON files back to the repo
+      contents: write
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Fetch data from BasketballConnect API
+      - name: Fetch teams from BasketballConnect
         run: |
-          BASE="https://registration.basketballconnect.com/liveScoreSeasonFixture?organisationKey=155fb981-71f6-48a0-a53f-1da7ee78fb39&yearId=8&competitionUniqueKey=ae31672b-fa16-475f-b569-deda015aba60&divisionId=All"
-          echo "Fetching teams..."
-          curl -s "$BASE" -o raw_teams.json
-          echo "Fetching fixtures..."
-          curl -s "${BASE}&teamId=-1" -o raw_fixtures.json
-          echo "Teams response (first 300 chars):"
-          head -c 300 raw_teams.json
-          echo ""
-          echo "Fixtures response (first 300 chars):"
-          head -c 300 raw_fixtures.json
+          echo "Fetching team list..."
+          curl -s \
+            "https://registration.basketballconnect.com/liveScoreSeasonFixture?organisationKey=155fb981-71f6-48a0-a53f-1da7ee78fb39&yearId=8&competitionUniqueKey=ae31672b-fa16-475f-b569-deda015aba60&divisionId=All" \
+            -o raw_teams.json
+          echo "Teams response (first 200 chars):"
+          head -c 200 raw_teams.json
           echo ""
 
-      - name: Parse and write teams.json and fixtures.json
+      - name: Fetch fixtures from Squadi API
+        run: |
+          echo "Fetching fixtures..."
+          curl -s \
+            --globoff \
+            "https://api-basketball.squadi.com/livescores/round/matches?competitionId=2449&divisionId=&teamIds=&ignoreStatuses=[1]" \
+            -H "Authorization: f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9578a18b0605ead797aee4263a4cb6a10db73a0e0afa6ed0477c77e5cf139c5e9016a55c2a85c503d07b4a62a1b340d55e07a1d220a5105edc8ba8fb5cc6d38570fad8161d02db3a81d7822e53264a89df82bc35e32b8bbbcb179defd98c3317dc7f07d2b37f2fc0c73a0e4c68f1d8ecbdd29ce4535e6747531faa42ca6a2dbabca250f41d1791d04fda2c0a3e97bc04ec7b193ac0b42910814c176ff7e0651504fb5c4694820d5c1fcb67ab6dbed0cc94" \
+            -H "Origin: https://registration.basketballconnect.com" \
+            -H "Referer: https://registration.basketballconnect.com/" \
+            -H "Accept: application/json" \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0" \
+            -o raw_fixtures.json
+          echo "Fixtures response (first 500 chars):"
+          head -c 500 raw_fixtures.json
+          echo ""
+          echo "Fixtures HTTP status:"
+          curl -s -o /dev/null -w "%{http_code}" \
+            --globoff \
+            "https://api-basketball.squadi.com/livescores/round/matches?competitionId=2449&divisionId=&teamIds=&ignoreStatuses=[1]" \
+            -H "Authorization: f68a1ffd26dd50c0fafa1f496a92e7b674e07fb0cfab5c778c2cf47cf6f61f784f7b1981fa99c057ce5607ffba2f8c9578a18b0605ead797aee4263a4cb6a10db73a0e0afa6ed0477c77e5cf139c5e9016a55c2a85c503d07b4a62a1b340d55e07a1d220a5105edc8ba8fb5cc6d38570fad8161d02db3a81d7822e53264a89df82bc35e32b8bbbcb179defd98c3317dc7f07d2b37f2fc0c73a0e4c68f1d8ecbdd29ce4535e6747531faa42ca6a2dbabca250f41d1791d04fda2c0a3e97bc04ec7b193ac0b42910814c176ff7e0651504fb5c4694820d5c1fcb67ab6dbed0cc94" \
+            -H "Origin: https://registration.basketballconnect.com" \
+            -H "Referer: https://registration.basketballconnect.com/" \
+            -H "Accept: application/json" \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0"
+          echo ""
+
+      - name: Parse and write JSON files
         run: |
           python3 << 'PYEOF'
           import json, datetime, sys
@@ -41,17 +63,14 @@ jobs:
           try:
               with open('raw_teams.json') as f:
                   teams_data = json.load(f)
-
               redbacks = sorted(
                   t['name'].strip()
                   for t in teams_data
                   if isinstance(t.get('name'), str) and t['name'].strip().startswith('Redbacks')
               )
-
               with open('teams.json', 'w') as f:
                   json.dump({"teams": redbacks, "updatedAt": now}, f, indent=2)
               print(f"OK: written {len(redbacks)} Redbacks teams to teams.json")
-
           except Exception as e:
               print(f"ERROR parsing teams: {e}", file=sys.stderr)
               sys.exit(1)
@@ -62,104 +81,40 @@ jobs:
                   raw = f.read().strip()
 
               if not raw or raw[0] not in '[{':
-                  print(f"WARNING: fixtures endpoint returned unexpected response: {raw[:150]}")
-                  print("Skipping fixtures.json — will retry next run.")
+                  print(f"WARNING: fixtures returned unexpected data: {raw[:200]}")
               else:
                   fix_data = json.loads(raw)
 
-                  # Log structure to help refine the parser
-                  print(f"Fixtures data type: {type(fix_data).__name__}")
+                  # Log structure to help understand and refine the parser
+                  print(f"Fixture data type: {type(fix_data).__name__}")
                   if isinstance(fix_data, list):
-                      print(f"Fixtures list length: {len(fix_data)}")
+                      print(f"List length: {len(fix_data)}")
                       if fix_data:
-                          print(f"First item keys: {list(fix_data[0].keys())}")
-                          print(f"First item:\n{json.dumps(fix_data[0], indent=2)[:800]}")
+                          first = fix_data[0]
+                          print(f"First item keys: {list(first.keys())}")
+                          print(f"First item:\n{json.dumps(first, indent=2)[:1000]}")
                   elif isinstance(fix_data, dict):
                       print(f"Top-level keys: {list(fix_data.keys())}")
-                      for k, v in fix_data.items():
-                          if isinstance(v, list) and v:
-                              print(f"  {k}[0] keys: {list(v[0].keys()) if isinstance(v[0], dict) else type(v[0])}")
-                      print(f"Sample:\n{json.dumps(fix_data, indent=2)[:800]}")
+                      print(f"Sample:\n{json.dumps(fix_data, indent=2)[:1000]}")
 
-                  # Parse fixtures into per-team structure
-                  def find_date(item):
-                      for key in ['date','gameDate','matchDate','scheduledDate','startDate','fixtureDate']:
-                          if item.get(key): return str(item[key])
-                      return ''
-
-                  def find_time(item):
-                      for key in ['time','gameTime','startTime','scheduledTime','fixtureTime']:
-                          if item.get(key): return str(item[key])
-                      return ''
-
-                  def find_venue(item):
-                      for key in ['venue','venueName','court','courtName','location']:
-                          if item.get(key): return str(item[key])
-                      return ''
-
-                  def find_division(item):
-                      for key in ['divisionName','division','grade','gradeName','competitionName']:
-                          if item.get(key): return str(item[key])
-                      return ''
-
-                  def get_team_name(item, side):
-                      t = item.get(f'{side}Team', {})
-                      if isinstance(t, dict):
-                          return str(t.get('name', item.get(f'{side}TeamName', '')))
-                      return str(item.get(f'{side}TeamName', ''))
-
-                  items = fix_data if isinstance(fix_data, list) else []
-                  if isinstance(fix_data, dict):
-                      for key in ['fixtures','games','rounds','matches','schedule']:
-                          if isinstance(fix_data.get(key), list):
-                              items = fix_data[key]
-                              break
-
-                  fixtures_by_team = {}
-                  for item in items:
-                      if not isinstance(item, dict): continue
-                      home = get_team_name(item, 'home')
-                      away = get_team_name(item, 'away')
-                      division = find_division(item)
-                      date_str = find_date(item)
-                      time_str = find_time(item)
-                      venue    = find_venue(item)
-
-                      for team_name, is_home in [(home, True), (away, False)]:
-                          if not team_name.startswith('Redbacks'): continue
-                          opponent = away if is_home else home
-                          if team_name not in fixtures_by_team:
-                              fixtures_by_team[team_name] = {"division": division, "nextGame": None}
-                          if division and not fixtures_by_team[team_name]["division"]:
-                              fixtures_by_team[team_name]["division"] = division
-                          if date_str:
-                              existing = fixtures_by_team[team_name]["nextGame"]
-                              if existing is None or date_str < existing.get("date", "9999"):
-                                  fixtures_by_team[team_name]["nextGame"] = {
-                                      "date": date_str,
-                                      "time": time_str,
-                                      "venue": venue,
-                                      "opponent": opponent,
-                                      "isHome": is_home,
-                                  }
-
+                  # Write raw data as fixtures.json for now
+                  # Parser will be refined once we see the actual structure
                   with open('fixtures.json', 'w') as f:
-                      json.dump({"fixtures": fixtures_by_team, "updatedAt": now}, f, indent=2)
-                  print(f"OK: written fixtures.json with data for {len(fixtures_by_team)} Redbacks teams")
+                      json.dump({"raw": fix_data, "updatedAt": now}, f, indent=2)
+                  print("OK: written fixtures.json (raw — parser to be refined)")
 
           except Exception as e:
-              print(f"WARNING: could not parse fixtures ({e}) — skipping fixtures.json")
+              print(f"WARNING: could not process fixtures: {e}")
           PYEOF
 
-      - name: Commit and push JSON files if changed
+      - name: Commit and push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add teams.json
-          git add fixtures.json 2>/dev/null || true
+          git add teams.json fixtures.json 2>/dev/null || git add teams.json
           if git diff --staged --quiet; then
             echo "No changes — skipping commit."
           else
-            git commit -m "chore: update teams and fixtures from BasketballConnect API"
+            git commit -m "chore: update teams and fixtures data"
             git push
           fi
