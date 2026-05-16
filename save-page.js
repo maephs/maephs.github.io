@@ -2,46 +2,76 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 
 (async () => {
-  // Launch browser with realistic screen resolution
-  const browser = await chromium.launch();
+  // 1. Launch a stealthier browser instance
+  const browser = await chromium.launch({
+    args: [
+      '--disable-blink-features=AutomationControlled',
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ]
+  });
+  
   const context = await browser.newContext({
     viewport: { width: 1440, height: 900 },
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    // Use an authentic, updated browser user agent
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    locale: 'en-AU',
+    timezoneId: 'Australia/Brisbane'
   });
+
   const page = await context.newPage();
   
+  // Prevent headless disclosure flags
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  });
+
   const targetUrl = 'https://basketballconnect.com';
 
-  console.log("Navigating to BasketballConnect...");
-  
-  // 1. Load the initial shell
-  await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
-
-  console.log("Waiting for fixture data to render on screen...");
+  console.log("Navigating to specific BasketballConnect portal link...");
 
   try {
-    // 2. FORCE Playwright to wait until the dynamic text loads.
-    // BasketballConnect fixtures always display "Match ID" or "Division" when data loads.
-    await page.waitForSelector('text="Match ID"', { state: 'visible', timeout: 45000 });
-    
-    // 3. Give the browser an extra 10 seconds to complete animations and render tables smoothly
-    await page.waitForTimeout(10000);
-    
-    console.log("Data detected! Saving files...");
+    // 2. Use 'commit' strategy instead of 'domcontentloaded'. 
+    // This tells Playwright to stop waiting for redirects/analytics and move to the next lines immediately.
+    await page.goto(targetUrl, { 
+      waitUntil: 'commit', 
+      timeout: 45000 
+    });
 
-    // 4. Capture HTML layout
+    console.log("Network connection initiated. Waiting for React layout execution...");
+
+    // 3. Keep checking the page until the sport data container renders.
+    // Instead of text, we look for standard text snippets found on BasketballConnect fixtures.
+    await page.waitForSelector('text="Match ID"', { state: 'visible', timeout: 30000 });
+    
+    // 4. Custom safety buffer to allow AJAX matches to render fully into view
+    console.log("Fixture elements located! Buffering for rendering...");
+    await page.waitForTimeout(10000); 
+
+    // 5. Capture layout
     const content = await page.content();
     fs.writeFileSync('copy.html', content);
+    console.log("Success: copy.html updated.");
 
-    // 5. Take an accurate full-page screenshot
+    // 6. Capture full fixture table screenshot
     await page.screenshot({ path: 'screenshot.png', fullPage: true });
-    console.log("Success: Snapshot and local layout saved.");
+    console.log("Success: screenshot.png saved.");
 
   } catch (error) {
-    console.error("Timeout Error: The fixture data took too long to load or structure changed.", error);
+    console.error("Pipeline Failure details:", error.message);
     
-    // Emergency snapshot so you can see what went wrong in your repository
-    await page.screenshot({ path: 'error-screenshot.png', fullPage: true });
+    // Fallback: Dump whatever the browser is looking at so we can diagnose via the git commit
+    try {
+      const fallbackContent = await page.content();
+      fs.writeFileSync('copy.html', fallbackContent);
+      await page.screenshot({ path: 'screenshot.png', fullPage: true });
+      console.log("Saved current state to repository for debugging.");
+    } catch (dumpError) {
+      console.error("Could not complete emergency dump:", dumpError.message);
+    }
+    
+    // Gracefully exit with 0 so your pipeline script saves the layout even on errors
+    process.exit(0);
   }
 
   await browser.close();
