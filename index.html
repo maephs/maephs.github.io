@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basketball Rotation Planner</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#f5a623" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Rotations" />
+  <link rel="apple-touch-icon" href="./icon-192.svg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Dark theme (default) ── */
+    :root {
+      --accent: #f5a623;
+      --bg: #111111;
+      --card: #1c1c1e;
+      --card2: #161616;       /* cheat cards, nested surfaces */
+      --border: #2a2a2a;
+      --border2: #3a3a3a;     /* modals, stronger borders */
+      --overlay: #000000aa;
+      --text-primary: #eeeeee;
+      --text-secondary: #aaaaaa;
+      --text-muted: #666666;
+      --text-faint: #555555;
+      --text-heading: #cccccc;
+      --row-bg: #1a1a1a;
+      --row-absent: #131313;
+      --row-starter: #1a1a10;
+      --row-court: #1e2e1e;
+      --row-court-border: #2a3d2a;
+      --row-new: #1e2a1e;
+      --name-border: #2a2a2a;
+      --name-bg-focus: #222222;
+      --timeline-bg: #1a1a1a;
+      --bench-pill-bg: #1e1e1e;
+      --modal-bg: #1a1a1c;
+      --input-bg: #222222;
+      --input-border: #444444;
+      --sub-banner-bg: #201a0a;
+      --sub-banner-border: #f5a62333;
+      --contact-bg: #111111;
+      --chip-bg: #1e1a0e;
+      --chip-border: #5a3a0a;
+      --chip-hover: #2a220e;
+      --star-inactive: #333333;
+      --avail-out-bg: #1e1e1e;
+      --avail-out-border: #3a3a3a;
+      --seg-btn-color: #555555;
+      --gen-disabled-bg: #2a2a2a;
+      --gen-disabled-color: #555555;
+      --ft-bar-bg: #1a1a10;
+      --ft-bar-border: #f5a62355;
+      --swap-box-bg: #1a1a1c;
+      --swap-option-bg: #1e1e1e;
+      --swap-option-hover: #221e10;
+      --role-big-bg: #7c2d2d;
+      --role-fwd-bg: #3a1a5c;
+      --role-grd-bg: #1a3a5c;
+      --role-big-bg-faint: #7c2d2d55;
+      --role-fwd-bg-faint: #3a1a5c55;
+      --role-grd-bg-faint: #1a3a5c55;
+      --red: #e57373; --blue: #4fc3f7; --green: #81c784; --purple: #ba68c8;
+      --tl-s1: #1a472acc; --tl-s2: #1a3a2a99; --tl-s3: #1a2a3a99;
+    }
+
+    /* ── Light theme ── */
+    :root.light, .light {
+      --bg: #f0f0f2;
+      --card: #ffffff;
+      --card2: #f5f5f7;
+      --border: #d0d0d8;
+      --border2: #b0b0bc;
+      --overlay: #00000066;
+      --text-primary: #111111;
+      --text-secondary: #444444;
+      --text-muted: #777777;
+      --text-faint: #999999;
+      --text-heading: #222222;
+      --row-bg: #f7f7fa;
+      --row-absent: #ececef;
+      --row-starter: #fffbee;
+      --row-court: #eef6ee;
+      --row-court-border: #b8d8b8;
+      --row-new: #e8f5e8;
+      --name-border: #d0d0d8;
+      --name-bg-focus: #ffffff;
+      --timeline-bg: #e8e8ee;
+      --bench-pill-bg: #eeeeee;
+      --modal-bg: #ffffff;
+      --input-bg: #f5f5f7;
+      --input-border: #b0b0bc;
+      --sub-banner-bg: #fff8ee;
+      --sub-banner-border: #f5a62366;
+      --contact-bg: #f5f5f7;
+      --chip-bg: #fff3dc;
+      --chip-border: #e8a020;
+      --chip-hover: #ffe8b0;
+      --star-inactive: #cccccc;
+      --avail-out-bg: #eeeeee;
+      --avail-out-border: #bbbbbb;
+      --seg-btn-color: #888888;
+      --gen-disabled-bg: #cccccc;
+      --gen-disabled-color: #999999;
+      --ft-bar-bg: #fffbee;
+      --ft-bar-border: #f5a62366;
+      --swap-box-bg: #ffffff;
+      --swap-option-bg: #f5f5f7;
+      --swap-option-hover: #fff3dc;
+      --role-big-bg: #f8d7d7;
+      --role-fwd-bg: #e8d5f8;
+      --role-grd-bg: #d5eef8;
+      --role-big-bg-faint: #f8d7d755;
+      --role-fwd-bg-faint: #e8d5f855;
+      --role-grd-bg-faint: #d5eef855;
+      --red: #c62828; --blue: #0277bd; --green: #2e7d32; --purple: #6a1b9a;
+      --tl-s1: #2e7d3244; --tl-s2: #0277bd33; --tl-s3: #6a1b9a33;
+    }
+
+    /* Auto-detect OS preference — overridden by .light/.dark on <html> */
+    @media (prefers-color-scheme: light) {
+      :root:not(.dark) {
+        --bg: #f0f0f2; --card: #ffffff; --card2: #f5f5f7;
+        --border: #d0d0d8; --border2: #b0b0bc; --overlay: #00000066;
+        --text-primary: #111111; --text-secondary: #444444;
+        --text-muted: #777777; --text-faint: #999999; --text-heading: #222222;
+        --row-bg: #f7f7fa; --row-absent: #ececef; --row-starter: #fffbee;
+        --row-court: #eef6ee; --row-court-border: #b8d8b8; --row-new: #e8f5e8;
+        --name-border: #d0d0d8; --name-bg-focus: #ffffff; --timeline-bg: #e8e8ee;
+        --bench-pill-bg: #eeeeee; --modal-bg: #ffffff;
+        --input-bg: #f5f5f7; --input-border: #b0b0bc;
+        --sub-banner-bg: #fff8ee; --sub-banner-border: #f5a62366;
+        --contact-bg: #f5f5f7; --chip-bg: #fff3dc; --chip-border: #e8a020; --chip-hover: #ffe8b0;
+        --star-inactive: #cccccc; --avail-out-bg: #eeeeee; --avail-out-border: #bbbbbb;
+        --seg-btn-color: #888888; --gen-disabled-bg: #cccccc; --gen-disabled-color: #999999;
+        --ft-bar-bg: #fffbee; --ft-bar-border: #f5a62366;
+        --swap-box-bg: #ffffff; --swap-option-bg: #f5f5f7; --swap-option-hover: #fff3dc;
+        --role-big-bg: #f8d7d7; --role-fwd-bg: #e8d5f8; --role-grd-bg: #d5eef8;
+        --role-big-bg-faint: #f8d7d755; --role-fwd-bg-faint: #e8d5f855; --role-grd-bg-faint: #d5eef855;
+        --red: #c62828; --blue: #0277bd; --green: #2e7d32; --purple: #6a1b9a;
+        --tl-s1: #2e7d3244; --tl-s2: #0277bd33; --tl-s3: #6a1b9a33;
+      }
+    }
+
+    body { background: var(--bg); color: var(--text-primary); font-family: 'DM Mono','Courier New',monospace; padding: 32px 16px; min-height: 100vh; transition: background 0.3s, color 0.3s; }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    h1 { font-family: 'Bebas Neue',sans-serif; font-size: clamp(36px,8vw,54px); letter-spacing: 3px; color: var(--accent); line-height: 1; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .card-title { font-family: 'Bebas Neue',sans-serif; font-size: 22px; letter-spacing: 1px; color: var(--text-heading); margin-bottom: 16px; }
+
+    /* ── Header row ── */
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .header-controls { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Theme toggle ── */
+    .theme-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border2);
+      background: transparent; color: var(--text-muted); font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Subtitle / game settings ── */
+    .subtitle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+    .subtitle-chip {
+      color: var(--accent); font-size: 13px; font-family: 'DM Mono',monospace;
+      background: var(--chip-bg); border: 1px solid var(--chip-border); border-radius: 5px;
+      padding: 1px 7px; cursor: pointer; transition: background 0.15s;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .subtitle-chip:hover { background: var(--chip-hover); }
+    .subtitle-chip .edit-icon { font-size: 9px; opacity: 0.6; }
+
+    /* ── Help button ── */
+    .help-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border2);
+      background: transparent; color: var(--text-muted); font-size: 14px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s; font-family: serif;
+    }
+    .help-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Settings button ── */
+    .settings-btn {
+      width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border2);
+      background: transparent; color: var(--text-muted); font-size: 15px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Settings modal ── */
+    .settings-modal { background: var(--modal-bg); border: 1px solid var(--border2); border-radius: 14px; padding: 28px; max-width: 480px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; }
+    .settings-section { margin-bottom: 24px; }
+    .settings-section:last-child { margin-bottom: 0; }
+    .settings-section h3 { font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: var(--text-heading); letter-spacing: 1px; margin-bottom: 8px; }
+    .team-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .team-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--row-bg); cursor: pointer; transition: all 0.15s; }
+    .team-option:hover { border-color: var(--accent); background: var(--chip-bg); }
+    .team-option.selected { border-color: var(--accent); background: var(--chip-bg); }
+    .team-option .team-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .team-option.selected .team-radio { border-color: var(--accent); background: var(--accent); }
+    .team-option.selected .team-radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #111; }
+    .team-option .team-name { font-size: 13px; color: var(--text-primary); flex: 1; }
+    .team-loading { font-size: 12px; color: var(--text-muted); padding: 12px 0; text-align: center; }
+    .team-error { font-size: 12px; color: var(--red); padding: 10px 12px; background: var(--row-bg); border-radius: 6px; border: 1px solid var(--border); }
+    .settings-saved { font-size: 11px; color: var(--text-faint); margin-top: 10px; transition: opacity 0.5s; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: var(--overlay); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--modal-bg); border: 1px solid var(--border2); border-radius: 14px; padding: 28px; max-width: 560px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; }
+    .modal h2 { font-family: 'Bebas Neue',sans-serif; font-size: 28px; color: var(--accent); letter-spacing: 2px; margin-bottom: 16px; }
+    .modal h3 { font-family: 'Bebas Neue',sans-serif; font-size: 17px; color: var(--text-heading); letter-spacing: 1px; margin: 18px 0 6px; }
+    .modal p, .modal li { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+    .modal ul { padding-left: 18px; }
+    .modal .role-tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 700; }
+    .modal .role-tag.big  { background: var(--role-big-bg); color: var(--red); }
+    .modal .role-tag.fwd  { background: var(--role-fwd-bg); color: var(--purple); }
+    .modal .role-tag.grd  { background: var(--role-grd-bg); color: var(--blue); }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid var(--border2); color: var(--text-muted); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; font-family: 'DM Mono',monospace; }
+    .modal-close:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+    .modal .contact { margin-top: 20px; padding: 12px; background: var(--contact-bg); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-muted); }
+    .modal .contact a { color: var(--accent); text-decoration: none; }
+
+    /* ── Game settings popup ── */
+    .gsettings-popup { display: none; position: fixed; inset: 0; background: var(--overlay); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+    .gsettings-popup.open { display: flex; }
+    .gsettings-box { background: var(--modal-bg); border: 1px solid var(--border2); border-radius: 12px; padding: 24px; max-width: 360px; width: 100%; }
+    .gsettings-box h2 { font-family: 'Bebas Neue',sans-serif; font-size: 22px; color: var(--accent); letter-spacing: 1px; margin-bottom: 16px; }
+    .gs-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .gs-label { font-size: 12px; color: var(--text-muted); width: 140px; flex-shrink: 0; }
+    .gs-input { background: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-primary); border-radius: 6px; padding: 6px 10px; font-family: 'DM Mono',monospace; font-size: 14px; width: 70px; text-align: center; }
+    .gs-input:focus { outline: none; border-color: var(--accent); }
+    .gs-hint { font-size: 10px; color: var(--text-faint); }
+    .gs-btns { display: flex; gap: 8px; margin-top: 4px; }
+    .gs-ok  { flex: 1; padding: 8px; background: var(--accent); color: #111; border: none; border-radius: 6px; font-family: 'Bebas Neue',sans-serif; font-size: 16px; letter-spacing: 1px; cursor: pointer; }
+    .gs-cancel { flex: 1; padding: 8px; background: transparent; color: var(--text-muted); border: 1px solid var(--border2); border-radius: 6px; font-family: 'DM Mono',monospace; font-size: 12px; cursor: pointer; }
+
+    /* ── Roster ── */
+    .roster-header { display: grid; grid-template-columns: 18px 20px 1fr 78px 28px; gap: 6px; padding: 0 4px 8px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
+    .roster-header span { font-size: 10px; color: var(--text-faint); letter-spacing: 1px; }
+    .roster-header span:nth-child(4), .roster-header span:nth-child(5) { text-align: center; }
+    .player-row { display: grid; grid-template-columns: 18px 20px 1fr 78px 28px; gap: 6px; align-items: center; padding: 6px 4px; border-radius: 6px; background: var(--row-bg); margin-bottom: 5px; transition: opacity 0.2s, background 0.2s; }
+    .player-row.absent { opacity: 0.4; background: var(--row-absent); }
+    .player-row.is-starter { background: var(--row-starter); }
+    .star-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; padding: 0; line-height: 1; transition: transform 0.15s; color: var(--star-inactive); }
+    .star-btn:hover { transform: scale(1.2); }
+    .star-btn.active { color: var(--accent); }
+    .dot { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #111; transition: background 0.2s; flex-shrink: 0; }
+    .name-field { padding: 3px 6px; border-radius: 4px; border: 1px solid var(--name-border); cursor: text; font-size: 13px; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: 'DM Mono',monospace; min-width: 0; }
+    .name-field:focus { outline: none; border-color: var(--accent); background: var(--name-bg-focus); }
+    .role-btns { display: flex; gap: 2px; }
+    .role-btn { flex: 1; padding: 4px 0; border-radius: 4px; font-size: 8px; font-weight: 700; border: 1px solid var(--border); background: transparent; color: var(--text-faint); cursor: pointer; transition: all 0.15s; font-family: 'DM Mono',monospace; letter-spacing: 0.3px; }
+    .role-btn.grd.active  { background: var(--role-grd-bg); border-color: var(--blue);   color: var(--blue);   }
+    .role-btn.fwd.active  { background: var(--role-fwd-bg); border-color: var(--purple); color: var(--purple); }
+    .role-btn.big.active  { background: var(--role-big-bg); border-color: var(--red);    color: var(--red);    }
+    .avail-center { display: flex; justify-content: center; align-items: center; }
+    .avail-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid; font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1; }
+    .avail-btn.in  { background: #1a4a1a; border-color: var(--green); color: var(--green); }
+    .avail-btn.out { background: var(--avail-out-bg); border-color: var(--avail-out-border); color: var(--avail-out-border); }
+
+    /* ── Add player ── */
+    .add-player-btn { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 6px; padding: 8px 10px; border-radius: 6px; border: 1px dashed var(--border); background: transparent; color: var(--text-faint); font-size: 12px; font-family: 'DM Mono',monospace; cursor: pointer; transition: all 0.15s; }
+    .add-player-btn:hover { border-color: var(--border2); color: var(--text-secondary); }
+    .add-player-btn .plus { font-size: 18px; line-height: 1; }
+
+    /* ── Settings row ── */
+    .settings-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+    .settings-label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; }
+    .seg-btns { display: flex; border: 1px solid var(--border2); border-radius: 6px; overflow: hidden; }
+    .seg-btn { padding: 7px 18px; background: transparent; border: none; color: var(--seg-btn-color); font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'DM Mono',monospace; transition: all 0.15s; white-space: nowrap; }
+    .seg-btn.active { background: var(--accent); color: #111; }
+    .gen-btn { padding: 10px 28px; background: var(--accent); color: #111; border: none; border-radius: 6px; font-family: 'Bebas Neue',sans-serif; font-size: 18px; letter-spacing: 1.5px; cursor: pointer; transition: all 0.2s; }
+    .gen-btn:disabled { background: var(--gen-disabled-bg); color: var(--gen-disabled-color); cursor: default; }
+    .warn { font-size: 12px; margin-top: 10px; }
+    .warn.red { color: var(--red); }
+    .warn.amber { color: var(--accent); }
+
+    /* ── Summary ── */
+    .summary { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+    .summary-stat .label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .summary-stat .value { font-family: 'Bebas Neue',sans-serif; font-size: 36px; }
+    .summary-stat .sub { font-size: 10px; color: var(--text-faint); }
+    .minutes-list { flex: 1; min-width: 220px; }
+    .minutes-list .label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .min-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+    .min-row .pname { font-size: 11px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-heading); }
+    .role-badge { font-size: 9px; padding: 1px 4px; border-radius: 3px; }
+    .role-badge.big { background: var(--role-big-bg); color: var(--red);    }
+    .role-badge.fwd { background: var(--role-fwd-bg); color: var(--purple); }
+    .role-badge.grd { background: var(--role-grd-bg); color: var(--blue);   }
+    .min-bar-wrap { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .min-bar { height: 100%; border-radius: 3px; }
+    .min-val { font-size: 12px; color: var(--text-secondary); width: 32px; text-align: right; }
+
+    /* ── Quarter cards ── */
+    .q-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .q-num { font-family: 'Bebas Neue',sans-serif; font-size: 26px; color: var(--text-heading); }
+    .q-meta { font-size: 12px; color: var(--text-muted); }
+    .tl-nums { display: flex; margin-bottom: 3px; }
+    .tl-nums span { font-size: 9px; color: var(--text-faint); flex: 1; }
+    .tl-nums span:last-child { flex: 0; }
+    .timeline { height: 40px; border-radius: 6px; overflow: hidden; display: flex; border: 1px solid var(--border); background: var(--timeline-bg); }
+    .tl-seg { display: flex; align-items: center; justify-content: center; font-size: 9px; }
+    .tl-sub { width: 2px; background: var(--accent); flex-shrink: 0; }
+    .tl-labels { font-size: 9px; color: var(--text-faint); margin-top: 3px; display: flex; justify-content: space-between; }
+    .lineups-1 { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: start; margin-top: 14px; }
+    .lineups-2 { display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; gap: 6px; align-items: start; margin-top: 14px; }
+    .lineup-head { font-size: 10px; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px; }
+    .arrow-col { display: flex; align-items: center; justify-content: center; padding-top: 24px; font-size: 16px; }
+    .p-row { display: flex; align-items: center; gap: 6px; background: var(--row-court); border: 1px solid var(--row-court-border); border-radius: 6px; padding: 5px 10px; margin-bottom: 4px; overflow: hidden; }
+    .p-row.is-new { background: var(--row-new); border-color: #f5a62344; }
+    .p-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .p-name { font-size: 12px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .p-role { font-size: 9px; padding: 1px 5px; border-radius: 3px; flex-shrink: 0; white-space: nowrap; }
+    .p-role.big { background: var(--role-big-bg); color: var(--red);    }
+    .p-role.fwd { background: var(--role-fwd-bg); color: var(--purple); }
+    .p-role.grd { background: var(--role-grd-bg); color: var(--blue);   }
+    .p-in { font-size: 9px; color: var(--accent); flex-shrink: 0; white-space: nowrap; }
+    .sub-banner { margin-top: 10px; padding: 9px 14px; background: var(--sub-banner-bg); border: 1px solid var(--sub-banner-border); border-radius: 8px; font-size: 12px; display: flex; flex-wrap: wrap; gap: 7px; align-items: center; }
+    .sub-title { font-family: 'Bebas Neue',sans-serif; font-size: 14px; letter-spacing: 0.5px; color: var(--accent); }
+    .bench-wrap { margin-top: 10px; }
+    .bench-label { font-size: 10px; color: var(--text-faint); margin-bottom: 4px; }
+    .bench-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .bench-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 20px; font-size: 11px; background: var(--bench-pill-bg); border: 1px solid var(--border); color: var(--text-faint); }
+    .bench-badge { font-size: 8px; padding: 0 3px; border-radius: 2px; }
+    .bench-badge.big { background: var(--role-big-bg-faint); color: var(--red); }
+    .bench-badge.fwd { background: var(--role-fwd-bg-faint); color: var(--purple); }
+    .bench-badge.grd { background: var(--role-grd-bg-faint); color: var(--blue); }
+    .cheat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .cheat-card { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+    .cheat-q { font-family: 'Bebas Neue',sans-serif; font-size: 16px; color: var(--accent); margin-bottom: 6px; }
+    .cheat-start { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .cheat-sub { font-size: 11px; margin-bottom: 2px; }
+    .roster-summary { font-size: 12px; color: var(--text-muted); }
+    #output { display: none; }
+    .reset-btn { background: transparent; border: 1px solid var(--border2); color: var(--text-faint); border-radius: 6px; padding: 5px 12px; font-size: 11px; font-family: 'DM Mono',monospace; cursor: pointer; transition: all 0.15s; }
+    .reset-btn:hover { border-color: var(--red); color: var(--red); }
+    .saved-toast { font-size: 11px; color: #555; transition: opacity 0.5s; }
+    .global-warn { background: var(--sub-banner-bg); border: 1px solid var(--sub-banner-border); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: var(--text-secondary); }
+
+    /* ── Fine-tune mode ── */
+    .finetune-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:10px 14px; background:var(--ft-bar-bg); border:1px solid var(--ft-bar-border); border-radius:8px; }
+    .finetune-bar .ft-label { font-size:12px; color:var(--accent); flex:1; }
+    .ft-btn { padding:6px 16px; border-radius:6px; border:none; font-family:'DM Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    .ft-btn.enter  { background:var(--accent); color:#111; }
+    .ft-btn.exit   { background:transparent; border:1px solid var(--border2); color:var(--text-muted); }
+    .ft-btn.reset  { background:transparent; border:1px solid var(--border); color:var(--text-faint); font-size:11px; }
+    .ft-btn.reset:hover { border-color:var(--red); color:var(--red); }
+    #finetuneTrigger { display:none; margin-bottom:16px; }
+    #finetuneTrigger button { padding:8px 20px; border-radius:6px; border:1px solid var(--border2); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.15s; }
+    #finetuneTrigger button:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* Player rows in edit mode */
+    .edit-mode .p-row { cursor:pointer; transition:background 0.15s, border-color 0.15s; }
+    .edit-mode .p-row:hover { background:var(--row-new); border-color:var(--blue); }
+    .p-row.ft-edited { background:var(--row-starter); border-color:#f5a62377; }
+    .p-row.ft-edited .p-dot::after { content:'✎'; font-size:7px; position:absolute; bottom:-2px; right:-2px; background:var(--accent); color:#111; border-radius:50%; width:9px; height:9px; display:flex; align-items:center; justify-content:center; }
+    .p-dot { position:relative; }
+
+    /* Swap picker popup */
+    .swap-overlay { display:none; position:fixed; inset:0; background:var(--overlay); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .swap-overlay.open { display:flex; }
+    .swap-box { background:var(--swap-box-bg); border:1px solid var(--border2); border-radius:12px; padding:20px; max-width:320px; width:100%; }
+    .swap-box h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--accent); letter-spacing:1px; margin-bottom:4px; }
+    .swap-box .swap-sub { font-size:11px; color:var(--text-muted); margin-bottom:14px; }
+    .swap-option { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:6px; border:1px solid var(--border); background:var(--swap-option-bg); margin-bottom:6px; cursor:pointer; transition:all 0.15s; }
+    .swap-option:hover { border-color:var(--accent); background:var(--swap-option-hover); }
+    .swap-option .so-name { flex:1; font-size:13px; color:var(--text-primary); }
+    .swap-option .so-mins { font-size:11px; color:var(--text-muted); }
+    .swap-cancel { width:100%; margin-top:10px; padding:8px; border-radius:6px; border:1px solid var(--border2); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+    .swap-cancel:hover { border-color:var(--text-secondary); color:var(--text-primary); }
+
+    /* ── Mid-game update modal ── */
+    .mg-overlay { display:none; position:fixed; inset:0; background:var(--overlay); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .mg-overlay.open { display:flex; }
+    .mg-box { background:var(--modal-bg); border:1px solid var(--border2); border-radius:14px; padding:24px; max-width:480px; width:100%; max-height:88vh; overflow-y:auto; position:relative; }
+    .mg-box h2 { font-family:'Bebas Neue',sans-serif; font-size:24px; color:var(--accent); letter-spacing:1px; margin-bottom:4px; }
+    .mg-box .mg-sub { font-size:12px; color:var(--text-muted); margin-bottom:18px; }
+    .mg-section-title { font-size:10px; color:var(--text-faint); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; margin-top:16px; }
+    .mg-seg-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(72px, 1fr)); gap:6px; margin-bottom:4px; }
+    .mg-seg-btn { padding:8px 4px; border-radius:6px; border:1px solid var(--border); background:transparent; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.15s; text-align:center; line-height:1.3; }
+    .mg-seg-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .mg-seg-btn.selected { background:var(--accent); border-color:var(--accent); color:#111; font-weight:700; }
+    .mg-seg-btn.played { background:var(--row-absent); border-color:var(--border); color:var(--text-faint); cursor:default; opacity:0.5; }
+    .mg-player-row { display:flex; align-items:center; gap:8px; padding:7px 4px; border-radius:6px; background:var(--row-bg); margin-bottom:5px; }
+    .mg-player-name { flex:1; font-size:13px; color:var(--text-primary); }
+    .mg-player-mins { font-size:11px; color:var(--text-faint); width:32px; text-align:right; }
+    .mg-avail-btn { width:26px; height:26px; border-radius:50%; border:2px solid; font-size:13px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; }
+    .mg-avail-btn.in  { background:#1a4a1a; border-color:var(--green); color:var(--green); }
+    .mg-avail-btn.out { background:var(--avail-out-bg); border-color:var(--avail-out-border); color:var(--avail-out-border); }
+    .mg-actions { display:flex; gap:8px; margin-top:18px; }
+    .mg-apply { flex:1; padding:10px; background:var(--accent); color:#111; border:none; border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; cursor:pointer; }
+    .mg-cancel { flex:1; padding:10px; background:transparent; border:1px solid var(--border2); color:var(--text-muted); border-radius:6px; font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+
+    /* Past quarter cards (greyed out) */
+    .card.past-quarter { opacity:0.45; pointer-events:none; }
+    .card.past-quarter::after { content:'PLAYED'; position:absolute; top:12px; right:16px; font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--text-faint); letter-spacing:1px; }
+    .card.past-quarter { position:relative; }
+    .midgame-divider { display:flex; align-items:center; gap:12px; margin:8px 0 16px; }
+    .midgame-divider span { font-size:11px; color:var(--accent); font-family:'Bebas Neue',sans-serif; letter-spacing:1px; white-space:nowrap; }
+    .midgame-divider::before,.midgame-divider::after { content:''; flex:1; height:1px; background:var(--accent); opacity:0.4; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header-row">
+    <h1>ROTATION PLANNER</h1>
+    <div class="header-controls">
+      <button class="theme-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀</button>
+      <button class="settings-btn" onclick="openSettings()" title="Settings">⚙</button>
+      <button class="help-btn" onclick="openHelp()" title="How to use this app">?</button>
+    </div>
+  </div>
+
+  <!-- Subtitle with editable game settings -->
+  <div class="subtitle-row">
+    <button class="subtitle-chip" onclick="openGameSettings()" title="Click to edit">
+      <span id="chipQuarters">4</span> × <span id="chipDuration">10</span>-min quarters
+      <span class="edit-icon">✎</span>
+    </button>
+  </div>
+
+  <!-- Roster card -->
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <div class="card-title" style="margin-bottom:0;">ROSTER</div>
+      <span class="roster-summary" id="rosterSummary"></span>
+      <span style="flex:1"></span>
+      <span class="saved-toast" id="savedToast"></span>
+      <button class="reset-btn" onclick="resetRoster()">↺ Reset</button>
+    </div>
+
+    <div class="roster-header">
+      <span style="text-align:center;color:#555;" title="Starter">★</span><span></span><span>NAME</span><span>ROLE</span><span style="text-align:center">IN?</span>
+    </div>
+    <div id="rosterRows"></div>
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <button class="add-player-btn" style="flex:1;justify-content:center;" onclick="addPlayer()">
+        <span class="plus">+</span> Add player
+      </button>
+      <button class="add-player-btn" id="removePlayerBtn" style="flex:1;justify-content:center;" onclick="removeLastPlayer()">
+        <span style="font-size:18px;line-height:1;">−</span> Remove last
+      </button>
+    </div>
+
+    <!-- Interchange mode -->
+    <div class="settings-row">
+      <span class="settings-label">INTERCHANGES PER QUARTER</span>
+      <div class="seg-btns">
+        <button class="seg-btn active" id="mode1btn" onclick="setMode(1)">1 &nbsp;(@ mid-quarter)</button>
+        <button class="seg-btn"        id="mode2btn" onclick="setMode(2)">2 &nbsp;(@ ⅓ &amp; ⅔)</button>
+      </div>
+      <button class="gen-btn" id="genBtn" onclick="handleGenerate()">GENERATE</button>
+    </div>
+
+    <div id="warnings"></div>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<!-- ── Settings modal ── -->
+<div class="modal-overlay" id="settingsModal" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-modal">
+    <button class="modal-close" onclick="closeSettings()">✕ Close</button>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);letter-spacing:2px;margin-bottom:20px;">SETTINGS</h2>
+
+    <div class="settings-section">
+      <h3>Your Team</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Select your team from the Redbacks competition (2026 season).</p>
+      <div id="teamListContainer">
+        <div class="team-loading" id="teamLoadingMsg">Loading teams…</div>
+      </div>
+      <div class="settings-saved" id="settingsSavedMsg" style="opacity:0;">✓ Saved</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Help modal ── -->
+<div class="modal-overlay" id="helpModal" onclick="if(event.target===this)closeHelp()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeHelp()">✕ Close</button>
+    <h2>HOW IT WORKS</h2>
+
+    <h3>Setting Up Your Roster</h3>
+    <p>Add your players and assign each one a role:</p>
+    <ul style="margin-top:8px;">
+      <li><span class="role-tag grd">GRD</span> <strong style="color:#eee"> Guard</strong> — your ball-handlers and perimeter players. The planner always tries to keep at least one guard on the court.</li>
+      <li><span class="role-tag fwd">FWD</span> <strong style="color:#eee"> Forward</strong> — versatile players who can play inside or outside. Forwards are used as flexible fill-in spots between guards and bigs.</li>
+      <li><span class="role-tag big">BIG</span> <strong style="color:#eee"> Big</strong> — your bigs and post players. The planner tries to keep 2 bigs on the court at all times, with a minimum of 1.</li>
+    </ul>
+
+    <h3>Availability</h3>
+    <p>Mark players <strong style="color:#81c784">✓ IN</strong> or <strong style="color:#e57373">✗ OUT</strong> on game day. Only available players are included in the rotation. You need at least 5.</p>
+
+    <h3>Starters</h3>
+    <p>Tap the <strong style="color:#f5a623">★</strong> star next to a player to mark them as a starter — your strongest combination to begin the game. All available starters will always be included in the Q1 opening lineup. The rest of the rotation is then generated normally from that point.</p>
+    <p style="margin-top:6px;">You can mark up to 5 starters. If fewer than 5 starters are available, the remaining Q1 slots are filled automatically from the rest of the roster. Players marked <strong style="color:#e57373">✗ OUT</strong> are excluded even if starred.</p>
+
+    <h3>Game Settings</h3>
+    <p>Tap the <strong style="color:var(--accent)">quarters × duration</strong> chip at the top to set the number of quarters (1–6) and quarter length (5–20 minutes) for your competition.</p>
+
+    <h3>Interchanges Per Quarter</h3>
+    <p>Choose how many substitution windows to use each quarter:</p>
+    <ul style="margin-top:8px;">
+      <li><strong style="color:#eee">1 interchange</strong> — one swap at the midpoint of each quarter. Fewer stoppages, simpler to manage.</li>
+      <li><strong style="color:#eee">2 interchanges</strong> — swaps at the ⅓ and ⅔ marks. More flexibility, useful for larger rosters.</li>
+    </ul>
+
+    <h3>The Rotation Logic</h3>
+    <p>The planner divides each quarter into segments and assigns lineups to give every available player as close to equal minutes as possible. For each lineup slot it:</p>
+    <ul style="margin-top:8px;">
+      <li>Picks players with the most remaining minutes first</li>
+      <li>Locks in at least 1 (ideally 2) bigs</li>
+      <li>Ensures at least 1 guard is on the court</li>
+      <li>Fills the remaining spots with whoever needs time most — usually forwards</li>
+    </ul>
+    <p style="margin-top:10px;">The lineup quality indicator (e.g. <strong style="color:#81c784">2B</strong> <strong style="color:#81c784">1G</strong>) next to each segment shows how many bigs and guards are on court. Green means the target is met, orange means 1 big (minimum acceptable), red means the target wasn't possible given available players.</p>
+
+    <h3>Courtside Cheat Sheet</h3>
+    <p>A compact summary at the bottom of the generated plan — perfect for reading at a glance during the game.</p>
+
+    <h3>Fine-Tuning Rotations</h3>
+    <p>After generating a plan, a <strong style="color:#f5a623">✎ Fine-tune</strong> button appears below the output. Use this to manually adjust the plan when the algorithm can't account for real-world factors — like a player carrying an injury, or someone who needs reduced minutes.</p>
+    <p style="margin-top:8px;">To make changes:</p>
+    <ul style="margin-top:6px;">
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap <strong style="color:#f5a623">✎ Fine-tune</strong> to enter edit mode — player rows will highlight when hovered or tapped</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap any player name in the rotation plan to swap them with a bench player</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">The swap picker shows only players currently on the bench for that segment, along with their current total minutes</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Manually changed slots are highlighted in amber with a <strong style="color:#f5a623">✎</strong> icon so you can see what's been adjusted</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">The minutes-per-player summary updates live after every change</li>
+      <li style="font-size:13px;color:#aaa;line-height:1.8;">Tap <strong style="color:#eee">Done</strong> to exit edit mode when you're happy</li>
+    </ul>
+    <p style="margin-top:8px;">Use <strong style="color:#eee">↺ Reset changes</strong> at any time to restore the original generated plan. Your fine-tune edits are saved automatically and will survive a page refresh — but clicking <strong style="color:#eee">Generate</strong> again will wipe them and start fresh.</p>
+
+    <h3>Mid-Game Updates</h3>
+    <p>After generating a plan, a <strong style="color:var(--accent)">⏱ Mid-game</strong> button appears alongside the Fine-tune button. Use this when player availability changes during the game — for example, a player arrives late or has to leave due to injury or fouling out.</p>
+    <p style="margin-top:8px;">To apply a mid-game update:</p>
+    <ul style="margin-top:6px;">
+      <li style="font-size:13px;color:var(--text-secondary);line-height:1.8;">Tap <strong style="color:var(--accent)">⏱ Mid-game</strong> to open the update panel</li>
+      <li style="font-size:13px;color:var(--text-secondary);line-height:1.8;">Select the next segment to be played — this tells the planner how much of the game has already been completed</li>
+      <li style="font-size:13px;color:var(--text-secondary);line-height:1.8;">Toggle any players whose availability has changed — mark latecomers as <strong style="color:var(--green)">✓</strong> or players leaving as <strong style="color:var(--red)">✗</strong></li>
+      <li style="font-size:13px;color:var(--text-secondary);line-height:1.8;">Tap <strong style="color:#eee">Recalculate</strong> to generate a fresh plan for the remaining quarters</li>
+    </ul>
+    <p style="margin-top:8px;">The planner keeps track of how many minutes each player has already played and distributes the remaining time as fairly as possible among whoever is now available. Players who arrive late get a fair share of whatever time is left. Quarters already played are shown greyed out.</p>
+    <p style="margin-top:6px;">You can apply a mid-game update more than once — for example, once at half time and again in the third quarter if needed.</p>
+
+    <h3>Installing as an App</h3>
+    <p>This planner can be installed on your phone so it works offline and opens like a native app — no app store required.</p>
+
+    <div style="margin-top:12px;background:var(--contact-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <!-- iOS -->
+      <div style="padding:12px 14px;border-bottom:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:700;color:#ccc;margin-bottom:6px;">
+          🍎 &nbsp;iPhone / iPad (Safari)
+        </div>
+        <ol style="padding-left:16px;margin:0;">
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Open the app in <strong style="color:#eee">Safari</strong> (must be Safari, not Chrome)</li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Tap the <strong style="color:#eee">Share</strong> button <span style="font-size:14px;">⎙</span> at the bottom of the screen</li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Scroll down and tap <strong style="color:#eee">Add to Home Screen</strong></li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Tap <strong style="color:#eee">Add</strong> — the app icon will appear on your home screen</li>
+        </ol>
+      </div>
+      <!-- Android -->
+      <div style="padding:12px 14px;">
+        <div style="font-size:12px;font-weight:700;color:#ccc;margin-bottom:6px;">
+          🤖 &nbsp;Android (Chrome)
+        </div>
+        <ol style="padding-left:16px;margin:0;">
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Open the app in <strong style="color:#eee">Chrome</strong></li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Tap the <strong style="color:#eee">three-dot menu</strong> (⋮) in the top-right corner</li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Tap <strong style="color:#eee">Add to Home screen</strong></li>
+          <li style="font-size:12px;color:#aaa;line-height:1.8;">Tap <strong style="color:#eee">Add</strong> — the app icon will appear on your home screen</li>
+        </ol>
+        <p style="font-size:11px;color:#555;margin-top:8px;">Chrome may also show an automatic install prompt at the bottom of the screen on your first visit.</p>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#666;margin-top:10px;">Once installed, the app works fully offline — no internet connection needed on game day.</p>
+
+    <div class="contact">
+      Questions or feedback? Contact <a href="mailto:adam.unit@gmail.com">adam.unit@gmail.com</a>
+      <div style="margin-top:8px;color:#444;font-size:11px;">Last updated: 07/05/2025</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Game settings popup ── -->
+<div class="gsettings-popup" id="gsettingsPopup" onclick="if(event.target===this)closeGameSettings()">
+  <div class="gsettings-box">
+    <h2>GAME SETTINGS</h2>
+    <div class="gs-row">
+      <span class="gs-label">Number of quarters</span>
+      <input class="gs-input" type="number" id="gsQuarters" min="1" max="6" value="4" />
+      <span class="gs-hint">1–6</span>
+    </div>
+    <div class="gs-row">
+      <span class="gs-label">Quarter length (min)</span>
+      <input class="gs-input" type="number" id="gsDuration" min="5" max="20" value="10" />
+      <span class="gs-hint">5–20</span>
+    </div>
+    <div class="gs-btns">
+      <button class="gs-cancel" onclick="closeGameSettings()">Cancel</button>
+      <button class="gs-ok" onclick="applyGameSettings()">APPLY</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Constants ────────────────────────────────────────────────────────────────
+const COURT_SIZE   = 5;
+const BLACKOUT     = 2; // minutes at start/end of quarter with no subs
+// Segment colours are read from CSS variables at render time
+function getSegColor(i) {
+  const colors = ['--tl-s1','--tl-s2','--tl-s3'];
+  return getComputedStyle(document.documentElement).getPropertyValue(colors[i % colors.length]).trim();
+}
+const PLAYER_COLORS = ["#f5a623","#4fc3f7","#81c784","#e57373","#ba68c8","#ff8a65","#4db6ac","#fff176","#f48fb1","#80cbc4","#ce93d8","#ef9a9a","#90caf9","#a5d6a7","#ffe082"];
+
+// Sub points as fraction of quarter (so they scale with duration)
+// Mode 1: one sub at halfway
+// Mode 2: subs at 1/3 and 2/3
+function getSubPoints(quarterDuration, mode) {
+  if (mode === 1) return [Math.round(quarterDuration / 2)];
+  const t1 = Math.round(quarterDuration / 3);
+  const t2 = Math.round(quarterDuration * 2 / 3);
+  return [t1, t2];
+}
+
+// ── Persistence ──────────────────────────────────────────────────────────────
+const STORAGE_KEY = 'bball_roster_v2';
+
+function saveRoster() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+    const t = document.getElementById('savedToast');
+    if (t) { t.textContent = '✓ saved'; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 1500); }
+  } catch(e) {}
+}
+
+function loadRoster() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw);
+    if (!Array.isArray(saved) || saved.length < 1) return null;
+    return saved.map((p, i) => ({
+      name: typeof p.name === 'string' && p.name.trim() ? p.name.trim() : `Player ${i+1}`,
+      role: ['guard','forward','big'].includes(p.role) ? p.role : 'guard',
+      available: typeof p.available === 'boolean' ? p.available : true,
+      starter: typeof p.starter === 'boolean' ? p.starter : false,
+    }));
+  } catch(e) { return null; }
+}
+
+// ── State ────────────────────────────────────────────────────────────────────
+let players         = loadRoster() || Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
+let interchangeMode = 1;
+let numQuarters     = 4;
+let quarterDuration = 10;
+
+function resetRoster() {
+  if (!confirm('Clear all saved names and roles and reset to defaults?')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  players = Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
+  clearOutput(); loadSettings();
+renderRoster();
+}
+
+function addPlayer() {
+  const n = players.length + 1;
+  players.push({ name: 'Player ' + n, role: 'guard', available: true, starter: false });
+  saveRoster(); clearOutput(); renderRoster();
+}
+
+function removeLastPlayer() {
+  if (players.length <= 1) return;
+  const last = players[players.length - 1];
+  if (!confirm('Remove ' + last.name + '?')) return;
+  players.pop();
+  saveRoster(); clearOutput(); renderRoster();
+}
+
+function setMode(m) {
+  interchangeMode = m;
+  document.getElementById('mode1btn').className = 'seg-btn' + (m===1?' active':'');
+  document.getElementById('mode2btn').className = 'seg-btn' + (m===2?' active':'');
+  clearOutput();
+}
+
+// ── Game settings ────────────────────────────────────────────────────────────
+function openGameSettings() {
+  document.getElementById('gsQuarters').value = numQuarters;
+  document.getElementById('gsDuration').value = quarterDuration;
+  document.getElementById('gsettingsPopup').classList.add('open');
+}
+function closeGameSettings() {
+  document.getElementById('gsettingsPopup').classList.remove('open');
+}
+function applyGameSettings() {
+  let q = parseInt(document.getElementById('gsQuarters').value, 10);
+  let d = parseInt(document.getElementById('gsDuration').value, 10);
+  q = Math.max(1, Math.min(6, isNaN(q) ? numQuarters : q));
+  d = Math.max(5, Math.min(20, isNaN(d) ? quarterDuration : d));
+  numQuarters = q; quarterDuration = d;
+  document.getElementById('chipQuarters').textContent = q;
+  document.getElementById('chipDuration').textContent = d;
+  clearOutput();
+  closeGameSettings();
+}
+
+// ── Help modal ────────────────────────────────────────────────────────────────
+function openHelp()  { document.getElementById('helpModal').classList.add('open'); }
+function closeHelp() { document.getElementById('helpModal').classList.remove('open'); }
+
+// ── Rotation engine ──────────────────────────────────────────────────────────
+//
+// RULES (strict priority order):
+//
+// 1. STARTERS: All available starters play Q1S1. Remaining Q1S1 slots filled
+//    by role balance (add guard/big if missing), then by minutes need.
+//
+// 2. EVEN MINUTES: Pick each segment's lineup using a priority queue —
+//    always select the 5 players most owed court time. Guaranteed exact.
+//
+// 3. NO FULL-QUARTER BENCH: On the last segment of each quarter, any player
+//    who hasn't played that quarter yet is forced into the lineup first
+//    (waived for rosters of 10+).
+//
+// 4. ROLE COVERAGE: After schedule is built, use pair-swaps to bring guards
+//    and bigs into segments that lack them, without changing any player's
+//    total minutes. Only works where a suitable swap exists.
+
+function generateRotation(activePlayers, mode, quarters, qDuration) {
+  const n = activePlayers.length;
+  if (n < 5) return null;
+
+  const subPoints    = getSubPoints(qDuration, mode);
+  const boundaries   = [0, ...subPoints, qDuration];
+  const segDurations = boundaries.slice(1).map((b, i) => b - boundaries[i]);
+  const segsPerQ     = segDurations.length;
+  const totalSegs    = quarters * segsPerQ;
+
+  // ── Rule 2 foundation: target minutes per player ─────────────────────────
+  const totalMinutes = quarters * qDuration * COURT_SIZE;
+  const baseMin  = Math.floor(totalMinutes / n);
+  const extraCnt = totalMinutes % n;
+  const targetMin = activePlayers.map((_, i) => baseMin + (i < extraCnt ? 1 : 0));
+
+  // ── Rule 1: Build lockedSeg0 ──────────────────────────────────────────────
+  const warnings = [];
+  const starterIdx = activePlayers.map((p, i) => p.starter ? i : -1).filter(x => x >= 0);
+  let lockedSeg0 = null;
+
+  if (starterIdx.length > 0) {
+    const slotsNeeded  = COURT_SIZE - starterIdx.length;
+    const nonStarters  = activePlayers.map((_, pi) => pi).filter(pi => !starterIdx.includes(pi));
+    const hasGuard     = starterIdx.some(pi => activePlayers[pi].role === 'guard');
+    const hasBig       = starterIdx.some(pi => activePlayers[pi].role === 'big');
+    const grdPool      = nonStarters.filter(pi => activePlayers[pi].role === 'guard');
+    const bigPool      = nonStarters.filter(pi => activePlayers[pi].role === 'big');
+    const fwdPool      = nonStarters.filter(pi => activePlayers[pi].role === 'forward');
+    const fillers      = [];
+
+    if (!hasGuard && slotsNeeded > fillers.length) {
+      const p = grdPool[0] ?? fwdPool[0] ?? null;
+      if (p !== null && !fillers.includes(p)) fillers.push(p);
+    }
+    if (!hasBig && slotsNeeded > fillers.length) {
+      const p = bigPool[0] ?? fwdPool.find(x => !fillers.includes(x)) ?? null;
+      if (p !== null && !fillers.includes(p)) fillers.push(p);
+    }
+    const remPool = nonStarters.filter(pi => !fillers.includes(pi))
+      .sort((a, b) => targetMin[b] - targetMin[a]);
+    while (fillers.length < slotsNeeded && remPool.length) fillers.push(remPool.shift());
+    lockedSeg0 = [...starterIdx, ...fillers.slice(0, slotsNeeded)];
+  }
+
+  // ── Rules 2 + 3: Priority-queue schedule builder ─────────────────────────
+  // minutesPlayed tracks actual minutes given to each player so far.
+  // score(pi, s) = owed minutes × 1000 + sitting time (tiebreak).
+  // On the last segment of each quarter, players with zero quarter-minutes
+  // are forced in first (Rule 3), then remaining slots filled by score.
+
+  const minutesPlayed = Array(n).fill(0);
+  const schedule      = [];
+  const lastPlayed    = Array(n).fill(-1); // last segment index on court
+  let   qMinutes      = Array(n).fill(0);  // minutes played this quarter
+  let   currentQ      = -1;
+
+  for (let s = 0; s < totalSegs; s++) {
+    const q        = Math.floor(s / segsPerQ);
+    const segInQ   = s % segsPerQ;
+    const dur      = segDurations[segInQ];
+    const lastSeg  = segInQ === segsPerQ - 1;
+
+    if (q !== currentQ) { qMinutes = Array(n).fill(0); currentQ = q; }
+
+    // Seg 0: use locked lineup
+    if (s === 0 && lockedSeg0) {
+      schedule.push([...lockedSeg0]);
+      lockedSeg0.forEach(pi => { minutesPlayed[pi] += dur; qMinutes[pi] += dur; lastPlayed[pi] = s; });
+      continue;
+    }
+
+    // Rule 3: who must play (hasn't played this quarter, and this is last seg)
+    const mustPlay = (n < 10 && lastSeg)
+      ? activePlayers.map((_, pi) => pi).filter(pi => qMinutes[pi] === 0)
+      : [];
+
+    // Score: owed minutes (primary) + sitting time (secondary) +
+    // role stagger bonus (tertiary) — prevents guards/bigs clustering together
+    // when all players start with identical owed-minutes scores.
+    const score = (pi, partial) => {
+      const owed    = (targetMin[pi] - minutesPlayed[pi]) * 1000000;
+      const sitting = (s - lastPlayed[pi] - 1) * 1000;
+      const sameRole = partial.filter(p => activePlayers[p].role === activePlayers[pi].role).length;
+      const roleBonus = sameRole === 0 ? 100 : sameRole === 1 ? 50 : 0;
+      return owed + sitting + roleBonus;
+    };
+
+    // Build lineup greedily: forced players first, then pick highest-scoring
+    // candidate one at a time (recomputing score as lineup grows)
+    const lineup = mustPlay.slice(0, COURT_SIZE);
+    const candidates = activePlayers.map((_, pi) => pi).filter(pi => !lineup.includes(pi));
+    while (lineup.length < COURT_SIZE && candidates.length) {
+      let bestIdx = 0, bestSc = -Infinity;
+      for (let ci = 0; ci < candidates.length; ci++) {
+        const sc = score(candidates[ci], lineup);
+        if (sc > bestSc) { bestSc = sc; bestIdx = ci; }
+      }
+      lineup.push(candidates.splice(bestIdx, 1)[0]);
+    }
+
+    schedule.push(lineup);
+    lineup.forEach(pi => { minutesPlayed[pi] += dur; qMinutes[pi] += dur; lastPlayed[pi] = s; });
+  }
+
+  // ── Rule 4: Role coverage via pair-swap ───────────────────────────────────
+  // For each segment missing a guard or big, find a segment where that role
+  // player appears alongside a non-role player who also appears in the deficit
+  // segment, and swap them. Total minutes are unchanged.
+  //
+  // Key invariant: after every swap, re-check that both courts have exactly
+  // COURT_SIZE distinct players. If the swap would create a duplicate, skip it.
+
+  const bigIdx    = activePlayers.map((p, i) => p.role === 'big'   ? i : -1).filter(x => x >= 0);
+  const grdIdx    = activePlayers.map((p, i) => p.role === 'guard' ? i : -1).filter(x => x >= 0);
+  const idealBigs = Math.min(2, bigIdx.length);
+
+  // Build playerSegs from final schedule (used to find donor segments)
+  const playerSegs = () => activePlayers.map((_, pi) =>
+    schedule.map((_, s) => s).filter(s => schedule[s].includes(pi))
+  );
+
+  function pairSwap(defSeg, rolePlayer, outFilter) {
+    // Bring rolePlayer into defSeg by swapping with a filler in defSeg.
+    // Find a donor segment where rolePlayer plays, then swap rolePlayer out
+    // of donor in exchange for a filler from defSeg.
+    //
+    // The swap only preserves exact minutes if the two segments have equal
+    // duration. We prefer same-duration donors; if none exist, skip.
+    const defCourt = schedule[defSeg];
+    if (defCourt.includes(rolePlayer)) return false;
+    const defDur = segDurations[defSeg % segsPerQ];
+
+    // Candidate fillers in defSeg: pass outFilter, not rolePlayer
+    const defFillers = defCourt.filter(pi => outFilter(pi));
+    if (!defFillers.length) return false;
+
+    // Donor segments: rolePlayer is playing, not locked.
+    // Prefer same-duration donors (exact minute preservation).
+    // Allow different-duration donors only if the minute difference is small
+    // (≤ 2 min) and the resulting minutes imbalance stays within 5 min of target.
+    const allDonors = schedule
+      .map((_, s) => s)
+      .filter(s => {
+        if (s === defSeg || (lockedSeg0 && s === 0)) return false;
+        return schedule[s].includes(rolePlayer);
+      });
+    if (!allDonors.length) return false;
+
+    // Sort: same-duration first, then by closeness of duration
+    allDonors.sort((a, b) => {
+      const aDiff = Math.abs(segDurations[a % segsPerQ] - defDur);
+      const bDiff = Math.abs(segDurations[b % segsPerQ] - defDur);
+      return aDiff - bDiff;
+    });
+
+    // Filter out donors where the duration difference would make minutes too uneven
+    const donors = allDonors.filter(s => {
+      const donDur = segDurations[s % segsPerQ];
+      const diff = Math.abs(donDur - defDur);
+      if (diff === 0) return true;
+      // Cross-duration swap: rolePlayer gains defDur, loses donDur (net: defDur - donDur)
+      //                      filler gains donDur, loses defDur (net: donDur - defDur)
+      // Check that both players would still be within 5 min of their target
+      return diff <= 2; // allow up to 2 min difference for non-uniform segment durations
+    });
+    if (!donors.length) return false;
+
+    // Prefer donor in a different quarter
+    const defQ = Math.floor(defSeg / segsPerQ);
+    donors.sort((a, b) =>
+      (Math.floor(a / segsPerQ) === defQ ? 1 : 0) - (Math.floor(b / segsPerQ) === defQ ? 1 : 0)
+    );
+
+    for (const donSeg of donors) {
+      const donCourt = schedule[donSeg];
+
+      // Pick a filler from defSeg that is NOT already in donSeg (avoids duplicates)
+      const filler = defFillers.find(pi => !donCourt.includes(pi));
+      if (filler === undefined) continue;
+      // rolePlayer must not already be in defSeg (checked above) and
+      // filler must not already be in donSeg (checked above)
+
+      // Rule 3 guard: skip this swap if it would leave either player
+      // sitting their entire quarter (only enforced for n < 10)
+      if (n < 10) {
+        const defQ = Math.floor(defSeg / segsPerQ);
+        const donQ = Math.floor(donSeg / segsPerQ);
+        if (defQ !== donQ) {
+          // filler loses defSeg — does it still appear elsewhere in defQ?
+          const fillerStillInDefQ = schedule.some((seg, s) =>
+            s !== defSeg && Math.floor(s / segsPerQ) === defQ && seg.includes(filler)
+          );
+          if (!fillerStillInDefQ) continue;
+          // rolePlayer loses donSeg — does it still appear elsewhere in donQ?
+          const roleStillInDonQ = schedule.some((seg, s) =>
+            s !== donSeg && Math.floor(s / segsPerQ) === donQ && seg.includes(rolePlayer)
+          );
+          if (!roleStillInDonQ) continue;
+        }
+      }
+
+      // Execute swap: rolePlayer defSeg↔donSeg, filler donSeg↔defSeg
+      defCourt.splice(defCourt.indexOf(filler), 1);
+      defCourt.push(rolePlayer);
+      donCourt.splice(donCourt.indexOf(rolePlayer), 1);
+      donCourt.push(filler);
+
+      // Sanity: no duplicates
+      if (new Set(defCourt).size !== defCourt.length ||
+          new Set(donCourt).size !== donCourt.length) {
+        defCourt.splice(defCourt.indexOf(rolePlayer), 1); defCourt.push(filler);
+        donCourt.splice(donCourt.indexOf(filler), 1); donCourt.push(rolePlayer);
+        continue;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  const startS = lockedSeg0 ? 1 : 0;
+  for (let s = startS; s < totalSegs; s++) {
+    const court = schedule[s];
+
+    // Ensure ≥1 big
+    if (court.filter(pi => bigIdx.includes(pi)).length < 1 && bigIdx.length >= 1) {
+      const cands = bigIdx.filter(pi => !court.includes(pi))
+        .sort((a, b) => schedule.filter(seg => seg.includes(b)).length -
+                        schedule.filter(seg => seg.includes(a)).length);
+      for (const big of cands) if (pairSwap(s, big, pi => !bigIdx.includes(pi))) break;
+    }
+
+    // Try for ≥2 bigs (swap out forward only)
+    if (court.filter(pi => bigIdx.includes(pi)).length < idealBigs && bigIdx.length >= 2) {
+      const cands = bigIdx.filter(pi => !court.includes(pi))
+        .sort((a, b) => schedule.filter(seg => seg.includes(b)).length -
+                        schedule.filter(seg => seg.includes(a)).length);
+      for (const big of cands)
+        if (pairSwap(s, big, pi => !bigIdx.includes(pi) && !grdIdx.includes(pi))) break;
+    }
+
+    // Ensure ≥1 guard
+    if (court.filter(pi => grdIdx.includes(pi)).length < 1 && grdIdx.length >= 1) {
+      const cands = grdIdx.filter(pi => !court.includes(pi))
+        .sort((a, b) => schedule.filter(seg => seg.includes(b)).length -
+                        schedule.filter(seg => seg.includes(a)).length);
+      for (const grd of cands) if (pairSwap(s, grd, pi => !grdIdx.includes(pi))) break;
+    }
+  }
+
+  // ── Post-swap: repair full-quarter-bench violations (Rule 3) ───────────────
+  // Pair-swaps can inadvertently move a player out of their only segment in a
+  // quarter. Detect and fix by swapping them in for the most-over-served player.
+  if (n < 10) {
+    const segCounts = () => activePlayers.map((_, p) =>
+      schedule.filter(seg => seg.includes(p)).length
+    );
+    for (let q = 0; q < quarters; q++) {
+      const qSegs = Array.from({length: segsPerQ}, (_, i) => q * segsPerQ + i);
+      for (let pi = 0; pi < n; pi++) {
+        if (qSegs.some(s => schedule[s].includes(pi))) continue;
+        // pi sits entire quarter — find best segment + player to swap
+        const counts = segCounts();
+        let bestSeg = -1, bestOut = -1, bestCnt = -1;
+        for (const s of qSegs) {
+          if (lockedSeg0 && s === 0) continue;
+          for (const out of schedule[s]) {
+            if (out === pi || counts[out] <= counts[pi]) continue;
+            if (counts[out] > bestCnt) { bestCnt = counts[out]; bestSeg = s; bestOut = out; }
+          }
+        }
+        if (bestSeg >= 0) {
+          const court = schedule[bestSeg];
+          court.splice(court.indexOf(bestOut), 1);
+          court.push(pi);
+        }
+      }
+    }
+  }
+
+  // ── Recompute minutes after pair-swaps ────────────────────────────────────
+  const finalMins = Array(n).fill(0);
+  for (let s = 0; s < totalSegs; s++) {
+    const dur = segDurations[s % segsPerQ];
+    schedule[s].forEach(pi => { finalMins[pi] += dur; });
+  }
+
+  // ── Build quarter/sub data structures ─────────────────────────────────────
+  const qData = [];
+  for (let q = 0; q < quarters; q++) {
+    const segs = [];
+    for (let s = 0; s < segsPerQ; s++)
+      segs.push({ players: [...schedule[q * segsPerQ + s]], start: boundaries[s], end: boundaries[s + 1] });
+    const subs = [];
+    for (let s = 1; s < segsPerQ; s++) {
+      const prev = segs[s-1].players, next = segs[s].players;
+      const exits  = prev.filter(p => !next.includes(p));
+      const enters = next.filter(p => !prev.includes(p));
+      if (exits.length) subs.push({ at: boundaries[s], exits, enters });
+    }
+    qData.push({ q: q+1, segs, subs, totalSubCount: subs.reduce((a, x) => a + x.exits.length, 0) });
+  }
+
+  // ── Warnings ──────────────────────────────────────────────────────────────
+  if (bigIdx.length === 0)      warnings.push('No bigs assigned — big balance not enforced.');
+  else if (bigIdx.length === 1) warnings.push('Only 1 big available — keeping them on court as much as possible.');
+  if (grdIdx.length === 0)      warnings.push('No guards assigned — guard balance not enforced.');
+  if (n === 5) warnings.push('Exactly 5 players — everyone plays the full game.');
+
+  return { quarters: qData, minutesPlayed: finalMins, warnings, boundaries, segDurations };
+}
+
+// ── Roster render ─────────────────────────────────────────────────────────────
+function renderRoster() {
+  const active  = players.filter(p => p.available);
+  const bigs    = active.filter(p => p.role==='big').length;
+  const fwds    = active.filter(p => p.role==='forward').length;
+  const guards  = active.filter(p => p.role==='guard').length;
+  const starters = active.filter(p => p.starter).length;
+  document.getElementById('rosterSummary').innerHTML =
+    `${active.length} available &nbsp;·&nbsp; `+
+    `<span style="color:#4fc3f7">${guards} guard${guards!==1?'s':''}</span> &nbsp;·&nbsp; `+
+    `<span style="color:#ba68c8">${fwds} forward${fwds!==1?'s':''}</span> &nbsp;·&nbsp; `+
+    `<span style="color:#e57373">${bigs} big${bigs!==1?'s':''}</span>` +
+    (starters > 0 ? ` &nbsp;·&nbsp; <span style="color:#f5a623">★ ${starters}/5 starter${starters!==1?'s':''}</span>` : '');
+
+  const container = document.getElementById('rosterRows');
+  container.innerHTML = '';
+
+  players.forEach((p, i) => {
+    const color = p.available ? PLAYER_COLORS[i % PLAYER_COLORS.length] : '#3a3a3a';
+    const row = document.createElement('div');
+    row.className = 'player-row' + (p.available ? '' : ' absent') + (p.starter && p.available ? ' is-starter' : '');
+
+    // Star (starter) button
+    const starBtn = document.createElement('button');
+    starBtn.className = 'star-btn' + (p.starter ? ' active' : '');
+    starBtn.textContent = '★';
+    starBtn.title = p.starter ? 'Starter — tap to unmark' : 'Mark as starter';
+    starBtn.onclick = () => {
+      const activeStarters = players.filter((pl, idx) => pl.starter && pl.available && idx !== i).length;
+      if (!players[i].starter && activeStarters >= 5) {
+        // Flash warning — already 5 starters
+        starBtn.style.color = '#e57373';
+        setTimeout(() => { starBtn.style.color = ''; }, 600);
+        return;
+      }
+      players[i].starter = !players[i].starter;
+      saveRoster(); clearOutput(); renderRoster();
+    };
+
+    // Number dot
+    const dot = document.createElement('div');
+    dot.className = 'dot'; dot.style.background = color; dot.textContent = i+1;
+
+    // Name field
+    const nameField = document.createElement('div');
+    nameField.className = 'name-field';
+    nameField.contentEditable = 'true'; nameField.spellcheck = false;
+    nameField.textContent = p.name;
+    nameField.addEventListener('blur', () => {
+      const v = nameField.textContent.trim();
+      players[i].name = v || players[i].name;
+      nameField.textContent = players[i].name;
+      saveRoster(); updateWarnings();
+    });
+    nameField.addEventListener('keydown', e => { if (e.key==='Enter') { e.preventDefault(); nameField.blur(); } });
+
+    // Role buttons — guard / forward / big
+    const roleBtns = document.createElement('div');
+    roleBtns.className = 'role-btns';
+    [['guard','GRD','grd'],['forward','FWD','fwd'],['big','BIG','big']].forEach(([role, label, cls]) => {
+      const btn = document.createElement('button');
+      btn.className = `role-btn ${cls}${p.role===role?' active':''}`;
+      btn.textContent = label;
+      btn.onclick = () => { players[i].role = role; saveRoster(); clearOutput(); renderRoster(); };
+      roleBtns.appendChild(btn);
+    });
+
+    // Availability
+    const availWrap = document.createElement('div');
+    availWrap.className = 'avail-center';
+    const availBtn = document.createElement('button');
+    availBtn.className = 'avail-btn ' + (p.available ? 'in' : 'out');
+    availBtn.textContent = p.available ? '✓' : '✗';
+    availBtn.title = p.available ? 'Playing — tap to bench' : 'Benched — tap to include';
+    availBtn.onclick = () => { players[i].available = !players[i].available; saveRoster(); clearOutput(); renderRoster(); };
+    availWrap.appendChild(availBtn);
+
+    row.append(starBtn, dot, nameField, roleBtns, availWrap);
+    container.appendChild(row);
+  });
+
+  updateRemoveBtn();
+  updateWarnings();
+}
+
+function updateRemoveBtn() {
+  const btn = document.getElementById('removePlayerBtn');
+  if (btn) {
+    btn.disabled = players.length <= 1;
+    btn.style.opacity = players.length <= 1 ? '0.3' : '1';
+    btn.style.cursor  = players.length <= 1 ? 'default' : 'pointer';
+  }
+}
+
+function updateWarnings() {
+  const active = players.filter(p => p.available);
+  const bigs   = active.filter(p => p.role==='big').length;
+  const guards = active.filter(p => p.role==='guard').length;
+  const warnEl = document.getElementById('warnings');
+  const msgs = [];
+  if (active.length < 5) msgs.push({cls:'red', txt:'⚠ Need at least 5 available players to generate rotations.'});
+  else {
+    if (bigs===0)   msgs.push({cls:'amber', txt:"⚠ No bigs assigned — big balance won't be enforced."});
+    if (guards===0) msgs.push({cls:'amber', txt:"⚠ No guards assigned — guard balance won't be enforced."});
+  }
+  warnEl.innerHTML = msgs.map(m=>`<p class="warn ${m.cls}">${m.txt}</p>`).join('');
+  document.getElementById('genBtn').disabled = active.length < 5;
+}
+
+function clearOutput() {
+  const o = document.getElementById('output');
+  o.style.display = 'none'; o.innerHTML = '';
+  document.getElementById('finetuneTrigger').style.display = 'none';
+  ftEdits = {};
+  ftActive = false;
+}
+
+// ── Fine-tune state ───────────────────────────────────────────────────────────
+// ftPlan: the live segment data (array of quarters, each with segs[].players)
+//   This is the mutable copy we edit in place.
+// ftEdits: { 'q-s-slot': true } — which player slots have been manually changed
+// ftActive: whether fine-tune edit mode is on
+// ftActivePlayers: reference to the active players array from last generate
+
+const FINETUNE_KEY = 'bball_finetune_v1';
+let ftPlan = null;        // live mutable plan
+let ftEdits = {};         // set of edited slot keys
+let ftActive = false;     // edit mode on/off
+let ftActivePlayers = []; // snapshot of activePlayers at generate time
+let ftTotalMinutes = 0;
+
+function saveFtState() {
+  try {
+    localStorage.setItem(FINETUNE_KEY, JSON.stringify({
+      plan: ftPlan,
+      edits: ftEdits,
+      activePlayers: ftActivePlayers,
+      totalMinutes: ftTotalMinutes,
+      numQuarters, quarterDuration, interchangeMode,
+    }));
+  } catch(e) {}
+}
+
+function loadFtState() {
+  try {
+    const raw = localStorage.getItem(FINETUNE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function clearFtState() {
+  try { localStorage.removeItem(FINETUNE_KEY); } catch(e) {}
+}
+
+// Compute minutes played from ftPlan
+function computeMinutes(plan, segDurations, segsPerQ) {
+  const n = ftActivePlayers.length;
+  const mins = Array(n).fill(0);
+  plan.forEach((q, qi) => {
+    q.segs.forEach((seg, si) => {
+      const dur = segDurations[si % segsPerQ];
+      seg.players.forEach(pi => { mins[pi] += dur; });
+    });
+  });
+  return mins;
+}
+
+function enterFinetuneMode() {
+  ftActive = true;
+  document.getElementById('output').classList.add('edit-mode');
+  renderFinetuneBar();
+  // Make player rows clickable
+  attachSwapHandlers();
+}
+
+function exitFinetuneMode() {
+  ftActive = false;
+  document.getElementById('output').classList.remove('edit-mode');
+  renderFinetuneBar();
+}
+
+function resetFinetuneEdits() {
+  if (!confirm('Reset all manual changes and restore the generated plan?')) return;
+  // Restore ftPlan from the original generated plan stored in ftOrigPlan
+  ftPlan = JSON.parse(JSON.stringify(ftOrigPlan));
+  ftEdits = {};
+  clearFtState();
+  reRenderOutput();
+  exitFinetuneMode();
+}
+
+let ftOrigPlan = null; // immutable original for reset
+
+function renderFinetuneBar() {
+  // Remove existing bar if any
+  const existing = document.getElementById('finetuneBar');
+  if (existing) existing.remove();
+
+  const bar = el('div', {class:'finetune-bar', style:'', id:'finetuneBar'});
+  if (ftActive) {
+    bar.appendChild(el('span', {class:'ft-label'}, '✎ Edit mode — tap any player to swap'));
+    const doneBtn = el('button', {class:'ft-btn exit'}, 'Done');
+    doneBtn.onclick = exitFinetuneMode;
+    const resetBtn = el('button', {class:'ft-btn reset'}, '↺ Reset changes');
+    resetBtn.onclick = resetFinetuneEdits;
+    bar.append(doneBtn, resetBtn);
+  } else {
+    bar.appendChild(el('span', {class:'ft-label'}, Object.keys(ftEdits).length > 0 ? `${Object.keys(ftEdits).length} manual change${Object.keys(ftEdits).length!==1?'s':''} applied` : 'Generated plan'));
+    const editBtn = el('button', {class:'ft-btn enter'}, '✎ Fine-tune');
+    editBtn.onclick = enterFinetuneMode;
+    const mgBtn = el('button', {class:'ft-btn exit'}, '⏱ Mid-game');
+    mgBtn.onclick = openMidGame;
+    if (Object.keys(ftEdits).length > 0) {
+      const resetBtn = el('button', {class:'ft-btn reset'}, '↺ Reset');
+      resetBtn.onclick = resetFinetuneEdits;
+      bar.append(editBtn, mgBtn, resetBtn);
+    } else {
+      bar.append(editBtn, mgBtn);
+    }
+  }
+
+  const out = document.getElementById('output');
+  out.insertBefore(bar, out.firstChild);
+}
+
+// ── Swap picker ───────────────────────────────────────────────────────────────
+let swapContext = null; // { qi, si, slot (index within seg.players) }
+
+function openSwap(qi, si, slot, segDurations, segsPerQ) {
+  if (!ftActive) return;
+  swapContext = { qi, si, slot, segDurations, segsPerQ };
+
+  const seg = ftPlan[qi].segs[si];
+  const currentPi = seg.players[slot];
+  const currentName = ftActivePlayers[currentPi].name;
+
+  // Players on bench for this segment
+  const onCourt = seg.players;
+  const benchPis = ftActivePlayers.map((_, pi) => pi).filter(pi => !onCourt.includes(pi));
+
+  const mins = computeMinutes(ftPlan, segDurations, segsPerQ);
+
+  document.getElementById('swapTitle').textContent = 'SWAP PLAYER';
+  document.getElementById('swapSub').textContent = `Replacing: ${currentName} — choose who comes in`;
+
+  const optContainer = document.getElementById('swapOptions');
+  optContainer.innerHTML = '';
+
+  if (benchPis.length === 0) {
+    optContainer.appendChild(el('div', {style:'font-size:12px;color:#555;padding:8px 0;'}, 'No bench players available for this segment.'));
+  } else {
+    benchPis.forEach(pi => {
+      const p = ftActivePlayers[pi];
+      const opt = el('div', {class:'swap-option'});
+      const dot = el('div', {class:'p-dot', style:`background:${PLAYER_COLORS[p.originalIndex % PLAYER_COLORS.length]};flex-shrink:0;width:10px;height:10px;`});
+      const nm  = el('span', {class:'so-name'}, p.name);
+      const roleCls = p.role==='big'?'big':p.role==='forward'?'fwd':'grd';
+      const badge = el('span', {class:`role-badge ${roleCls}`, style:'flex-shrink:0;'}, p.role==='big'?'B':p.role==='forward'?'F':'G');
+      const minsEl = el('span', {class:'so-mins'}, mins[pi]+'m');
+      opt.append(dot, nm, badge, minsEl);
+      opt.onclick = () => applySwap(pi, segDurations, segsPerQ);
+      optContainer.appendChild(opt);
+    });
+  }
+
+  document.getElementById('swapOverlay').classList.add('open');
+}
+
+function closeSwap() {
+  document.getElementById('swapOverlay').classList.remove('open');
+  swapContext = null;
+}
+
+function applySwap(incomingPi, segDurations, segsPerQ) {
+  const { qi, si, slot } = swapContext;
+  const seg = ftPlan[qi].segs[si];
+  const outgoingPi = seg.players[slot];
+
+  // Record the edit key
+  const key = `${qi}-${si}-${outgoingPi}`;
+  ftEdits[key] = true;
+
+  // Apply swap in ftPlan
+  seg.players[slot] = incomingPi;
+
+  // Rebuild subs for this quarter from updated segs
+  rebuildSubs(qi);
+
+  closeSwap();
+  saveFtState();
+  reRenderOutput();
+  // Re-enter edit mode after re-render
+  ftActive = true;
+  document.getElementById('output').classList.add('edit-mode');
+  renderFinetuneBar();
+  attachSwapHandlers();
+}
+
+function rebuildSubs(qi) {
+  const q = ftPlan[qi];
+  q.subs = [];
+  for (let s = 1; s < q.segs.length; s++) {
+    const prev = q.segs[s-1].players, next = q.segs[s].players;
+    const exits  = prev.filter(p => !next.includes(p));
+    const enters = next.filter(p => !prev.includes(p));
+    if (exits.length > 0) q.subs.push({ at: q.segs[s].start, exits, enters });
+  }
+  q.totalSubCount = q.subs.reduce((a,x) => a + x.exits.length, 0);
+}
+
+function attachSwapHandlers() {
+  // Handled via data attributes set during render — see reRenderOutput
+}
+
+// ── Output render ─────────────────────────────────────────────────────────────
+function handleGenerate() {
+  const activePlayers = players.map((p,i) => ({...p, originalIndex:i})).filter(p=>p.available);
+  if (activePlayers.length < 5) return;
+  const result = generateRotation(activePlayers, interchangeMode, numQuarters, quarterDuration);
+  // Note: starters are embedded in activePlayers[i].starter
+  if (!result) return;
+
+  const {quarters, minutesPlayed, warnings, boundaries, segDurations} = result;
+
+  // Store mutable plan for fine-tuning
+  ftActivePlayers = activePlayers;
+  ftTotalMinutes  = numQuarters * quarterDuration;
+  ftPlan = quarters.map(q => ({
+    q: q.q,
+    segs: q.segs.map(s => ({ ...s, players: [...s.players] })),
+    subs: q.subs.map(s => ({ ...s, exits: [...s.exits], enters: [...s.enters] })),
+    totalSubCount: q.totalSubCount,
+  }));
+  ftOrigPlan = JSON.parse(JSON.stringify(ftPlan));
+  ftEdits = {};
+  ftActive = false;
+  clearFtState();
+
+  // Store segDurations/segsPerQ for re-renders
+  window._ftSegDurations = segDurations;
+  window._ftSegsPerQ     = segDurations.length;
+  window._ftWarnings     = warnings;
+
+  reRenderOutput();
+  document.getElementById('output').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function reRenderOutput() {
+  const activePlayers = ftActivePlayers;
+  const segDurations  = window._ftSegDurations;
+  const segsPerQ      = window._ftSegsPerQ;
+  const warnings      = window._ftWarnings;
+
+  const getName  = i => activePlayers[i].name;
+  const getOrig  = i => activePlayers[i].originalIndex;
+  const getRole  = i => activePlayers[i].role;
+  const pColor   = orig => PLAYER_COLORS[orig % PLAYER_COLORS.length];
+
+  // Recompute minutes from live ftPlan
+  const minutesPlayed = computeMinutes(ftPlan, segDurations, segsPerQ);
+
+  const totalPlayerSubs = ftPlan.reduce((a,q)=>a+q.totalSubCount,0);
+  const totalSwapEvents = ftPlan.reduce((a,q)=>a+q.subs.length,0);
+
+  const roleLabel   = r => r==='big'?'BIG':r==='forward'?'FWD':'GRD';
+  const roleCls     = r => r==='big'?'big':r==='forward'?'fwd':'grd';
+  const badgeLetter = r => r==='big'?'B':r==='forward'?'F':'G';
+
+  const lineupInfo = (slot) => {
+    const b = slot.filter(i=>getRole(i)==='big').length;
+    const g = slot.filter(i=>getRole(i)==='guard').length;
+    return `<span style="color:${b>=2?'#81c784':b===1?'#f5a623':'#e57373'}">${b}B</span> `+
+           `<span style="color:${g>=1?'#81c784':'#e57373'}">${g}G</span>`;
+  };
+
+  const totalMinutes = ftTotalMinutes;
+  const out = document.getElementById('output');
+  out.innerHTML = ''; out.style.display = 'block';
+
+  warnings.forEach(w => out.appendChild(el('div', {class:'global-warn'}, `⚠ ${w}`)));
+
+  // Summary card
+  const summCard = el('div', {class:'card summary'});
+  summCard.appendChild(statBlock(String(activePlayers.length), 'PLAYING', '', '#f5a623'));
+  summCard.appendChild(statBlock(String(totalPlayerSubs*2), 'TOTAL SUBS', `${totalSwapEvents} swap events`, '#4fc3f7'));
+  const minList = el('div', {class:'minutes-list'});
+  minList.appendChild(el('div', {class:'label'}, 'MINUTES PER PLAYER'));
+  activePlayers.forEach((p,i) => {
+    const row = el('div', {class:'min-row'});
+    row.appendChild(el('div', {class:'p-dot', style:`background:${pColor(p.originalIndex)};`}));
+    row.appendChild(el('div', {class:'pname'}, p.name));
+    row.appendChild(el('span', {class:`role-badge ${roleCls(p.role)}`}, badgeLetter(p.role)));
+    const bw = el('div', {class:'min-bar-wrap'});
+    bw.appendChild(el('div', {class:'min-bar', style:`width:${(minutesPlayed[i]/totalMinutes)*100}%;background:${pColor(p.originalIndex)};`}));
+    row.appendChild(bw);
+    row.appendChild(el('div', {class:'min-val'}, minutesPlayed[i]+'m'));
+    minList.appendChild(row);
+  });
+  summCard.appendChild(minList);
+  out.appendChild(summCard);
+
+  // Quarter cards — with divider between played and upcoming
+  let mgDividerShown = false;
+  ftPlan.forEach(q => {
+    // Show mid-game divider before first unplayed quarter
+    if (!q.played && !q.partiallyPlayed && !mgDividerShown && window._mgNextSeg > 0) {
+      mgDividerShown = true;
+      const div = el('div', {class:'midgame-divider'});
+      div.appendChild(el('span', {}, '⏱ MID-GAME UPDATE — REMAINING QUARTERS'));
+      out.appendChild(div);
+    }
+    const allOnCourt = [...new Set(q.segs.flatMap(s=>s.players))];
+    const bench = ftActivePlayers.map((_,i)=>i).filter(i=>!allOnCourt.includes(i));
+    const qSegsPerQ = q.segs.length;
+    const qi = q.q - 1;
+    const isPlayed = q.played === true;
+    const isPartial = q.partiallyPlayed === true;
+    const card = el('div', {class:'card' + (isPlayed ? ' past-quarter' : '')});
+
+    // Header
+    const qh = el('div', {class:'q-header'});
+    qh.appendChild(el('div', {class:'q-num'}, `Q${q.q}`));
+    qh.appendChild(el('div', {style:'color:#444;font-size:18px'}, '—'));
+    const meta = el('div', {class:'q-meta'});
+    const subDesc = q.subs.length===0 ? 'No subs'
+      : q.subs.map(s=>`${s.exits.length} swap${s.exits.length!==1?'s':''} @ min ${s.at}`).join(', ');
+    meta.innerHTML = `<span style="color:#4fc3f7">${subDesc}</span>`;
+    qh.appendChild(meta);
+    card.appendChild(qh);
+
+    // Timeline
+    const tlWrap = el('div', {style:'margin-bottom:14px'});
+    const nums = el('div', {class:'tl-nums'});
+    for (let n=0;n<=quarterDuration;n++) nums.appendChild(el('span',{},String(n)));
+    tlWrap.appendChild(nums);
+
+    const tl = el('div', {class:'timeline'});
+    q.segs.forEach((seg,si) => {
+      const width = ((seg.end - seg.start) / quarterDuration * 100);
+      const segEl = el('div', {class:'tl-seg', style:`width:${width}%;background:${getSegColor(si)};`});
+      segEl.appendChild(el('span', {style:'color:#aaa;font-size:8px'}, `S${si+1}`));
+      tl.appendChild(segEl);
+      if (si < q.segs.length - 1) tl.appendChild(el('div', {class:'tl-sub'}));
+    });
+    tlWrap.appendChild(tl);
+
+    const tlLab = el('div', {class:'tl-labels'});
+    const subLabels = q.subs.length > 0 ? q.subs.map(s=>`▲ min ${s.at}`).join('  ') : '— no change —';
+    tlLab.innerHTML = `<span></span><span style="color:#f5a623">${subLabels}</span><span></span>`;
+    tlWrap.appendChild(tlLab);
+    card.appendChild(tlWrap);
+
+    // Lineups — each interchange rendered as a 3-column mini-grid:
+    //   [left seg players] | [per-row arrow column] | [right seg players]
+    //
+    // Players are ordered so the same player occupies the same row slot on
+    // both sides. Stayers: slots 0..(4-numChanges-1). Changers: bottom slots.
+    // An orange → arrow appears only in rows where a player is being swapped.
+
+    // Helper: build an ordered 5-slot display for a pair of adjacent segments
+    // Returns array of 5 objects: { leftPi, rightPi, hasArrow }
+    function buildSlots(segA, segB) {
+      const stayers  = segA.players.filter(pi => segB.players.includes(pi));
+      const exiting  = segA.players.filter(pi => !segB.players.includes(pi));
+      const entering = segB.players.filter(pi => !segA.players.includes(pi));
+      // Stayer slots first, then changer slots at bottom
+      const slots = [];
+      stayers.forEach(pi  => slots.push({ leftPi: pi, rightPi: pi, hasArrow: false }));
+      exiting.forEach((pi, i) => slots.push({ leftPi: pi, rightPi: entering[i] ?? null, hasArrow: true }));
+      return slots;
+    }
+
+    // For 1 interchange: one pair (seg0 → seg1)
+    // For 2 interchanges: two pairs (seg0 → seg1, seg1 → seg2)
+    // We render each pair as its own 3-col block, stacked vertically
+
+    const lineupsDiv = el('div');
+
+    if (qSegsPerQ === 1) {
+      // No subs — just list the single segment
+      const seg = q.segs[0];
+      const wrap = el('div', {style:'margin-top:14px;'});
+      const head = el('div', {class:'lineup-head'});
+      head.innerHTML = `<span>MIN ${seg.start}–${seg.end}</span><span>${lineupInfo(seg.players)}</span>`;
+      wrap.appendChild(head);
+      seg.players.forEach((pi, slot) => wrap.appendChild(playerRowEl(getName(pi), roleLabel(getRole(pi)), roleCls(getRole(pi)), pColor(getOrig(pi)), qi, 0, slot, pi)));
+      lineupsDiv.appendChild(wrap);
+
+    } else {
+      // For each consecutive pair of segments, render a 3-col interchange block
+      for (let si = 0; si < q.segs.length - 1; si++) {
+        const segA = q.segs[si];
+        const segB = q.segs[si + 1];
+        const slots = buildSlots(segA, segB);
+        const hasSub = q.subs.some(s => s.at === segA.end);
+
+        const block = el('div', {style:'margin-top:14px;'});
+
+        // Two header labels side by side
+        const headers = el('div', {style:'display:grid;grid-template-columns:1fr 20px 1fr;gap:4px;margin-bottom:6px;'});
+        const hA = el('div', {class:'lineup-head', style:'margin-bottom:0;'});
+        hA.innerHTML = `<span>MIN ${segA.start}–${segA.end}</span><span>${lineupInfo(segA.players)}</span>`;
+        const hSpacer = el('div');
+        const hB = el('div', {class:'lineup-head', style:'margin-bottom:0;'});
+        hB.innerHTML = `<span>MIN ${segB.start}–${segB.end}</span><span>${lineupInfo(segB.players)}</span>`;
+        headers.append(hA, hSpacer, hB);
+        block.appendChild(headers);
+
+        // 5 rows, each a 3-col grid: left player | arrow | right player
+        slots.forEach(({leftPi, rightPi, hasArrow}) => {
+          const rowGrid = el('div', {style:'display:grid;grid-template-columns:1fr 20px 1fr;gap:4px;margin-bottom:4px;align-items:center;'});
+
+          // Left player
+          const leftSlot = segA.players.indexOf(leftPi);
+          const leftEl = leftPi !== null
+            ? playerRowEl(getName(leftPi), roleLabel(getRole(leftPi)), roleCls(getRole(leftPi)), pColor(getOrig(leftPi)), qi, si, leftSlot, leftPi)
+            : el('div', {style:'height:30px;'});
+          leftEl.style.marginBottom = '0';
+
+          // Arrow cell — orange if changing, invisible spacer if staying
+          const arrowEl = el('div', {style:`display:flex;align-items:center;justify-content:center;font-size:14px;color:${hasArrow?'#f5a623':'transparent'};`}, '→');
+
+          // Right player
+          const rightSlot = segB.players.indexOf(rightPi);
+          const rightEl = rightPi !== null
+            ? playerRowEl(getName(rightPi), roleLabel(getRole(rightPi)), roleCls(getRole(rightPi)), pColor(getOrig(rightPi)), qi, si+1, rightSlot, rightPi)
+            : el('div', {style:'height:30px;'});
+          rightEl.style.marginBottom = '0';
+
+          rowGrid.append(leftEl, arrowEl, rightEl);
+          block.appendChild(rowGrid);
+        });
+
+        lineupsDiv.appendChild(block);
+
+        // Divider between interchange blocks (for 2-interchange quarters)
+        if (si < q.segs.length - 2) {
+          lineupsDiv.appendChild(el('hr', {style:'border:none;border-top:1px solid #2a2a2a;margin:12px 0 0;'}));
+        }
+      }
+    }
+
+    card.appendChild(lineupsDiv);
+
+    // Sub banners
+    q.subs.forEach(sub => {
+      const banner = el('div', {class:'sub-banner'});
+      banner.appendChild(el('span', {class:'sub-title'}, `SUB @ MIN ${sub.at}`));
+      banner.appendChild(el('span', {style:'color:#e57373'}, `OUT: ${sub.exits.map(i=>getName(i)).join(', ')}`));
+      banner.appendChild(el('span', {style:'color:#555'}, '→'));
+      banner.appendChild(el('span', {style:'color:#81c784'}, `IN: ${sub.enters.map(i=>getName(i)).join(', ')}`));
+      card.appendChild(banner);
+    });
+
+    // Bench
+    if (bench.length > 0) {
+      const bw = el('div', {class:'bench-wrap'});
+      bw.appendChild(el('div', {class:'bench-label'}, 'BENCH THIS QUARTER'));
+      const pills = el('div', {class:'bench-pills'});
+      bench.forEach(pi => {
+        const pill = el('div', {class:'bench-pill'});
+        pill.appendChild(el('div', {class:'p-dot', style:`background:${pColor(getOrig(pi))};`}));
+        pill.appendChild(document.createTextNode(getName(pi)));
+        pill.appendChild(el('span', {class:`bench-badge ${roleCls(getRole(pi))}`}, badgeLetter(getRole(pi))));
+        pills.appendChild(pill);
+      });
+      bw.appendChild(pills); card.appendChild(bw);
+    }
+    out.appendChild(card);
+  });
+
+  // Cheat sheet
+  const cheat = el('div', {class:'card'});
+  cheat.appendChild(el('div', {class:'card-title'}, 'COURTSIDE CHEAT SHEET'));
+  const grid = el('div', {class:'cheat-grid'});
+  ftPlan.forEach(q => {
+    const cc = el('div', {class:'cheat-card'});
+    cc.appendChild(el('div', {class:'cheat-q'}, `Q${q.q}`));
+    cc.appendChild(el('div', {class:'cheat-start'}, `Start: ${q.segs[0].players.map(i=>getName(i)).join(', ')}`));
+    if (q.subs.length > 0) {
+      q.subs.forEach(sub => {
+        const s = el('div', {class:'cheat-sub'});
+        s.innerHTML = `<span style="color:#888">@ min ${sub.at} — </span>`+
+          `<span style="color:#e57373">OUT ${sub.exits.map(i=>getName(i)).join(' & ')}</span> / `+
+          `<span style="color:#81c784">IN ${sub.enters.map(i=>getName(i)).join(' & ')}</span>`;
+        cc.appendChild(s);
+      });
+    } else {
+      cc.appendChild(el('div', {style:'font-size:11px;color:#555'}, 'No subs this quarter'));
+    }
+    grid.appendChild(cc);
+  });
+  cheat.appendChild(grid);
+  out.appendChild(cheat);
+
+  // Show fine-tune trigger button and bar
+  document.getElementById('finetuneTrigger').style.display = 'none'; // bar replaces it
+  renderFinetuneBar();
+  if (ftActive) {
+    out.classList.add('edit-mode');
+    attachSwapHandlers();
+  }
+  saveFtState();
+}
+
+// ── DOM helpers ───────────────────────────────────────────────────────────────
+function el(tag, attrs={}, text) {
+  const e = document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v]) => {
+    if (k==='class') e.className=v;
+    else if (k==='style') e.style.cssText=v;
+    else e.setAttribute(k,v);
+  });
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function statBlock(value, label, sub, color) {
+  const d = el('div', {class:'summary-stat'});
+  d.appendChild(el('div', {class:'label'}, label));
+  d.appendChild(el('div', {class:'value', style:`color:${color}`}, value));
+  if (sub) d.appendChild(el('div', {class:'sub'}, sub));
+  return d;
+}
+function playerRowEl(name, rlabel, rcls, color, qi, si, slot, pi) {
+  const editKey = `${qi}-${si}-${pi}`;
+  const isEdited = ftEdits && ftEdits[editKey];
+  const row = el('div', {class:'p-row' + (isEdited ? ' ft-edited' : '')});
+  row.appendChild(el('div', {class:'p-dot', style:`background:${color};`}));
+  row.appendChild(el('span', {class:'p-name'}, name));
+  row.appendChild(el('span', {class:`p-role ${rcls}`}, rlabel));
+  if (isEdited) row.appendChild(el('span', {style:'font-size:9px;color:#f5a623;flex-shrink:0;'}, '✎'));
+  // Wire up swap click — uses data attributes so handler survives re-render
+  if (qi !== undefined) {
+    row.dataset.qi   = qi;
+    row.dataset.si   = si;
+    row.dataset.slot = slot;
+    row.onclick = function() {
+      if (!ftActive) return;
+      const segDurs = window._ftSegDurations;
+      const sqpq    = window._ftSegsPerQ;
+      openSwap(parseInt(this.dataset.qi), parseInt(this.dataset.si), parseInt(this.dataset.slot), segDurs, sqpq);
+    };
+  }
+  return row;
+}
+
+// ── Settings ─────────────────────────────────────────────────────────────────
+const SETTINGS_KEY   = 'bball_settings_v1';
+// Teams are loaded from teams.json (same-origin, no CORS issue).
+// teams.json is kept up to date by a GitHub Actions workflow (.github/workflows/fetch-teams.yml).
+let _teamsCache = null;
+let settingsState = { selectedTeam: null };
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) settingsState = { ...settingsState, ...JSON.parse(raw) };
+  } catch(e) {}
+}
+
+function saveSettings() {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settingsState)); } catch(e) {}
+  const msg = document.getElementById('settingsSavedMsg');
+  if (msg) { msg.style.opacity = '1'; setTimeout(() => { msg.style.opacity = '0'; }, 1800); }
+}
+
+function openSettings() {
+  document.getElementById('settingsModal').classList.add('open');
+  loadTeamList();
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+let _fixturesCache = null;
+
+async function loadTeamList() {
+  const container = document.getElementById('teamListContainer');
+  if (_teamsCache && _fixturesCache) { renderTeamList(_teamsCache, container); return; }
+  container.innerHTML = '<div class="team-loading">Loading teams…</div>';
+  try {
+    const [teamsResp, fixturesResp] = await Promise.all([
+      fetch('./teams.json?v=' + Date.now()),
+      fetch('./fixtures.json?v=' + Date.now()),
+    ]);
+    if (!teamsResp.ok) throw new Error(`teams.json: HTTP ${teamsResp.status}`);
+    const teamsData = await teamsResp.json();
+    const teams = Array.isArray(teamsData.teams) ? teamsData.teams : [];
+    if (teams.length === 0) throw new Error('No teams found in teams.json');
+    _teamsCache = teams;
+    if (fixturesResp.ok) {
+      const fd = await fixturesResp.json();
+      _fixturesCache = fd.fixtures || {};
+    } else {
+      _fixturesCache = {};
+    }
+    renderTeamList(teams, container);
+  } catch(e) {
+    container.innerHTML = `<div class="team-error">Could not load team list.<br><small style="opacity:0.6;">${e.message}</small></div>`;
+  }
+}
+
+
+
+function renderTeamList(teams, container) {
+  container.innerHTML = '';
+  const list = el('div', {class:'team-list'});
+
+  teams.forEach(teamName => {
+    const isSelected = settingsState.selectedTeam === teamName;
+    const opt = el('div', {class:'team-option' + (isSelected ? ' selected' : '')});
+    const radio = el('div', {class:'team-radio'});
+    const name  = el('span', {class:'team-name'}, teamName);
+    opt.append(radio, name);
+    opt.onclick = () => {
+      settingsState.selectedTeam = teamName;
+      saveSettings();
+      renderTeamList(teams, container);
+    };
+    list.appendChild(opt);
+  });
+
+  container.appendChild(list);
+
+  // Show fixture details for selected team below the list
+  const existingInfo = document.getElementById('teamFixtureInfo');
+  if (existingInfo) existingInfo.remove();
+
+  if (settingsState.selectedTeam && _fixturesCache) {
+    const info = renderFixtureInfo(settingsState.selectedTeam);
+    if (info) container.appendChild(info);
+  }
+}
+
+function renderFixtureInfo(teamName) {
+  const fd = _fixturesCache && _fixturesCache[teamName];
+  if (!fd) return null;
+
+  const box = el('div', {id:'teamFixtureInfo', style:'margin-top:14px;padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:8px;'});
+
+  // Division
+  if (fd.division) {
+    const divRow = el('div', {style:'font-size:11px;color:var(--text-faint);letter-spacing:0.5px;margin-bottom:6px;'}, fd.division);
+    box.appendChild(divRow);
+  }
+
+  // Helper to format a game block
+  function gameBlock(label, game) {
+    if (!game) return null;
+    const wrap = el('div', {style:'margin-top:8px;'});
+    const lbl  = el('div', {style:'font-size:10px;color:var(--text-faint);letter-spacing:0.5px;margin-bottom:4px;'}, label);
+    wrap.appendChild(lbl);
+
+    // Date + time
+    if (game.date) {
+      const d = new Date(game.date);
+      const dateStr = d.toLocaleDateString('en-AU', {weekday:'short', day:'numeric', month:'short', year:'numeric', timeZone:'Australia/Brisbane'});
+      const timeStr = d.toLocaleTimeString('en-AU', {hour:'numeric', minute:'2-digit', hour12:true, timeZone:'Australia/Brisbane'});
+      const dateEl = el('div', {style:'font-size:13px;color:var(--text-primary);font-weight:700;'}, `${dateStr} at ${timeStr}`);
+      wrap.appendChild(dateEl);
+    }
+
+    // Opponent
+    const vsStr = game.isHome ? `vs ${game.opponent} (Home)` : `vs ${game.opponent} (Away)`;
+    wrap.appendChild(el('div', {style:'font-size:12px;color:var(--text-secondary);margin-top:2px;'}, vsStr));
+
+    // Venue
+    if (game.venue) {
+      const venueStr = game.court ? `${game.venue} — ${game.court}` : game.venue;
+      wrap.appendChild(el('div', {style:'font-size:12px;color:var(--text-muted);margin-top:2px;'}, '📍 ' + venueStr));
+    }
+
+    // Round
+    if (game.roundName) {
+      wrap.appendChild(el('div', {style:'font-size:11px;color:var(--text-faint);margin-top:2px;'}, game.roundName));
+    }
+
+    return wrap;
+  }
+
+  const nextBlock = gameBlock('NEXT GAME', fd.nextGame);
+  const lastBlock = gameBlock(fd.nextGame ? 'LAST GAME' : 'MOST RECENT GAME', fd.lastGame);
+
+  if (nextBlock) box.appendChild(nextBlock);
+  if (lastBlock) {
+    if (nextBlock) {
+      // Divider
+      box.appendChild(el('hr', {style:'border:none;border-top:1px solid var(--border);margin:10px 0;'}));
+    }
+    box.appendChild(lastBlock);
+  }
+
+  if (!nextBlock && !lastBlock) return null;
+  return box;
+}
+
+// ── Theme ────────────────────────────────────────────────────────────────────
+// Three states: 'dark' → 'light' → null (auto) → 'dark' → ...
+const THEME_KEY = 'bball_theme_v1';
+
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.classList.remove('light', 'dark');
+  if (theme) root.classList.add(theme);
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    if (theme === 'dark')  { btn.textContent = '☀';  btn.title = 'Switch to light mode'; }
+    else if (theme === 'light') { btn.textContent = '🔄'; btn.title = 'Switch to auto (follow device)'; }
+    else                   { btn.textContent = '🌙'; btn.title = 'Switch to dark mode'; }
+  }
+}
+
+function toggleTheme() {
+  let current = null;
+  try { current = localStorage.getItem(THEME_KEY); } catch(e) {}
+  // Cycle: dark → light → auto(null) → dark
+  const next = current === 'dark' ? 'light' : current === 'light' ? null : 'dark';
+  try {
+    if (next) localStorage.setItem(THEME_KEY, next);
+    else localStorage.removeItem(THEME_KEY);
+  } catch(e) {}
+  applyTheme(next);
+}
+
+// Apply saved theme before first render to avoid flash
+(function initTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    applyTheme(saved || null);
+  } catch(e) { applyTheme(null); }
+})();
+
+// Listen for OS-level changes (only applies when no manual override is set)
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (!saved) applyTheme(null);
+  } catch(e) {}
+});
+
+// ── Mid-game update ──────────────────────────────────────────────────────────
+// State: which segment is "next" and per-player availability overrides
+let mgNextSeg = null;       // global segment index (0-based) where we re-plan from
+let mgAvailOverrides = {};  // pi -> true/false availability override
+
+function openMidGame() {
+  if (!ftPlan || !ftActivePlayers.length) return;
+  const segsPerQ = window._ftSegDurations.length;
+  const totalSegs = ftPlan.length * segsPerQ;
+  const segDurations = window._ftSegDurations;
+
+  // Compute minutes actually played so far per player from current plan
+  // (up to mgNextSeg if already set, otherwise assume nothing played yet)
+  mgAvailOverrides = {};
+  mgNextSeg = mgNextSeg ?? 0;
+
+  // Build segment grid
+  const grid = document.getElementById('mgSegGrid');
+  grid.innerHTML = '';
+  for (let s = 0; s < totalSegs; s++) {
+    const q = Math.floor(s / segsPerQ) + 1;
+    const seg = s % segsPerQ + 1;
+    const btn = document.createElement('button');
+    btn.className = 'mg-seg-btn' + (s === mgNextSeg ? ' selected' : '');
+    btn.innerHTML = `<strong>Q${q}S${seg}</strong>`;
+    btn.onclick = () => {
+      mgNextSeg = s;
+      document.querySelectorAll('.mg-seg-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+    grid.appendChild(btn);
+  }
+
+  // Build player list
+  renderMgPlayerList();
+
+  document.getElementById('mgOverlay').classList.add('open');
+}
+
+function renderMgPlayerList() {
+  const list = document.getElementById('mgPlayerList');
+  list.innerHTML = '';
+  const segDurations = window._ftSegDurations;
+  const segsPerQ = segDurations.length;
+
+  // Compute minutes played up to mgNextSeg from the current plan.
+  // ftPlan uses ftActivePlayers indices, so build a lookup by originalIndex.
+  const minsPlayedByOrigIdx = {};
+  const nextSeg = mgNextSeg ?? 0;
+  for (let s = 0; s < nextSeg; s++) {
+    const q = Math.floor(s / segsPerQ);
+    const segInQ = s % segsPerQ;
+    const dur = segDurations[segInQ];
+    ftPlan[q].segs[segInQ].players.forEach(pi => {
+      const origIdx = ftActivePlayers[pi].originalIndex;
+      minsPlayedByOrigIdx[origIdx] = (minsPlayedByOrigIdx[origIdx] || 0) + dur;
+    });
+  }
+
+  // Show ALL players from the full roster (not just ftActivePlayers),
+  // so coaches can bring in players who were originally marked OUT.
+  // mgAvailOverrides keys are the full-roster player index (i in players[]).
+  players.forEach((p, rosterIdx) => {
+    // Default availability: whatever was set in the roster when Generate was run
+    // (ftActivePlayers contains those who were IN; anyone absent was OUT)
+    const wasActive = ftActivePlayers.some(ap => ap.originalIndex === rosterIdx);
+    const isAvail = mgAvailOverrides.hasOwnProperty(rosterIdx)
+      ? mgAvailOverrides[rosterIdx]
+      : wasActive;
+
+    const mins = minsPlayedByOrigIdx[rosterIdx] || 0;
+    const color = PLAYER_COLORS[rosterIdx % PLAYER_COLORS.length];
+
+    const row = document.createElement('div');
+    row.className = 'mg-player-row';
+
+    const dot = document.createElement('div');
+    dot.className = 'p-dot';
+    dot.style.cssText = `background:${color};width:10px;height:10px;border-radius:50%;flex-shrink:0;`;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'mg-player-name';
+    nameEl.textContent = p.name;
+    if (!wasActive && !isAvail) nameEl.style.opacity = '0.5'; // dim originally-OUT players
+
+    const minsEl = document.createElement('span');
+    minsEl.className = 'mg-player-mins';
+    minsEl.textContent = mins + 'm';
+
+    const availBtn = document.createElement('button');
+    availBtn.className = 'mg-avail-btn ' + (isAvail ? 'in' : 'out');
+    availBtn.textContent = isAvail ? '✓' : '✗';
+    availBtn.title = isAvail ? 'Available — tap to mark unavailable' : 'Unavailable — tap to mark available';
+    availBtn.onclick = () => {
+      mgAvailOverrides[rosterIdx] = !isAvail;
+      renderMgPlayerList();
+    };
+
+    row.append(dot, nameEl, minsEl, availBtn);
+    list.appendChild(row);
+  });
+}
+
+function closeMidGame() {
+  document.getElementById('mgOverlay').classList.remove('open');
+}
+
+function applyMidGame() {
+  if (mgNextSeg === null) { closeMidGame(); return; }
+
+  const segDurations = window._ftSegDurations;
+  const segsPerQ     = segDurations.length;
+  const totalSegs    = ftPlan.length * segsPerQ;
+  const nextSeg      = mgNextSeg;
+
+  if (nextSeg >= totalSegs) { closeMidGame(); return; }
+
+  // ── Compute minutes already played (from past segments of current plan) ──
+  const minsPlayed = Array(ftActivePlayers.length).fill(0);
+  for (let s = 0; s < nextSeg; s++) {
+    const q = Math.floor(s / segsPerQ);
+    const si = s % segsPerQ;
+    ftPlan[q].segs[si].players.forEach(pi => { minsPlayed[pi] += segDurations[si]; });
+  }
+
+  // ── Build updated availability list from the FULL roster ────────────────
+  // mgAvailOverrides keys are full-roster indices (players[]).
+  // We include anyone now marked available, including late arrivals who were
+  // originally OUT when Generate was run.
+  const updatedPlayers = players.map((p, rosterIdx) => {
+    const wasActive = ftActivePlayers.findIndex(ap => ap.originalIndex === rosterIdx);
+    const nowAvail = mgAvailOverrides.hasOwnProperty(rosterIdx)
+      ? mgAvailOverrides[rosterIdx]
+      : wasActive >= 0; // default: same as when generated
+    // Minutes already played: only possible if they were active before
+    const played = wasActive >= 0 ? minsPlayed[wasActive] : 0;
+    return {
+      name: p.name,
+      role: p.role,
+      starter: false,
+      available: nowAvail,
+      originalIndex: rosterIdx,
+      minutesAlreadyPlayed: played,
+      originalActiveIdx: wasActive >= 0 ? wasActive : null,
+    };
+  }).filter(p => p.available);
+
+  if (updatedPlayers.length < 5) {
+    alert('At least 5 available players are needed to recalculate.');
+    return;
+  }
+
+  // ── Calculate remaining game time and fair targets ────────────────────────
+  const remainingSegs    = totalSegs - nextSeg;
+  const remainingMinutes = Array.from({length: remainingSegs}, (_, i) => segDurations[(nextSeg + i) % segsPerQ]).reduce((a, b) => a + b, 0);
+  const totalGameMinutes = numQuarters * quarterDuration;
+
+  // Total remaining court-time to distribute = remaining segs × 5 slots
+  const totalRemainingSlots = remainingSegs * COURT_SIZE;
+  const n = updatedPlayers.length;
+
+  // Each player's "ideal total" minutes = their fair share of the whole game
+  // Their remaining target = ideal total - minutes already played (floor 0)
+  const idealTotal = totalGameMinutes * COURT_SIZE / n; // fair share if equal
+  // But we only have remainingMinutes × 5 to distribute, so scale proportionally
+  const totalRemainingMins = remainingSegs * COURT_SIZE; // in segments, each seg = segDuration
+  const baseRemSegs   = Math.floor(totalRemainingSlots / n);
+  const extraRemCount = totalRemainingSlots % n;
+
+  // Sort by most owed remaining time (those with fewest mins so far get priority for extras)
+  const sorted = updatedPlayers
+    .map((p, i) => ({ ...p, idx: i }))
+    .sort((a, b) => a.minutesAlreadyPlayed - b.minutesAlreadyPlayed);
+
+  const targetRemSegs = new Array(n).fill(0);
+  sorted.forEach((p, rank) => {
+    targetRemSegs[p.idx] = baseRemSegs + (rank < extraRemCount ? 1 : 0);
+  });
+
+  // ── Run the engine on remaining segments only ────────────────────────────
+  // Build synthetic activePlayers for the engine with updated starters/availability
+  // Starters: only relevant if nextSeg === 0 (start of game), otherwise ignore
+  const synthPlayers = updatedPlayers.map(p => ({
+    name: p.name,
+    role: p.role,
+    starter: false, // starters don't apply mid-game
+    available: true,
+    originalIndex: p.originalIndex,
+  }));
+
+  // Calculate how many quarters/segments remain
+  const remQuarters = Math.ceil(remainingSegs / segsPerQ);
+  const firstRemQ   = Math.floor(nextSeg / segsPerQ);
+
+  // Call generateRotation for the remaining game portion
+  // We pass the remaining segs as a custom quarter count
+  // by treating remaining segs as full "quarters" of segsPerQ each
+  // (pad with a partial quarter if needed)
+  const result = generateRotation(
+    synthPlayers, interchangeMode,
+    Math.ceil(remainingSegs / segsPerQ),
+    quarterDuration
+  );
+
+  if (!result) { closeMidGame(); return; }
+
+  // ── Build the new ftActivePlayers FIRST, then create the index map ─────────
+  // The engine output uses indices 0..n-1 into synthPlayers (= updatedPlayers).
+  // After this mid-game update, ftActivePlayers becomes exactly updatedPlayers.
+  // So the remap is: engine index (= updatedPlayers index) → that same index
+  // into the new ftActivePlayers. i.e. it's an identity map — no remapping needed
+  // for the new quarters.
+  //
+  // However, past quarters in ftPlan still use the OLD ftActivePlayers indices.
+  // Those are preserved as-is (they're marked played: true and not re-rendered
+  // with player names from ftActivePlayers — they're frozen).
+  //
+  // For future quarters, engine index i simply refers to updatedPlayers[i],
+  // which will become ftActivePlayers[i] after the rebuild below.
+  // So remapPlayers is the identity function for future segments.
+  function remapPlayers(playerList) {
+    return playerList; // engine indices map 1:1 to new ftActivePlayers indices
+  }
+
+  // ── Stitch: keep past segments from ftPlan, replace future with new plan ──
+  const newPlan = [];
+
+  // Build a lookup: originalIndex → new ftActivePlayers index
+  // (new ftActivePlayers = updatedPlayers, in order)
+  const origToNewIdx = {};
+  updatedPlayers.forEach((p, newIdx) => { origToNewIdx[p.originalIndex] = newIdx; });
+
+  // Also build lookup for OLD ftActivePlayers: old pi → originalIndex
+  const oldActiveByPi = ftActivePlayers.map(p => p.originalIndex);
+
+  function remapOldPi(pi) {
+    const origIdx = oldActiveByPi[pi];
+    // If this player is still in the new active set, return new index
+    if (origToNewIdx.hasOwnProperty(origIdx)) return origToNewIdx[origIdx];
+    // Player is no longer active (e.g. fouled out) — keep old index as fallback
+    // (won't display correctly but at least won't crash)
+    return pi;
+  }
+
+  function remapPastSeg(seg) {
+    return { ...seg, players: seg.players.map(remapOldPi) };
+  }
+
+  // Past quarters (fully played) — remap player indices to new ftActivePlayers
+  for (let q = 0; q < Math.floor(nextSeg / segsPerQ); q++) {
+    const oldQ = ftPlan[q];
+    newPlan.push({
+      ...oldQ,
+      played: true,
+      segs: oldQ.segs.map(remapPastSeg),
+      subs: oldQ.subs.map(sub => ({
+        ...sub,
+        exits:  sub.exits.map(remapOldPi),
+        enters: sub.enters.map(remapOldPi),
+      })),
+    });
+  }
+
+  // Partial past quarter (some segs played, some future)
+  const partialQ = Math.floor(nextSeg / segsPerQ);
+  const partialSegStart = nextSeg % segsPerQ;
+  if (partialSegStart > 0 && partialQ < ftPlan.length) {
+    const partialSegs = ftPlan[partialQ].segs.slice(0, partialSegStart)
+      .map(s => ({ ...remapPastSeg(s), played: true }));
+    const newQData = result.quarters[0];
+    const futureSegs = newQData
+      ? newQData.segs.slice(partialSegStart).map(s => ({ ...s, players: remapPlayers(s.players) }))
+      : [];
+    const mergedSegs = [...partialSegs, ...futureSegs.slice(0, segsPerQ - partialSegStart)];
+    const subs = [];
+    for (let s = 1; s < mergedSegs.length; s++) {
+      if (mergedSegs[s].played) continue;
+      const prev = mergedSegs[s-1].players, next = mergedSegs[s].players;
+      const exits  = prev.filter(p => !next.includes(p));
+      const enters = next.filter(p => !prev.includes(p));
+      if (exits.length) subs.push({ at: mergedSegs[s].start, exits, enters });
+    }
+    newPlan.push({ q: partialQ + 1, segs: mergedSegs, subs, totalSubCount: subs.reduce((a,x) => a+x.exits.length,0), partiallyPlayed: true });
+  }
+
+  // Remaining full quarters — remap all player indices
+  const resultQOffset = partialSegStart > 0 ? 1 : 0;
+  result.quarters.forEach((q, qi) => {
+    if (qi < resultQOffset) return;
+    const remappedSegs = q.segs.map(s => ({ ...s, players: remapPlayers(s.players) }));
+    const remappedSubs = q.subs.map(sub => ({
+      ...sub,
+      exits:  remapPlayers(sub.exits),
+      enters: remapPlayers(sub.enters),
+    }));
+    newPlan.push({ ...q, q: newPlan.length + 1, segs: remappedSegs, subs: remappedSubs });
+  });
+
+  // Update ftPlan and rebuild ftActivePlayers to include newly available players.
+  // New arrivals (originally OUT) are appended so their originalIndex is preserved.
+  ftPlan = newPlan;
+
+  // Rebuild ftActivePlayers as all players now marked available,
+  // preserving originalIndex for correct colour/name lookup in render.
+  // The synthToActive map already handled index remapping in the plan.
+  // We need ftActivePlayers to reflect the new active set for reRenderOutput.
+  ftActivePlayers = updatedPlayers.map((p, newIdx) => ({
+    name: p.name,
+    role: p.role,
+    starter: p.starter,
+    available: true,
+    originalIndex: p.originalIndex,
+  }));
+
+  // Mark that mid-game update was applied
+  window._mgNextSeg = nextSeg;
+  ftEdits = {};
+  ftActive = false;
+
+  closeMidGame();
+  saveFtState();
+  reRenderOutput();
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+renderRoster();
+
+// Restore fine-tune state if present (e.g. after page refresh)
+(function restoreFtState() {
+  const saved = loadFtState();
+  if (!saved || !saved.plan || !saved.activePlayers) return;
+  // Only restore if game settings match
+  if (saved.numQuarters !== numQuarters || saved.quarterDuration !== quarterDuration || saved.interchangeMode !== interchangeMode) return;
+  ftPlan          = saved.plan;
+  ftOrigPlan      = JSON.parse(JSON.stringify(saved.plan));
+  ftEdits         = saved.edits || {};
+  ftActivePlayers = saved.activePlayers;
+  ftTotalMinutes  = saved.totalMinutes || (numQuarters * quarterDuration);
+
+  // Rebuild segDurations
+  const subPoints    = getSubPoints(quarterDuration, interchangeMode);
+  const boundaries   = [0, ...subPoints, quarterDuration];
+  const segDurations = boundaries.slice(1).map((b,i) => b - boundaries[i]);
+  window._ftSegDurations = segDurations;
+  window._ftSegsPerQ     = segDurations.length;
+  window._ftWarnings     = [];
+
+  // Re-apply subs in case they weren't stored correctly
+  for (let qi = 0; qi < ftPlan.length; qi++) rebuildSubs(qi);
+
+  reRenderOutput();
+})();
+
+// ── Register service worker ───────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+
+<!-- ── Mid-game update modal ── -->
+<div class="mg-overlay" id="mgOverlay" onclick="if(event.target===this)closeMidGame()">
+  <div class="mg-box">
+    <h2>⏱ MID-GAME UPDATE</h2>
+    <p class="mg-sub">Recalculate rotations from a point mid-game when availability has changed.</p>
+
+    <div class="mg-section-title">1. Next segment to be played</div>
+    <div class="mg-seg-grid" id="mgSegGrid"></div>
+    <div style="font-size:10px;color:var(--text-faint);margin-top:4px;">Select the segment you are about to play next.</div>
+
+    <div class="mg-section-title">2. Update player availability</div>
+    <div id="mgPlayerList"></div>
+    <div style="font-size:10px;color:var(--text-faint);margin-top:4px;">Toggle players who have arrived late or can no longer play.</div>
+
+    <div class="mg-actions">
+      <button class="mg-cancel" onclick="closeMidGame()">Cancel</button>
+      <button class="mg-apply" id="mgApplyBtn" onclick="applyMidGame()">RECALCULATE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Swap picker overlay ── -->
+<div class="swap-overlay" id="swapOverlay" onclick="if(event.target===this)closeSwap()">
+  <div class="swap-box">
+    <h3 id="swapTitle">SWAP PLAYER</h3>
+    <div class="swap-sub" id="swapSub"></div>
+    <div id="swapOptions"></div>
+    <button class="swap-cancel" onclick="closeSwap()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Fine-tune trigger (shown after generate) ── -->
+<div id="finetuneTrigger">
+  <button onclick="enterFinetuneMode()">✎ Fine-tune rotations</button>
+</div>
+
+</body>
+</html>
