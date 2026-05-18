@@ -344,6 +344,9 @@
     .cheat-start { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
     .cheat-sub { font-size: 11px; margin-bottom: 2px; }
     .roster-summary { font-size: 12px; color: var(--text-muted); }
+    .fillin-btn { padding:4px 10px; border-radius:6px; border:1px solid var(--accent); background:transparent; color:var(--accent); font-size:11px; font-family:'DM Mono',monospace; font-weight:700; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+    .fillin-btn:hover { background:var(--accent); color:#111; }
+    .fillin-toast { font-size:11px; color:var(--green); transition:opacity 0.5s; opacity:0; white-space:nowrap; }
     #output { display: none; }
     .reset-btn { background: transparent; border: 1px solid var(--border2); color: var(--text-faint); border-radius: 6px; padding: 5px 12px; font-size: 11px; font-family: 'DM Mono',monospace; cursor: pointer; transition: all 0.15s; }
     .reset-btn:hover { border-color: var(--red); color: var(--red); }
@@ -439,6 +442,8 @@
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
       <div class="card-title" style="margin-bottom:0;">ROSTER</div>
       <span class="roster-summary" id="rosterSummary"></span>
+      <button class="fillin-btn" id="fillinBtn" style="display:none;" onclick="copyFillinRequest()">📋 Request fill-ins</button>
+      <span class="fillin-toast" id="fillinToast">✓ Copied!</span>
       <span style="flex:1"></span>
       <span class="saved-toast" id="savedToast"></span>
       <button class="reset-btn" onclick="resetRoster()">↺ Reset</button>
@@ -1069,6 +1074,13 @@ function renderRoster() {
     `<span style="color:#ba68c8">${fwds} forward${fwds!==1?'s':''}</span> &nbsp;·&nbsp; `+
     `<span style="color:#e57373">${bigs} big${bigs!==1?'s':''}</span>` +
     (starters > 0 ? ` &nbsp;·&nbsp; <span style="color:#f5a623">★ ${starters}/5 starter${starters!==1?'s':''}</span>` : '');
+
+  // Show fill-in button only when a team is selected and < 7 players available
+  const fillinBtn = document.getElementById('fillinBtn');
+  if (fillinBtn) {
+    const showFillin = settingsState.selectedTeam && active.length < 7;
+    fillinBtn.style.display = showFillin ? 'inline-block' : 'none';
+  }
 
   const container = document.getElementById('rosterRows');
   container.innerHTML = '';
@@ -2221,6 +2233,127 @@ function applyMidGame() {
   saveFtState();
   reRenderOutput();
   document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Fill-in request ──────────────────────────────────────────────────────────
+
+// Parse age group number from strings like "U12", "U14", "U16" etc.
+function parseAgeGroup(str) {
+  const m = str.match(/U(\d+)/i);
+  return m ? parseInt(m[1]) : null;
+}
+
+// Parse division number from strings like "U14 Boys Division 3", "Division 5" etc.
+function parseDivision(str) {
+  const m = str.match(/Division\s+(\d+)/i);
+  return m ? parseInt(m[1]) : null;
+}
+
+// Age group ordering — each step younger is one index higher
+const AGE_GROUP_ORDER = [10, 12, 14, 16, 18];
+
+function getEligibleTeams(requestingTeam) {
+  if (!_fixturesCache) return [];
+
+  // Parse requesting team's age group from team name and division from fixture data
+  const reqAgeGroup  = parseAgeGroup(requestingTeam);
+  const reqFixture   = _fixturesCache[requestingTeam];
+  const reqDivision  = reqFixture ? parseDivision(reqFixture.division) : null;
+
+  if (!reqAgeGroup || !reqDivision) return [];
+
+  const nextYoungestAge = (() => {
+    const idx = AGE_GROUP_ORDER.indexOf(reqAgeGroup);
+    return idx > 0 ? AGE_GROUP_ORDER[idx - 1] : null;
+  })();
+
+  const eligible = [];
+
+  for (const [teamName, fd] of Object.entries(_fixturesCache)) {
+    if (teamName === requestingTeam) continue;
+
+    const teamAge = parseAgeGroup(teamName);
+    const teamDiv = parseDivision(fd.division);
+    if (!teamAge || !teamDiv) continue;
+
+    // Same age group: only higher division numbers (lower skill)
+    if (teamAge === reqAgeGroup && teamDiv > reqDivision) {
+      eligible.push(teamName);
+      continue;
+    }
+
+    // Next-youngest age group: division must not be more than 2 better
+    // i.e. teamDiv >= reqDivision - 2
+    if (nextYoungestAge && teamAge === nextYoungestAge && teamDiv >= reqDivision - 2) {
+      eligible.push(teamName);
+    }
+  }
+
+  // Sort: oldest age group first, within age group by ascending division number
+  return eligible.sort((a, b) => {
+    const ageA = parseAgeGroup(a), ageB = parseAgeGroup(b);
+    if (ageB !== ageA) return ageB - ageA; // oldest (highest U number) first
+    const divA = parseDivision((_fixturesCache[a] || {}).division);
+    const divB = parseDivision((_fixturesCache[b] || {}).division);
+    return (divA || 99) - (divB || 99); // lowest division number first
+  });
+}
+
+function buildFillinMessage(teamName, availableCount) {
+  const fillinsNeeded = 7 - availableCount;
+  const fd = _fixturesCache && _fixturesCache[teamName];
+
+  // Next game details
+  let gameDetails;
+  if (fd && fd.nextGame) {
+    const g = fd.nextGame;
+    const d = new Date(g.date);
+    const dateStr = d.toLocaleDateString('en-AU', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      timeZone: 'Australia/Brisbane'
+    });
+    const timeStr = d.toLocaleTimeString('en-AU', {
+      hour: 'numeric', minute: '2-digit', hour12: true,
+      timeZone: 'Australia/Brisbane'
+    });
+    const venue = [g.venue, g.court].filter(Boolean).join(', ');
+    gameDetails = `${dateStr} at ${timeStr}${venue ? ', ' + venue : ''}`;
+  } else {
+    gameDetails = null;
+  }
+
+  const eligible = getEligibleTeams(teamName);
+
+  const lines = [
+    `Fill-ins requested for ${teamName}.`,
+    `We have ${availableCount} player${availableCount !== 1 ? 's' : ''} available and could use up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
+    ``,
+    gameDetails
+      ? `Our next game is on ${gameDetails}.`
+      : `Our next game details have not yet been published.`,
+    ``,
+    `Teams that are eligible to provide fill-ins:`,
+    ...eligible.map(t => `  • ${t}`),
+    eligible.length === 0 ? `  (no eligible teams found)` : '',
+  ].filter(l => l !== undefined);
+
+  return lines.join('\n').trim();
+}
+
+function copyFillinRequest() {
+  const active = players.filter(p => p.available);
+  const msg = buildFillinMessage(settingsState.selectedTeam, active.length);
+
+  navigator.clipboard.writeText(msg).then(() => {
+    const toast = document.getElementById('fillinToast');
+    if (toast) {
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+    }
+  }).catch(() => {
+    // Fallback for browsers that block clipboard without interaction
+    alert(msg);
+  });
 }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
