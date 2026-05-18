@@ -1,13 +1,17 @@
-name: Save Web Page Copy
+name: Fetch Teams and Fixtures
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight
-  workflow_dispatch: # Allows manual trigger
+    # Runs every Monday at 2am AEST (Sunday 4pm UTC)
+    - cron: '0 16 * * 0'
+  workflow_dispatch:
 
 jobs:
-  save_page:
+  fetch-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,19 +21,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: Install Playwright
         run: npm install playwright
 
-      - name: Install Playwright Browsers
+      - name: Install Chromium browser
         run: npx playwright install chromium --with-deps
 
-      - name: Run save script
+      - name: Run fetch script
         run: node save-page.js
 
-      - name: Upload local copy
-        uses: actions/upload-artifact@v4
-        with:
-          name: webpage-copy
-          path: |
-            copy.html
-            screenshot.png
+      - name: Commit and push JSON files if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add teams.json fixtures.json 2>/dev/null || git add teams.json
+          if git diff --staged --quiet; then
+            echo "No changes — skipping commit."
+          else
+            git commit -m "chore: update teams and fixtures data"
+            git push
+          fi
