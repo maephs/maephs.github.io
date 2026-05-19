@@ -353,6 +353,23 @@
     .saved-toast { font-size: 11px; color: #555; transition: opacity 0.5s; }
     .global-warn { background: var(--sub-banner-bg); border: 1px solid var(--sub-banner-border); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: var(--text-secondary); }
 
+    /* ── Update banner ── */
+    #updateBanner {
+      display: none; position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: var(--accent); color: #111; border-radius: 24px;
+      padding: 10px 20px; font-size: 13px; font-weight: 700;
+      font-family: 'DM Mono', monospace; cursor: pointer;
+      box-shadow: 0 4px 16px #0006; z-index: 999;
+      display: none; align-items: center; gap: 8px;
+      white-space: nowrap; border: none;
+      animation: slideUp 0.3s ease;
+    }
+    #updateBanner.visible { display: flex; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
     /* ── Fine-tune mode ── */
     .finetune-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:10px 14px; background:var(--ft-bar-bg); border:1px solid var(--ft-bar-border); border-radius:8px; }
     .finetune-bar .ft-label { font-size:12px; color:var(--accent); flex:1; }
@@ -2385,12 +2402,57 @@ renderRoster();
   reRenderOutput();
 })();
 
-// ── Register service worker ───────────────────────────────────────────────────
+// ── Register service worker + update detection ───────────────────────────────
+let _swRegistration = null;
+
+function applyUpdate() {
+  if (_swRegistration && _swRegistration.waiting) {
+    // Tell the waiting SW to activate immediately
+    _swRegistration.waiting.postMessage('SKIP_WAITING');
+  }
+  // Hide banner and reload once the new SW has taken control
+  document.getElementById('updateBanner').classList.remove('visible');
+  window.location.reload();
+}
+
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW registration failed:', err));
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('./sw.js');
+      _swRegistration = reg;
+
+      // If a new SW is already waiting on first load, show banner immediately
+      if (reg.waiting) {
+        document.getElementById('updateBanner').classList.add('visible');
+      }
+
+      // Listen for a new SW moving into the waiting state
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener('statechange', () => {
+          // New SW has installed and is now waiting — show the banner
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            document.getElementById('updateBanner').classList.add('visible');
+          }
+        });
+      });
+
+      // Also check for updates immediately (catches updates since last visit)
+      reg.update();
+
+      // Re-check for updates every 60 minutes while the page is open
+      setInterval(() => reg.update(), 60 * 60 * 1000);
+
+    } catch (err) {
+      console.log('SW registration failed:', err);
+    }
+
+    // When the SW controlling this page changes, reload to use new version
+    // (fires after applyUpdate() triggers skipWaiting)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
   });
 }
 </script>
@@ -2430,6 +2492,9 @@ if ('serviceWorker' in navigator) {
 <div id="finetuneTrigger">
   <button onclick="enterFinetuneMode()">✎ Fine-tune rotations</button>
 </div>
+
+<!-- ── Update available banner ── -->
+<button id="updateBanner" onclick="applyUpdate()">✨ Update available — tap to refresh</button>
 
 </body>
 </html>
