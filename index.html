@@ -2316,30 +2316,84 @@ function getEligibleTeams(requestingTeam) {
   });
 }
 
+// Format a UTC date string as Brisbane local date (YYYY-MM-DD)
+function brisbaneDate(utcStr) {
+  // Brisbane is UTC+10 with no daylight saving
+  const d = new Date(new Date(utcStr).getTime() + 10 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD in Brisbane time
+}
+
+// Format a UTC date string as a readable Brisbane time string (e.g. "7:00 pm")
+function brisbaneTime(utcStr) {
+  return new Date(utcStr).toLocaleTimeString('en-AU', {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'Australia/Brisbane'
+  });
+}
+
+// Check for a schedule clash between the requesting team's game and an eligible team's game.
+// Returns a clash description string if clashing, or null if no clash.
+function getClashNote(reqGame, eligibleTeamName) {
+  const fd = _fixturesCache && _fixturesCache[eligibleTeamName];
+
+  // No fixture data or no next game — mark as not yet published
+  if (!fd || !fd.nextGame) return 'fixture not yet published';
+
+  const elGame = fd.nextGame;
+
+  // Compare calendar dates in Brisbane time
+  const reqDate = brisbaneDate(reqGame.date);
+  const elDate  = brisbaneDate(elGame.date);
+
+  // Different date — no clash
+  if (reqDate !== elDate) return null;
+
+  // Same date — check venues and time gap
+  const reqVenue = (reqGame.venue || '').trim().toLowerCase();
+  const elVenue  = (elGame.venue  || '').trim().toLowerCase();
+  const sameVenue = reqVenue && elVenue && reqVenue === elVenue;
+
+  const threshold = sameVenue ? 50 : 80; // minutes
+  const reqMs  = new Date(reqGame.date).getTime();
+  const elMs   = new Date(elGame.date).getTime();
+  const gapMin = Math.abs(reqMs - elMs) / 60000;
+
+  if (gapMin < threshold) {
+    const timeStr  = brisbaneTime(elGame.date);
+    const venueStr = [elGame.venue, elGame.court].filter(Boolean).join(', ');
+    return `schedule clash: ${timeStr}${venueStr ? ' at ' + venueStr : ''}`;
+  }
+
+  return null;
+}
+
 function buildFillinMessage(teamName, availableCount) {
   const fillinsNeeded = 7 - availableCount;
   const fd = _fixturesCache && _fixturesCache[teamName];
 
-  // Next game details
-  let gameDetails;
+  // Requesting team's next game details
+  let gameDetails = null;
+  let reqGame = null;
   if (fd && fd.nextGame) {
-    const g = fd.nextGame;
-    const d = new Date(g.date);
+    reqGame = fd.nextGame;
+    const d = new Date(reqGame.date);
     const dateStr = d.toLocaleDateString('en-AU', {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
       timeZone: 'Australia/Brisbane'
     });
-    const timeStr = d.toLocaleTimeString('en-AU', {
-      hour: 'numeric', minute: '2-digit', hour12: true,
-      timeZone: 'Australia/Brisbane'
-    });
-    const venue = [g.venue, g.court].filter(Boolean).join(', ');
+    const timeStr = brisbaneTime(reqGame.date);
+    const venue = [reqGame.venue, reqGame.court].filter(Boolean).join(', ');
     gameDetails = `${dateStr} at ${timeStr}${venue ? ', ' + venue : ''}`;
-  } else {
-    gameDetails = null;
   }
 
   const eligible = getEligibleTeams(teamName);
+
+  // Build team lines with optional clash notes
+  const teamLines = eligible.map(t => {
+    if (!reqGame) return `  • ${t}`;
+    const clash = getClashNote(reqGame, t);
+    return clash ? `  • ${t} (${clash})` : `  • ${t}`;
+  });
 
   const lines = [
     `Fill-ins requested for ${teamName}.`,
@@ -2350,9 +2404,8 @@ function buildFillinMessage(teamName, availableCount) {
       : `Our next game details have not yet been published.`,
     ``,
     `Teams that are eligible to provide fill-ins:`,
-    ...eligible.map(t => `  • ${t}`),
-    eligible.length === 0 ? `  (no eligible teams found)` : '',
-  ].filter(l => l !== undefined);
+    ...(teamLines.length ? teamLines : [`  (no eligible teams found)`]),
+  ];
 
   return lines.join('\n').trim();
 }
