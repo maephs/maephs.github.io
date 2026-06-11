@@ -543,7 +543,7 @@
         "opponent": "Devils U16 Yellow",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
+        "status": "ENDED"
       }
     },
     "Redbacks U16 Silver": {
@@ -579,13 +579,13 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-06T05:00:11.000Z",
+        "date": "2026-06-06T05:00:00.000Z",
         "venue": "The Lakes College",
         "court": "Court 1",
         "opponent": "Tigers U16 Gold",
         "isHome": false,
         "roundName": "Round 8",
-        "status": "PAUSED"
+        "status": "ENDED"
       }
     },
     "Redbacks U18 Onyx": {
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-06-09T08:27:00.792Z"
+  "updatedAt": "2026-06-11T09:08:28.184Z"
 }
