@@ -8,9 +8,7 @@ const TARGET_URL = 'https://registration.basketballconnect.com/liveScoreSeasonFi
   '&divisionId=All' +
   '&teamId=-1';
 
-// Matches the Squadi round/matches endpoint
 const FIXTURE_API = /api-basketball\.squadi\.com\/livescores\/round\/matches/;
-// Matches the teams list endpoint (no teamId param)
 const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/list/;
 
 (async () => {
@@ -32,25 +30,27 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
 
   const page = await context.newPage();
 
-  let fixtureData = null;
-  let teamsData   = null;
+  // Store promises so we can await them BEFORE closing the browser
+  const responsePromises = [];
 
-  // Intercept API responses as they fire
-  page.on('response', async response => {
+  page.on('response', response => {
     const url = response.url();
-    try {
-      if (FIXTURE_API.test(url)) {
-        console.log(`Intercepted fixture response: ${url}`);
-        fixtureData = await response.json();
-        console.log(`Fixture data type: ${typeof fixtureData}, rounds: ${fixtureData?.rounds?.length ?? 'N/A'}`);
-      }
-      if (TEAMS_API.test(url)) {
-        console.log(`Intercepted teams response: ${url}`);
-        teamsData = await response.json();
-        console.log(`Teams count: ${Array.isArray(teamsData) ? teamsData.length : 'N/A'}`);
-      }
-    } catch (e) {
-      console.log(`Could not parse response from ${url}: ${e.message}`);
+
+    if (FIXTURE_API.test(url)) {
+      console.log(`Intercepted fixture response: ${url}`);
+      // Capture body as text immediately — do NOT await here (event handler is sync)
+      const p = response.text()
+        .then(text => ({ type: 'fixture', url, text }))
+        .catch(e => ({ type: 'fixture', url, error: e.message }));
+      responsePromises.push(p);
+    }
+
+    if (TEAMS_API.test(url)) {
+      console.log(`Intercepted teams response: ${url}`);
+      const p = response.text()
+        .then(text => ({ type: 'teams', url, text }))
+        .catch(e => ({ type: 'teams', url, error: e.message }));
+      responsePromises.push(p);
     }
   });
 
@@ -61,16 +61,56 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
     console.log(`Navigation note: ${e.message} — checking if data was captured anyway`);
   }
 
-  // Extra wait for any delayed API calls
-  await page.waitForTimeout(5000);
+  // Give delayed API calls a moment to fire and be captured
+  await page.waitForTimeout(3000);
+
+  // ── Await ALL response bodies BEFORE closing the browser ─────────────────
+  console.log(`Awaiting ${responsePromises.length} captured response(s)...`);
+  const results = await Promise.all(responsePromises);
+
+  // Now safe to close
   await browser.close();
+  console.log('Browser closed.');
+
+  // ── Process captured responses ────────────────────────────────────────────
+  let fixtureData = null;
+  let teamsData   = null;
+
+  for (const r of results) {
+    if (r.error) {
+      console.log(`ERROR reading ${r.type} response from ${r.url}: ${r.error}`);
+      continue;
+    }
+    try {
+      const parsed = JSON.parse(r.text);
+      if (r.type === 'fixture') {
+        if (parsed?.rounds) {
+          fixtureData = parsed;
+          console.log(`Parsed fixture data: ${parsed.rounds.length} rounds`);
+        } else {
+          console.log(`Fixture response unexpected shape — keys: ${Object.keys(parsed).join(', ')}`);
+        }
+      } else if (r.type === 'teams') {
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Prefer the larger teams response (the first call returns 0 teams)
+          if (!teamsData || parsed.length > teamsData.length) {
+            teamsData = parsed;
+            console.log(`Parsed teams data: ${parsed.length} teams`);
+          }
+        } else {
+          console.log(`Teams response was empty array or unexpected — skipping`);
+        }
+      }
+    } catch (e) {
+      console.log(`ERROR parsing ${r.type} JSON from ${r.url}: ${e.message}`);
+      console.log(`Raw response (first 200 chars): ${r.text.slice(0, 200)}`);
+    }
+  }
 
   const now = new Date().toISOString();
 
   // ── teams.json ─────────────────────────────────────────────────────────────
-  // Teams come from the teams list API, or fall back to extracting from fixture data
   let redbacks = [];
-
   if (Array.isArray(teamsData)) {
     redbacks = teamsData
       .filter(t => typeof t.name === 'string' && t.name.startsWith('Redbacks'))
@@ -78,7 +118,6 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
       .sort();
     console.log(`Extracted ${redbacks.length} Redbacks teams from teams API`);
   } else if (fixtureData?.rounds) {
-    // Fallback: extract unique team names from fixture data
     const teamSet = new Set();
     for (const round of fixtureData.rounds) {
       if (round.isHidden) continue;
@@ -95,24 +134,17 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
 
   if (redbacks.length > 0) {
     fs.writeFileSync('teams.json', JSON.stringify({ teams: redbacks, updatedAt: now }, null, 2));
-    console.log(`OK: written teams.json with ${redbacks.length} teams`);
+    console.log(`OK: written teams.json`);
   } else {
     console.log('WARNING: no Redbacks teams found — teams.json not updated');
   }
 
   // ── fixtures.json ───────────────────────────────────────────────────────────
-  // Structure: data.rounds[] where isHidden=false, each round has:
-  //   - name: "Round 5"
-  //   - division.name: "U12 Boys Division 1"
-  //   - matches[]: each match has:
-  //       team1.name, team2.name
-  //       startTime: ISO 8601 UTC string
-  //       venueCourt.venue.name: "Northside Indoor Sports Centre"
-  //       venueCourt.name: "Court 1"
-  //       matchStatus: "ENDED" | "STARTED" | "SCHEDULED" etc.
-
   if (!fixtureData?.rounds) {
     console.log('ERROR: no fixture data captured — fixtures.json not updated');
+    console.log('Diagnosis: ' + (responsePromises.length === 0
+      ? 'No fixture API calls were intercepted at all. The page may not have loaded correctly.'
+      : 'Fixture API calls were intercepted but data could not be parsed. See errors above.'));
     process.exit(1);
   }
 
@@ -121,7 +153,6 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
 
   for (const round of fixtureData.rounds) {
     if (round.isHidden) continue;
-
     const division  = round.division?.name || '';
     const roundName = round.name || '';
 
@@ -141,32 +172,19 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
         if (!fixturesByTeam[teamName]) {
           fixturesByTeam[teamName] = { division, nextGame: null, lastGame: null };
         }
-
-        // Always update division
         if (division && !fixturesByTeam[teamName].division) {
           fixturesByTeam[teamName].division = division;
         }
 
         if (startTime) {
           const gameDate = new Date(startTime);
-          const gameInfo = {
-            date: startTime,
-            venue,
-            court,
-            opponent,
-            isHome,
-            roundName,
-            status,
-          };
-
+          const gameInfo = { date: startTime, venue, court, opponent, isHome, roundName, status };
           if (gameDate > nowDate) {
-            // Future game — keep the soonest
             const existing = fixturesByTeam[teamName].nextGame;
             if (!existing || new Date(existing.date) > gameDate) {
               fixturesByTeam[teamName].nextGame = gameInfo;
             }
           } else {
-            // Past game — keep the most recent
             const existing = fixturesByTeam[teamName].lastGame;
             if (!existing || new Date(existing.date) < gameDate) {
               fixturesByTeam[teamName].lastGame = gameInfo;
@@ -180,10 +198,9 @@ const TEAMS_API   = /api-basketball\.squadi\.com\/livescores\/teams\/enduser\/li
   fs.writeFileSync('fixtures.json', JSON.stringify({ fixtures: fixturesByTeam, updatedAt: now }, null, 2));
   console.log(`OK: written fixtures.json with data for ${Object.keys(fixturesByTeam).length} Redbacks teams`);
 
-  // Summary
   for (const [team, data] of Object.entries(fixturesByTeam)) {
-    const next = data.nextGame ? `next: ${data.nextGame.date.substring(0,10)}` : 'no upcoming game';
-    const last = data.lastGame ? `last: ${data.lastGame.date.substring(0,10)}` : '';
-    console.log(`  ${team} [${data.division}] — ${next}${last ? ', ' + last : ''}`);
+    const next = data.nextGame ? `next: ${data.nextGame.date.substring(0, 10)}` : 'no upcoming game';
+    const last = data.lastGame ? `, last: ${data.lastGame.date.substring(0, 10)}` : '';
+    console.log(`  ${team} [${data.division}] — ${next}${last}`);
   }
 })();
