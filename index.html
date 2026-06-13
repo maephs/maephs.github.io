@@ -2272,14 +2272,14 @@ const AGE_GROUP_ORDER = [10, 12, 14, 16, 18];
 function getEligibleTeams(requestingTeam) {
   if (!_fixturesCache) return [];
 
-  // Parse requesting team's age group from team name and division from fixture data
-  const reqAgeGroup  = parseAgeGroup(requestingTeam);
-  const reqFixture   = _fixturesCache[requestingTeam];
-  const reqDivision  = reqFixture ? parseDivision(reqFixture.division) : null;
+  const reqAgeGroup = parseAgeGroup(requestingTeam);
+  const reqFixture  = _fixturesCache[requestingTeam];
+  const reqDivision = reqFixture ? parseDivision(reqFixture.division) : null;
 
   if (!reqAgeGroup || !reqDivision) return [];
 
-  const nextYoungestAge = (() => {
+  // The next-younger age group whose players may fill in for this team
+  const nextYoungerAge = (() => {
     const idx = AGE_GROUP_ORDER.indexOf(reqAgeGroup);
     return idx > 0 ? AGE_GROUP_ORDER[idx - 1] : null;
   })();
@@ -2293,26 +2293,43 @@ function getEligibleTeams(requestingTeam) {
     const teamDiv = parseDivision(fd.division);
     if (!teamAge || !teamDiv) continue;
 
-    // Same age group: only higher division numbers (lower skill)
+    // ── Same age group ──────────────────────────────────────────────────────
+    // Players from higher-numbered divisions (lower skill) may fill in.
     if (teamAge === reqAgeGroup && teamDiv > reqDivision) {
       eligible.push(teamName);
       continue;
     }
 
-    // Next-youngest age group: division must not be more than 2 better
-    // i.e. teamDiv >= reqDivision - 2
-    if (nextYoungestAge && teamAge === nextYoungestAge && teamDiv >= reqDivision - 2) {
-      eligible.push(teamName);
+    // ── Next-younger age group ──────────────────────────────────────────────
+    // Two sub-rules apply:
+    //
+    // 1. Division 1 players (special case): may only fill in for the requesting
+    //    team if the requesting team is Division 1 or Division 2.
+    //
+    // 2. Division 2+ players (general rule): may fill in as long as the
+    //    requesting team's division is not more than 2 worse (higher number)
+    //    than the fill-in player's division.
+    //    Formula: teamDiv >= reqDivision - 2
+    //    (equivalently: reqDivision <= teamDiv + 2)
+
+    if (nextYoungerAge && teamAge === nextYoungerAge) {
+      if (teamDiv === 1) {
+        // Division 1 special case: only eligible if requesting team is Div 1 or 2
+        if (reqDivision <= 2) eligible.push(teamName);
+      } else {
+        // General rule: fill-in team's division must be within 2 of requesting team
+        if (teamDiv >= reqDivision - 2) eligible.push(teamName);
+      }
     }
   }
 
   // Sort: oldest age group first, within age group by ascending division number
   return eligible.sort((a, b) => {
     const ageA = parseAgeGroup(a), ageB = parseAgeGroup(b);
-    if (ageB !== ageA) return ageB - ageA; // oldest (highest U number) first
+    if (ageB !== ageA) return ageB - ageA;
     const divA = parseDivision((_fixturesCache[a] || {}).division);
     const divB = parseDivision((_fixturesCache[b] || {}).division);
-    return (divA || 99) - (divB || 99); // lowest division number first
+    return (divA || 99) - (divB || 99);
   });
 }
 
