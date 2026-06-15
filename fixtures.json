@@ -633,21 +633,21 @@
     "Redbacks U18 Pearl": {
       "division": "U18 Boys  Division 4",
       "nextGame": {
+        "date": "2026-06-20T22:50:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Bobcats U18 Blue",
+        "isHome": false,
+        "roundName": "Round 10",
+        "status": ""
+      },
+      "lastGame": {
         "date": "2026-06-14T09:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Bye",
         "isHome": true,
         "roundName": "Round 9",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-06-07T05:00:08.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Pythons U18 Black",
-        "isHome": false,
-        "roundName": "Round 8",
         "status": "ENDED"
       }
     },
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-06-14T08:37:51.438Z"
+  "updatedAt": "2026-06-15T10:51:02.065Z"
 }
