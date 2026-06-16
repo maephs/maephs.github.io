@@ -654,7 +654,7 @@
     "Redbacks U18 White": {
       "division": "U18 Boys  Division 3",
       "nextGame": {
-        "date": "2026-06-21T07:30:00.000Z",
+        "date": "2026-06-21T08:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U18 Black",
@@ -696,7 +696,7 @@
     "Redbacks U18 Black": {
       "division": "U18 Boys  Division 2",
       "nextGame": {
-        "date": "2026-06-21T07:30:00.000Z",
+        "date": "2026-06-21T08:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U18 White",
@@ -717,7 +717,7 @@
     "Redbacks U18 Silver": {
       "division": "U18 Boys  Division 2",
       "nextGame": {
-        "date": "2026-06-21T07:30:00.000Z",
+        "date": "2026-06-21T08:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Timberwolves U18 Green",
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-06-15T10:51:02.065Z"
+  "updatedAt": "2026-06-16T10:02:41.584Z"
 }
