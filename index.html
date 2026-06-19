@@ -370,6 +370,83 @@
       to   { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
+    /* ── Game Start button ── */
+    .gamestart-row { display:flex; justify-content:center; margin-top:24px; margin-bottom:8px; }
+    .gamestart-btn {
+      padding: 14px 36px; background: var(--accent); color: #111; border: none;
+      border-radius: 30px; font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+      letter-spacing: 1.5px; cursor: pointer; box-shadow: 0 4px 14px #0004;
+      transition: all 0.15s;
+    }
+    .gamestart-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px #0005; }
+
+    /* ── Game Time full-screen view ── */
+    #gameTimeView {
+      display: none; position: fixed; inset: 0; background: var(--bg); z-index: 500;
+      overflow-y: auto; padding: 16px; padding-bottom: 100px;
+    }
+    #gameTimeView.open { display: block; }
+    .gt-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .gt-header h1 { font-family:'Bebas Neue',sans-serif; font-size:28px; color:var(--accent); letter-spacing:2px; }
+    .gt-back-btn { padding:8px 16px; border-radius:6px; border:1px solid var(--border2); background:transparent; color:var(--text-secondary); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+    .gt-back-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── Clock ── */
+    .gt-clock-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:16px; text-align:center; }
+    .gt-quarter-label { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--text-muted); letter-spacing:1.5px; margin-bottom:4px; }
+    .gt-clock-display { font-family:'Bebas Neue',sans-serif; font-size:64px; color:var(--text-primary); line-height:1; cursor:pointer; letter-spacing:2px; }
+    .gt-clock-display.running { color: var(--green); }
+    .gt-clock-controls { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+    .gt-clock-btn { padding:10px 24px; border-radius:24px; border:none; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; cursor:pointer; }
+    .gt-clock-btn.start { background:var(--green); color:#111; }
+    .gt-clock-btn.stop  { background:var(--red); color:#111; }
+    .gt-clock-btn.q-nav { background:transparent; border:1px solid var(--border2); color:var(--text-secondary); font-size:13px; padding:8px 14px; }
+    .gt-edit-clock-overlay { display:none; position:fixed; inset:0; background:var(--overlay); z-index:600; align-items:center; justify-content:center; padding:20px; }
+    .gt-edit-clock-overlay.open { display:flex; }
+    .gt-edit-clock-box { background:var(--modal-bg); border:1px solid var(--border2); border-radius:14px; padding:24px; max-width:280px; width:100%; text-align:center; }
+    .gt-edit-clock-box input { width:80px; font-size:28px; text-align:center; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-primary); border-radius:8px; padding:8px; font-family:'Bebas Neue',sans-serif; }
+
+    /* ── Sub alert banner ── */
+    #subAlertBanner {
+      display:none; background: var(--accent); color:#111; border-radius:12px;
+      padding:14px 18px; margin-bottom:16px; text-align:center; font-family:'Bebas Neue',sans-serif;
+      font-size:16px; letter-spacing:0.5px; animation: flashAlert 1s infinite;
+    }
+    #subAlertBanner.visible { display:block; }
+    @keyframes flashAlert { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+    .sub-confirm-btn { margin-top:8px; padding:8px 20px; border-radius:20px; border:none; background:#111; color:var(--accent); font-family:'DM Mono',monospace; font-weight:700; font-size:12px; cursor:pointer; display:block; margin-left:auto; margin-right:auto; }
+
+    /* ── Team sections ── */
+    .gt-team-section { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px; }
+    .gt-team-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .gt-team-name { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--text-heading); letter-spacing:1px; }
+    .gt-team-score { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--accent); }
+    .gt-bonus-indicator { display:inline-block; margin-left:8px; padding:3px 10px; border-radius:12px; background:var(--red); color:#fff; font-family:'DM Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.5px; vertical-align:middle; animation: pulseBonus 1.2s infinite; }
+    @keyframes pulseBonus { 0%,100% { opacity:1; } 50% { opacity:0.65; } }
+    .gt-player-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
+    .gt-player-card { background:var(--row-bg); border:1px solid var(--border); border-radius:10px; padding:10px; }
+    .gt-player-card.foul-trouble { border-color:var(--red); background: color-mix(in srgb, var(--red) 12%, var(--row-bg)); }
+    .gt-player-card.bench-player { opacity: 0.55; }
+    .gt-oncourt-badge { font-size:8px; padding:1px 6px; border-radius:8px; background:var(--green); color:#111; font-weight:700; letter-spacing:0.3px; flex-shrink:0; }
+    .gt-player-name-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+    .gt-player-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .gt-player-name { font-size:12px; color:var(--text-primary); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .gt-foul-icon { font-size:11px; color:var(--red); flex-shrink:0; }
+    .gt-stat-row { display:flex; gap:4px; margin-bottom:4px; }
+    .gt-stat-btn { flex:1; padding:5px 0; border-radius:5px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); font-family:'DM Mono',monospace; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.1s; }
+    .gt-stat-btn:active { transform:scale(0.94); }
+    .gt-stat-btn.plus  { border-color: var(--green); color: var(--green); }
+    .gt-stat-btn.minus { border-color: var(--border2); color: var(--text-faint); font-size:10px; }
+    .gt-stat-btn.pf  { border-color: var(--accent); color: var(--accent); }
+    .gt-stat-btn.t   { border-color: var(--red); color: var(--red); }
+    .gt-player-totals { display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:4px; }
+    .gt-jersey-input { width:36px; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text-primary); border-radius:4px; padding:2px 4px; font-size:11px; text-align:center; font-family:'DM Mono',monospace; }
+
+    /* ── Bottom action row ── */
+    .gt-bottom-actions { display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+    .gt-reset-btn { padding:10px 20px; border-radius:8px; border:1px solid var(--red); background:transparent; color:var(--red); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
+    .gt-reset-btn:hover { background:var(--red); color:#111; }
+
     /* ── Fine-tune mode ── */
     .finetune-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:10px 14px; background:var(--ft-bar-bg); border:1px solid var(--ft-bar-border); border-radius:8px; }
     .finetune-bar .ft-label { font-size:12px; color:var(--accent); flex:1; }
@@ -1681,6 +1758,13 @@ function reRenderOutput() {
   cheat.appendChild(grid);
   out.appendChild(cheat);
 
+  // Game Start button
+  const gsRow = el('div', {class:'gamestart-row'});
+  const gsBtn = el('button', {class:'gamestart-btn'}, '🏀 GAME START');
+  gsBtn.onclick = openGameTime;
+  gsRow.appendChild(gsBtn);
+  out.appendChild(gsRow);
+
   // Show fine-tune trigger button and bar
   document.getElementById('finetuneTrigger').style.display = 'none'; // bar replaces it
   renderFinetuneBar();
@@ -1689,6 +1773,9 @@ function reRenderOutput() {
     attachSwapHandlers();
   }
   saveFtState();
+
+  // If Game Time view is already open, refresh its data to reflect any plan changes
+  if (typeof refreshGameTimeFromPlan === 'function') refreshGameTimeFromPlan();
 }
 
 // ── DOM helpers ───────────────────────────────────────────────────────────────
@@ -2443,6 +2530,586 @@ function copyFillinRequest() {
   });
 }
 
+// ── Game Time ────────────────────────────────────────────────────────────────
+//
+// A separate full-screen overlay for live in-game use: clock, live roster,
+// scoring, fouls, and upcoming-substitution alerts. Reads from ftPlan
+// (the rotation plan) but does not modify it — game state is independent
+// and persists separately in localStorage.
+
+const GAME_STATE_KEY = 'bball_gamestate_v1';
+
+let gameState = null;        // the live game state object
+let gtClockInterval = null;  // setInterval handle for the countdown
+let gtVibrated = false;      // prevents repeated vibration spam for the same alert
+
+function defaultGameState() {
+  const n = ftActivePlayers ? ftActivePlayers.length : 0;
+  return {
+    quarter: 1,
+    clockSeconds: quarterDuration * 60,
+    clockRunning: false,
+    clockLastTick: null, // timestamp when clock was last started, for drift correction
+    confirmedSegIndex: 0, // which global segment index is "live" right now (confirmed by coach)
+    pendingSegIndex: null, // segment the coach has been alerted about but not yet confirmed
+    myStats: {},   // { playerIdx: { points, pf: {1: n, 2: n, ...}, t } } — pf is per-quarter breakdown
+    oppName: (settingsState.selectedTeam && _fixturesCache && _fixturesCache[settingsState.selectedTeam] && _fixturesCache[settingsState.selectedTeam].nextGame)
+      ? _fixturesCache[settingsState.selectedTeam].nextGame.opponent
+      : null,
+    oppScore: 0,
+    oppPlayers: Array.from({length: 10}, () => ({ jersey: null, points: 0, pf: {}, t: 0 })),
+    // Team foul tally per quarter, for "in the bonus" tracking.
+    // Resets to 0 automatically at the start of each new quarter.
+    // Keyed by quarter number: { 1: {my: N, opp: N}, 2: {...}, ... }
+    quarterFouls: {},
+  };
+}
+
+function loadGameState() {
+  try {
+    const raw = localStorage.getItem(GAME_STATE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function saveGameState() {
+  try { localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState)); } catch(e) {}
+}
+
+function openGameTime() {
+  if (!ftPlan || !ftActivePlayers.length) {
+    alert('Please generate a rotation plan first.');
+    return;
+  }
+
+  // gameState was already restored on page load (with clock drift correction).
+  // If somehow not initialised yet (e.g. first ever use), create fresh.
+  if (!gameState) gameState = defaultGameState();
+
+  // Ensure myStats has an entry for every current active player
+  ftActivePlayers.forEach((_, pi) => {
+    if (!gameState.myStats[pi]) gameState.myStats[pi] = { points: 0, pf: {}, t: 0 };
+  });
+
+  document.getElementById('gameTimeView').classList.add('open');
+  renderGameTime();
+  saveGameState();
+}
+
+function closeGameTime() {
+  document.getElementById('gameTimeView').classList.remove('open');
+  // Clock keeps running in the background via the interval — state is saved continuously
+}
+
+function resetGameState() {
+  if (!confirm('Are you sure you want to reset all game data? This cannot be undone.')) return;
+  stopClockInterval();
+  gameState = defaultGameState();
+  saveGameState();
+  renderGameTime();
+}
+
+// ── Quarter/segment helpers ───────────────────────────────────────────────────
+
+function getSegsPerQ() {
+  return window._ftSegsPerQ || 2;
+}
+
+function getGlobalSegIndex(quarter, segInQ) {
+  return (quarter - 1) * getSegsPerQ() + segInQ;
+}
+
+// Given the current quarter and elapsed time, determine which segment SHOULD
+// be live based on the rotation plan (for alert purposes only — the actual
+// confirmed lineup only changes when the coach taps Confirm).
+function getScheduledSegIndex() {
+  if (!ftPlan || !ftPlan[gameState.quarter - 1]) return gameState.confirmedSegIndex;
+  const q = ftPlan[gameState.quarter - 1];
+  const elapsedSec = (quarterDuration * 60) - gameState.clockSeconds;
+  const elapsedMin = elapsedSec / 60;
+
+  for (let si = 0; si < q.segs.length; si++) {
+    const seg = q.segs[si];
+    if (elapsedMin >= seg.start && elapsedMin < seg.end) {
+      return getGlobalSegIndex(gameState.quarter, si);
+    }
+  }
+  // Past the end of the quarter's segments — return the last one
+  return getGlobalSegIndex(gameState.quarter, q.segs.length - 1);
+}
+
+function getPlayersForSeg(globalSegIdx) {
+  const segsPerQ = getSegsPerQ();
+  const q = Math.floor(globalSegIdx / segsPerQ);
+  const si = globalSegIdx % segsPerQ;
+  if (!ftPlan[q] || !ftPlan[q].segs[si]) return [];
+  return ftPlan[q].segs[si].players;
+}
+
+// ── Clock ──────────────────────────────────────────────────────────────────────
+
+function toggleClock() {
+  if (gameState.clockRunning) {
+    stopClockInterval();
+    gameState.clockRunning = false;
+  } else {
+    gameState.clockRunning = true;
+    gameState.clockLastTick = Date.now();
+    startClockInterval();
+  }
+  saveGameState();
+  renderClock();
+}
+
+function startClockInterval() {
+  stopClockInterval();
+  gtClockInterval = setInterval(() => {
+    if (!gameState.clockRunning) return;
+    gameState.clockSeconds = Math.max(0, gameState.clockSeconds - 1);
+    gameState.clockLastTick = Date.now();
+    saveGameState();
+    renderClock();
+    checkSubAlert();
+    if (gameState.clockSeconds === 0) {
+      gameState.clockRunning = false;
+      stopClockInterval();
+      saveGameState();
+      renderClock();
+    }
+  }, 1000);
+}
+
+function stopClockInterval() {
+  if (gtClockInterval) { clearInterval(gtClockInterval); gtClockInterval = null; }
+}
+
+function changeQuarter(delta) {
+  const newQ = gameState.quarter + delta;
+  if (newQ < 1 || newQ > numQuarters) return;
+  gameState.quarter = newQ;
+  gameState.clockSeconds = quarterDuration * 60;
+  gameState.clockRunning = false;
+  stopClockInterval();
+  gameState.pendingSegIndex = null;
+  gtVibrated = false;
+  saveGameState();
+  renderGameTime();
+}
+
+function openClockEdit() {
+  const mins = Math.floor(gameState.clockSeconds / 60);
+  const secs = gameState.clockSeconds % 60;
+  document.getElementById('clockEditMin').value = mins;
+  document.getElementById('clockEditSec').value = secs;
+  document.getElementById('clockEditOverlay').classList.add('open');
+}
+
+function closeClockEdit() {
+  document.getElementById('clockEditOverlay').classList.remove('open');
+}
+
+function applyClockEdit() {
+  const mins = parseInt(document.getElementById('clockEditMin').value, 10) || 0;
+  const secs = parseInt(document.getElementById('clockEditSec').value, 10) || 0;
+  gameState.clockSeconds = Math.max(0, mins * 60 + secs);
+  gtVibrated = false;
+  saveGameState();
+  renderClock();
+  closeClockEdit();
+}
+
+function renderClock() {
+  const mins = Math.floor(gameState.clockSeconds / 60);
+  const secs = gameState.clockSeconds % 60;
+  const display = document.getElementById('gtClockDisplay');
+  display.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
+  display.classList.toggle('running', gameState.clockRunning);
+
+  document.getElementById('gtQuarterLabel').textContent = `QUARTER ${gameState.quarter}`;
+
+  const startStopBtn = document.getElementById('gtStartStopBtn');
+  startStopBtn.textContent = gameState.clockRunning ? '⏸ Stop' : '▶ Start';
+  startStopBtn.className = 'gt-clock-btn ' + (gameState.clockRunning ? 'stop' : 'start');
+
+  document.getElementById('gtPrevQBtn').disabled = gameState.quarter <= 1;
+  document.getElementById('gtNextQBtn').disabled = gameState.quarter >= numQuarters;
+}
+
+// ── Substitution alerts ───────────────────────────────────────────────────────
+
+function checkSubAlert() {
+  const scheduledIdx = getScheduledSegIndex();
+  const banner = document.getElementById('subAlertBanner');
+
+  if (scheduledIdx === gameState.confirmedSegIndex) {
+    // No change due — clear alert
+    banner.classList.remove('visible');
+    banner.innerHTML = '';
+    gameState.pendingSegIndex = null;
+    return;
+  }
+
+  // A change is due (or overdue). Show alert if within 60 sec of the segment
+  // boundary, or if we're already past it.
+  const q = ftPlan[gameState.quarter - 1];
+  const segsPerQ = getSegsPerQ();
+  const si = scheduledIdx % segsPerQ;
+  const elapsedSec = (quarterDuration * 60) - gameState.clockSeconds;
+  const segStartSec = (q.segs[si] ? q.segs[si].start : 0) * 60;
+  const secsUntilChange = segStartSec - elapsedSec;
+
+  if (secsUntilChange <= 60) {
+    if (gameState.pendingSegIndex !== scheduledIdx) {
+      gameState.pendingSegIndex = scheduledIdx;
+      gtVibrated = false;
+      saveGameState();
+    }
+
+    const currentPlayers = getPlayersForSeg(gameState.confirmedSegIndex);
+    const newPlayers     = getPlayersForSeg(scheduledIdx);
+    const exits  = currentPlayers.filter(p => !newPlayers.includes(p));
+    const enters = newPlayers.filter(p => !currentPlayers.includes(p));
+
+    const exitNames  = exits.map(pi => ftActivePlayers[pi]?.name).filter(Boolean);
+    const enterNames = enters.map(pi => ftActivePlayers[pi]?.name).filter(Boolean);
+
+    let msg = secsUntilChange > 0
+      ? `⏱ SUB DUE IN ${secsUntilChange}s`
+      : `⏱ SUB OVERDUE`;
+    if (exitNames.length || enterNames.length) {
+      msg += `<br><span style="font-size:13px;">OUT: ${exitNames.join(', ') || '—'} → IN: ${enterNames.join(', ') || '—'}</span>`;
+    }
+
+    banner.innerHTML = msg;
+    banner.classList.add('visible');
+
+    // Add confirm button
+    const confirmBtn = el('button', {class:'sub-confirm-btn'}, '✓ Confirm Substitution');
+    confirmBtn.onclick = confirmSubstitution;
+    banner.appendChild(confirmBtn);
+
+    // Vibrate once per alert (not every second)
+    if (!gtVibrated && 'vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200]);
+      gtVibrated = true;
+    }
+  } else {
+    banner.classList.remove('visible');
+    banner.innerHTML = '';
+  }
+}
+
+function confirmSubstitution() {
+  if (gameState.pendingSegIndex === null) return;
+  gameState.confirmedSegIndex = gameState.pendingSegIndex;
+  gameState.pendingSegIndex = null;
+  gtVibrated = false;
+  saveGameState();
+  document.getElementById('subAlertBanner').classList.remove('visible');
+  renderMyTeam();
+}
+
+// ── Long-press helper ───────────────────────────────────────────────────────────
+// Attaches both a normal click handler and a long-press (500ms) handler to a
+// button. Long-press fires resetFn instead of clickFn, with a brief visual pulse.
+// Touch and mouse events are both handled for cross-device support.
+function attachLongPress(btn, clickFn, resetFn, holdMs = 500) {
+  let pressTimer = null;
+  let longPressFired = false;
+
+  function start(e) {
+    longPressFired = false;
+    pressTimer = setTimeout(() => {
+      longPressFired = true;
+      btn.style.transition = 'none';
+      btn.style.background = 'var(--red)';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.style.transition = '';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 200);
+      if ('vibrate' in navigator) navigator.vibrate(80);
+      resetFn();
+    }, holdMs);
+  }
+
+  function cancel() {
+    if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+  }
+
+  function clickHandler(e) {
+    if (longPressFired) { e.preventDefault(); longPressFired = false; return; }
+    clickFn();
+  }
+
+  btn.addEventListener('mousedown', start);
+  btn.addEventListener('mouseup', cancel);
+  btn.addEventListener('mouseleave', cancel);
+  btn.addEventListener('touchstart', start, { passive: true });
+  btn.addEventListener('touchend', cancel);
+  btn.addEventListener('touchcancel', cancel);
+  btn.addEventListener('click', clickHandler);
+}
+
+// ── Stat tracking ─────────────────────────────────────────────────────────────
+
+// `pf` is stored per-quarter: { 1: count, 2: count, ... }. This lets us
+// reset exactly the fouls committed in the CURRENT quarter without touching
+// fouls from earlier quarters, which keeps the team bonus tally accurate.
+
+function totalPF(pfObj) {
+  return Object.values(pfObj || {}).reduce((a, b) => a + b, 0);
+}
+
+function adjustMyStat(playerIdx, field, delta) {
+  if (!gameState.myStats[playerIdx]) gameState.myStats[playerIdx] = { points: 0, pf: {}, t: 0 };
+  const stat = gameState.myStats[playerIdx];
+
+  if (field === 'pf') {
+    const q = gameState.quarter;
+    stat.pf[q] = Math.max(0, (stat.pf[q] || 0) + delta);
+    if (delta > 0) getQuarterFoulTally().my += delta;
+  } else {
+    stat[field] = Math.max(0, (stat[field] || 0) + delta);
+  }
+
+  saveGameState();
+  renderMyTeam();
+}
+
+function resetMyStat(playerIdx, field) {
+  if (!gameState.myStats[playerIdx]) gameState.myStats[playerIdx] = { points: 0, pf: {}, t: 0 };
+  const stat = gameState.myStats[playerIdx];
+
+  if (field === 'pf') {
+    // Only clear fouls committed THIS quarter — fouls from earlier quarters
+    // are untouched, so the bonus tally for past quarters stays correct.
+    const q = gameState.quarter;
+    const thisQuarterCount = stat.pf[q] || 0;
+    stat.pf[q] = 0;
+    getQuarterFoulTally().my = Math.max(0, getQuarterFoulTally().my - thisQuarterCount);
+  } else {
+    stat[field] = 0;
+  }
+
+  saveGameState();
+  renderMyTeam();
+}
+
+function adjustOppStat(oppIdx, field, delta) {
+  const p = gameState.oppPlayers[oppIdx];
+
+  if (field === 'pf') {
+    const q = gameState.quarter;
+    p.pf[q] = Math.max(0, (p.pf[q] || 0) + delta);
+    if (delta > 0) getQuarterFoulTally().opp += delta;
+  } else {
+    p[field] = Math.max(0, (p[field] || 0) + delta);
+  }
+
+  saveGameState();
+  renderOppTeam();
+}
+
+function resetOppStat(oppIdx, field) {
+  const p = gameState.oppPlayers[oppIdx];
+
+  if (field === 'pf') {
+    const q = gameState.quarter;
+    const thisQuarterCount = p.pf[q] || 0;
+    p.pf[q] = 0;
+    getQuarterFoulTally().opp = Math.max(0, getQuarterFoulTally().opp - thisQuarterCount);
+  } else {
+    p[field] = 0;
+  }
+
+  saveGameState();
+  renderOppTeam();
+}
+
+function setOppJersey(oppIdx, value) {
+  gameState.oppPlayers[oppIdx].jersey = value.trim() || null;
+  saveGameState();
+}
+
+// ── Team foul / bonus tracking ───────────────────────────────────────────────
+// Tracks total personal fouls committed by each team within the CURRENT
+// quarter only. Resets automatically when the quarter changes (see
+// changeQuarter()). 5+ fouls in a quarter puts the opposing team "in the bonus".
+
+function getQuarterFoulTally() {
+  const q = gameState.quarter;
+  if (!gameState.quarterFouls[q]) gameState.quarterFouls[q] = { my: 0, opp: 0 };
+  return gameState.quarterFouls[q];
+}
+
+function isInBonus(team) {
+  // team: 'my' or 'opp' — returns true if the OPPONENT of that team has
+  // committed 5+ fouls this quarter (meaning `team` is in the bonus)
+  const tally = getQuarterFoulTally();
+  const opposingTeam = team === 'my' ? 'opp' : 'my';
+  return tally[opposingTeam] >= 5;
+}
+
+// ── Foul trouble logic ────────────────────────────────────────────────────────
+// Q1: more than 1 PF is foul trouble. Q2: more than 2 PF (cumulative).
+// Any time: more than 3 PF total is foul trouble. 5 PF = fouled out.
+
+function isFoulTrouble(pf) {
+  if (pf > 3) return true;
+  if (gameState.quarter === 1 && pf > 1) return true;
+  if (gameState.quarter === 2 && pf > 2) return true;
+  return false;
+}
+
+function isFouledOut(pf) { return pf >= 5; }
+
+// ── Rendering ──────────────────────────────────────────────────────────────────
+
+function renderGameTime() {
+  renderClock();
+  renderMyTeam();
+  renderOppTeam();
+  checkSubAlert();
+  if (gameState.clockRunning && !gtClockInterval) startClockInterval();
+}
+
+function renderMyTeam() {
+  const grid = document.getElementById('myPlayerGrid');
+  grid.innerHTML = '';
+
+  const onCourt = getPlayersForSeg(gameState.confirmedSegIndex);
+  let totalPoints = 0;
+  Object.values(gameState.myStats).forEach(s => { totalPoints += (s.points || 0); });
+  document.getElementById('myTeamScore').innerHTML = totalPoints + (isInBonus('my') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
+  document.getElementById('myTeamName').textContent = (settingsState.selectedTeam || 'MY TEAM').toUpperCase();
+
+  // Show ALL active players, with on-court players first (in their current
+  // order) followed by bench players. Bench players are visually dimmed but
+  // still fully interactive, so the coach can pre-emptively log something
+  // for a player about to come on, or correct a mistake for someone now
+  // on the bench.
+  const benchPlayers = ftActivePlayers
+    .map((_, pi) => pi)
+    .filter(pi => !onCourt.includes(pi));
+  const orderedPlayers = [...onCourt, ...benchPlayers];
+
+  orderedPlayers.forEach(pi => {
+    const player = ftActivePlayers[pi];
+    if (!player) return;
+    const isOnCourt = onCourt.includes(pi);
+    const stat = gameState.myStats[pi] || { points: 0, pf: {}, t: 0 };
+    const foulTrouble = isFoulTrouble(totalPF(stat.pf));
+
+    const cardClasses = ['gt-player-card'];
+    if (foulTrouble) cardClasses.push('foul-trouble');
+    if (!isOnCourt) cardClasses.push('bench-player');
+    const card = el('div', {class: cardClasses.join(' ')});
+
+    const nameRow = el('div', {class:'gt-player-name-row'});
+    nameRow.appendChild(el('div', {class:'gt-player-dot', style:`background:${PLAYER_COLORS[player.originalIndex % PLAYER_COLORS.length]};`}));
+    nameRow.appendChild(el('span', {class:'gt-player-name'}, player.name));
+    if (isOnCourt) nameRow.appendChild(el('span', {class:'gt-oncourt-badge'}, 'ON'));
+    if (foulTrouble) nameRow.appendChild(el('span', {class:'gt-foul-icon'}, '⚠'));
+    card.appendChild(nameRow);
+
+    // Points row
+    const ptsRow = el('div', {class:'gt-stat-row'});
+    [1,2,3].forEach(n => {
+      const btn = el('button', {class:'gt-stat-btn plus'}, '+'+n);
+      btn.onclick = () => adjustMyStat(pi, 'points', n);
+      ptsRow.appendChild(btn);
+    });
+    card.appendChild(ptsRow);
+
+    const minusRow = el('div', {class:'gt-stat-row'});
+    [1,2,3].forEach(n => {
+      const btn = el('button', {class:'gt-stat-btn minus'}, '−'+n);
+      btn.onclick = () => adjustMyStat(pi, 'points', -n);
+      minusRow.appendChild(btn);
+    });
+    card.appendChild(minusRow);
+
+    const foulRow = el('div', {class:'gt-stat-row'});
+    const pfBtn = el('button', {class:'gt-stat-btn pf'}, `PF (${totalPF(stat.pf)})`);
+    attachLongPress(pfBtn, () => adjustMyStat(pi, 'pf', 1), () => resetMyStat(pi, 'pf'));
+    const tBtn = el('button', {class:'gt-stat-btn t'}, `T (${stat.t||0})`);
+    attachLongPress(tBtn, () => adjustMyStat(pi, 't', 1), () => resetMyStat(pi, 't'));
+    foulRow.append(pfBtn, tBtn);
+    card.appendChild(foulRow);
+
+    card.appendChild(el('div', {class:'gt-player-totals'}, `Pts: ${stat.points||0}${isFouledOut(totalPF(stat.pf)) ? '  •  FOULED OUT' : ''}`));
+
+    grid.appendChild(card);
+  });
+}
+
+function renderOppTeam() {
+  const grid = document.getElementById('oppPlayerGrid');
+  grid.innerHTML = '';
+
+  // Opponent score is always the sum of all opponent players' points
+  let oppTotal = 0;
+  gameState.oppPlayers.forEach(p => { oppTotal += (p.points || 0); });
+  gameState.oppScore = oppTotal;
+
+  document.getElementById('oppTeamScore').innerHTML = oppTotal + (isInBonus('opp') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
+  document.getElementById('oppTeamName').textContent = (gameState.oppName || 'OPPONENT').toUpperCase();
+
+  gameState.oppPlayers.forEach((p, idx) => {
+    const foulTrouble = isFoulTrouble(totalPF(p.pf));
+    const card = el('div', {class:'gt-player-card' + (foulTrouble ? ' foul-trouble' : '')});
+
+    const nameRow = el('div', {class:'gt-player-name-row'});
+    const jerseyInput = el('input', {class:'gt-jersey-input', type:'text', placeholder:'#', value: p.jersey || ''});
+    jerseyInput.maxLength = 3;
+    jerseyInput.onchange = () => setOppJersey(idx, jerseyInput.value);
+    nameRow.appendChild(jerseyInput);
+    if (foulTrouble) nameRow.appendChild(el('span', {class:'gt-foul-icon'}, '⚠'));
+    card.appendChild(nameRow);
+
+    const ptsRow = el('div', {class:'gt-stat-row'});
+    [1,2,3].forEach(n => {
+      const btn = el('button', {class:'gt-stat-btn plus'}, '+'+n);
+      btn.onclick = () => adjustOppStat(idx, 'points', n);
+      ptsRow.appendChild(btn);
+    });
+    card.appendChild(ptsRow);
+
+    const minusRow = el('div', {class:'gt-stat-row'});
+    [1,2,3].forEach(n => {
+      const btn = el('button', {class:'gt-stat-btn minus'}, '−'+n);
+      btn.onclick = () => adjustOppStat(idx, 'points', -n);
+      minusRow.appendChild(btn);
+    });
+    card.appendChild(minusRow);
+
+    const foulRow = el('div', {class:'gt-stat-row'});
+    const pfBtn = el('button', {class:'gt-stat-btn pf'}, `PF (${totalPF(p.pf)})`);
+    attachLongPress(pfBtn, () => adjustOppStat(idx, 'pf', 1), () => resetOppStat(idx, 'pf'));
+    const tBtn = el('button', {class:'gt-stat-btn t'}, `T (${p.t||0})`);
+    attachLongPress(tBtn, () => adjustOppStat(idx, 't', 1), () => resetOppStat(idx, 't'));
+    foulRow.append(pfBtn, tBtn);
+    card.appendChild(foulRow);
+
+    card.appendChild(el('div', {class:'gt-player-totals'}, `Pts: ${p.points||0}${isFouledOut(totalPF(p.pf)) ? '  •  FOULED OUT' : ''}`));
+
+    grid.appendChild(card);
+  });
+}
+
+// Called from reRenderOutput when the rotation plan changes, so the live
+// Game Time view (if open) reflects the latest plan without losing game state.
+function refreshGameTimeFromPlan() {
+  if (!gameState) return;
+  if (document.getElementById('gameTimeView').classList.contains('open')) {
+    renderMyTeam();
+    checkSubAlert();
+  }
+}
+
 // ── Init ─────────────────────────────────────────────────────────────────────
 renderRoster();
 
@@ -2470,6 +3137,47 @@ renderRoster();
   for (let qi = 0; qi < ftPlan.length; qi++) rebuildSubs(qi);
 
   reRenderOutput();
+})();
+
+// Restore game state if present, accounting for clock drift while closed/refreshed
+(function restoreGameState() {
+  const saved = loadGameState();
+  if (!saved) return;
+  gameState = saved;
+
+  // Migrate old format where pf was a single cumulative number, to the new
+  // per-quarter breakdown object { quarterNum: count }. Treat any old
+  // cumulative count as having occurred in quarter 1, for safety.
+  function migratePf(obj) {
+    if (typeof obj.pf === 'number') {
+      const total = obj.pf;
+      obj.pf = total > 0 ? { 1: total } : {};
+    } else if (!obj.pf || typeof obj.pf !== 'object') {
+      obj.pf = {};
+    }
+  }
+  if (gameState.myStats) Object.values(gameState.myStats).forEach(migratePf);
+  if (gameState.oppPlayers) gameState.oppPlayers.forEach(migratePf);
+  if (!gameState.quarterFouls) gameState.quarterFouls = {};
+
+  // If the clock was running when the page closed, account for elapsed time
+  if (gameState.clockRunning && gameState.clockLastTick) {
+    const elapsedSec = Math.floor((Date.now() - gameState.clockLastTick) / 1000);
+    gameState.clockSeconds = Math.max(0, gameState.clockSeconds - elapsedSec);
+    if (gameState.clockSeconds === 0) gameState.clockRunning = false;
+  }
+
+  // Ensure myStats has an entry for every current active player (in case
+  // the roster changed since the game was last open)
+  if (ftActivePlayers && ftActivePlayers.length) {
+    ftActivePlayers.forEach((_, pi) => {
+      if (!gameState.myStats[pi]) gameState.myStats[pi] = { points: 0, pf: {}, t: 0 };
+    });
+  }
+
+  saveGameState();
+  // Note: we don't auto-open the Game Time view on load — the user taps
+  // "Game Start" again, which will pick up this restored state.
 })();
 
 // ── Register service worker + update detection ───────────────────────────────
@@ -2565,6 +3273,65 @@ if ('serviceWorker' in navigator) {
 
 <!-- ── Update available banner ── -->
 <button id="updateBanner" onclick="applyUpdate()">✨ Update available — tap to refresh</button>
+
+<!-- ── Game Time full-screen view ── -->
+<div id="gameTimeView">
+  <div class="gt-header">
+    <h1>GAME TIME</h1>
+    <button class="gt-back-btn" onclick="closeGameTime()">← Back to Rotations</button>
+  </div>
+
+  <!-- Substitution alert -->
+  <div id="subAlertBanner"></div>
+
+  <!-- Clock card -->
+  <div class="gt-clock-card">
+    <div class="gt-quarter-label" id="gtQuarterLabel">QUARTER 1</div>
+    <div class="gt-clock-display" id="gtClockDisplay" onclick="openClockEdit()">10:00</div>
+    <div class="gt-clock-controls">
+      <button class="gt-clock-btn q-nav" id="gtPrevQBtn" onclick="changeQuarter(-1)">‹ Prev Q</button>
+      <button class="gt-clock-btn start" id="gtStartStopBtn" onclick="toggleClock()">▶ Start</button>
+      <button class="gt-clock-btn q-nav" id="gtNextQBtn" onclick="changeQuarter(1)">Next Q ›</button>
+    </div>
+  </div>
+
+  <!-- My team -->
+  <div class="gt-team-section" id="myTeamSection">
+    <div class="gt-team-header">
+      <span class="gt-team-name" id="myTeamName">MY TEAM</span>
+      <span class="gt-team-score" id="myTeamScore">0</span>
+    </div>
+    <div class="gt-player-grid" id="myPlayerGrid"></div>
+  </div>
+
+  <!-- Opponent team -->
+  <div class="gt-team-section" id="oppTeamSection">
+    <div class="gt-team-header">
+      <span class="gt-team-name" id="oppTeamName">OPPONENT</span>
+      <span class="gt-team-score" id="oppTeamScore">0</span>
+    </div>
+    <div class="gt-player-grid" id="oppPlayerGrid"></div>
+  </div>
+
+  <div class="gt-bottom-actions">
+    <button class="gt-reset-btn" onclick="resetGameState()">↺ Reset Game</button>
+  </div>
+</div>
+
+<!-- ── Clock edit overlay ── -->
+<div class="gt-edit-clock-overlay" id="clockEditOverlay" onclick="if(event.target===this)closeClockEdit()">
+  <div class="gt-edit-clock-box">
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);margin-bottom:14px;">SET CLOCK</h3>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;">
+      <input type="number" id="clockEditMin" min="0" max="60" value="10" /> <span style="font-size:20px;color:var(--text-muted);">:</span>
+      <input type="number" id="clockEditSec" min="0" max="59" value="0" />
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="gs-cancel" style="flex:1;" onclick="closeClockEdit()">Cancel</button>
+      <button class="gs-ok" style="flex:1;" onclick="applyClockEdit()">SET</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
