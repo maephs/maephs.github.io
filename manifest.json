@@ -2,7 +2,7 @@
   "name": "Basketball Rotation Planner",
   "short_name": "Rotations",
   "description": "Plan basketball substitution rotations with even playing time and role balance.",
-  "start_url": "./",
+  "start_url": "./?v=2.0.0",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#f5a623",
