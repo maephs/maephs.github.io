@@ -704,7 +704,7 @@
 
     <div class="contact">
       Questions or feedback? Contact <a href="mailto:adam.unit@gmail.com">adam.unit@gmail.com</a>
-      <div style="margin-top:8px;color:#444;font-size:11px;">Last updated: 07/05/2025</div>
+      <div style="margin-top:8px;color:#444;font-size:11px;">Last updated: 20/06/2026</div>
     </div>
   </div>
 </div>
@@ -2829,10 +2829,14 @@ function checkSubAlert() {
     return;
   }
 
-  // Case B: confirmed lineup matches right now — check if a FUTURE boundary
-  // (the next segment) is coming up within the next 60 seconds, for the
-  // green advance-warning banner.
-  const nextSegLocalIdx = currentSegLocalIdx + 1;
+  // Case B: confirmed lineup is at or ahead of the clock — check if a FUTURE
+  // boundary is coming up within the next 60 seconds, for the green
+  // advance-warning banner. Look ahead from whichever is FURTHER ALONG —
+  // the clock's current segment or the already-confirmed segment — so that
+  // confirming early doesn't cause us to re-flag the segment just confirmed.
+  const confirmedLocalIdx = gameState.confirmedSegIndex % segsPerQ;
+  const baseLocalIdx = Math.max(currentSegLocalIdx, confirmedLocalIdx);
+  const nextSegLocalIdx = baseLocalIdx + 1;
   const hasNextSeg = nextSegLocalIdx < q.segs.length;
 
   if (!hasNextSeg) {
