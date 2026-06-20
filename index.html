@@ -2817,10 +2817,13 @@ function checkSubAlert() {
   }
   const currentScheduledIdx = getGlobalSegIndex(gameState.quarter, currentSegLocalIdx);
 
-  // Case A: the lineup that should be live right now doesn't match what's
-  // confirmed — the sub boundary has already passed without confirmation.
-  // This takes priority over any "upcoming" check, since it's already due/overdue.
-  if (currentScheduledIdx !== gameState.confirmedSegIndex) {
+  // Case A: the lineup that SHOULD be live right now (per the clock) is
+  // AHEAD of what's confirmed — meaning the sub boundary has passed without
+  // confirmation. Compare using segment order (>), not just inequality,
+  // so a coach who confirms EARLY (getting ahead of the clock) is never
+  // mistaken for being behind. If confirmedSegIndex is already at or ahead
+  // of currentScheduledIdx, there's nothing overdue.
+  if (currentScheduledIdx > gameState.confirmedSegIndex) {
     const secsUntilChange = (q.segs[currentSegLocalIdx].start * 60) - elapsedSec; // will be <= 0
     showSubBanner(currentScheduledIdx, secsUntilChange);
     return;
@@ -2859,10 +2862,10 @@ function checkSubAlert() {
 function showSubBanner(scheduledIdx, secsUntilChange) {
   const banner = document.getElementById('subAlertBanner');
 
-  // Clock-remaining at the moment the sub is/was due (for the "X minute mark" label)
-  // Derived from secsUntilChange and the current clock, so it's correct
-  // regardless of which case (upcoming or already-passed) triggered this call.
-  const clockSecAtChange = gameState.clockSeconds + secsUntilChange;
+  // Clock-remaining at the moment the sub is/was due (for the "X minute mark" label).
+  // The clock counts DOWN, and secsUntilChange seconds will still elapse before
+  // the sub time arrives, so the clock value at that moment is LESS than now.
+  const clockSecAtChange = gameState.clockSeconds - secsUntilChange;
   const minuteMark = Math.max(0, Math.ceil(clockSecAtChange / 60));
 
   {
