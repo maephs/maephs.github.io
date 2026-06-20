@@ -413,6 +413,7 @@
       font-size:16px; letter-spacing:0.5px; animation: flashAlert 1s infinite;
     }
     #subAlertBanner.visible { display:block; }
+    #subAlertBanner.upcoming { background: var(--green); animation: none; }
     @keyframes flashAlert { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
     .sub-confirm-btn { margin-top:8px; padding:8px 20px; border-radius:20px; border:none; background:#111; color:var(--accent); font-family:'DM Mono',monospace; font-weight:700; font-size:12px; cursor:pointer; display:block; margin-left:auto; margin-right:auto; }
 
@@ -420,7 +421,9 @@
     .gt-team-section { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px; }
     .gt-team-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
     .gt-team-name { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--text-heading); letter-spacing:1px; }
-    .gt-team-score { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--accent); }
+    .gt-team-score-wrap { text-align:right; }
+    .gt-team-score { font-family:'Bebas Neue',sans-serif; font-size:32px; color:var(--accent); line-height:1; }
+    .gt-team-fouls { font-size:11px; color:var(--text-muted); margin-top:2px; }
     .gt-bonus-indicator { display:inline-block; margin-left:8px; padding:3px 10px; border-radius:12px; background:var(--red); color:#fff; font-family:'DM Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.5px; vertical-align:middle; animation: pulseBonus 1.2s infinite; }
     @keyframes pulseBonus { 0%,100% { opacity:1; } 50% { opacity:0.65; } }
     .gt-player-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
@@ -446,6 +449,15 @@
     .gt-bottom-actions { display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
     .gt-reset-btn { padding:10px 20px; border-radius:8px; border:1px solid var(--red); background:transparent; color:var(--red); font-family:'DM Mono',monospace; font-size:12px; cursor:pointer; }
     .gt-reset-btn:hover { background:var(--red); color:#111; }
+
+    /* ── Lineup stats ── */
+    .gt-lineup-section { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px; }
+    .gt-lineup-section-title { font-family:'Bebas Neue',sans-serif; font-size:16px; color:var(--text-heading); letter-spacing:1px; margin-bottom:12px; }
+    .gt-lineup-card { background:var(--row-bg); border-radius:8px; padding:10px 12px; margin-bottom:8px; }
+    .gt-lineup-card:last-child { margin-bottom:0; }
+    .gt-lineup-label { font-size:11px; color:var(--text-muted); letter-spacing:0.5px; font-weight:700; margin-bottom:4px; }
+    .gt-lineup-players { font-size:13px; color:var(--text-primary); margin-bottom:3px; }
+    .gt-lineup-meta { font-size:11px; color:var(--text-faint); }
 
     /* ── Fine-tune mode ── */
     .finetune-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px; padding:10px 14px; background:var(--ft-bar-bg); border:1px solid var(--ft-bar-border); border-radius:8px; }
@@ -2562,7 +2574,36 @@ function defaultGameState() {
     // Resets to 0 automatically at the start of each new quarter.
     // Keyed by quarter number: { 1: {my: N, opp: N}, 2: {...}, ... }
     quarterFouls: {},
+    // Lineup stints — one entry per period of court time with a fixed 5.
+    // A new stint starts whenever a substitution is confirmed. Points scored
+    // by either team while a stint is active are added to that stint.
+    // players is always stored as a sorted array of 5 indices, so stints with
+    // the same 5 players (even from different parts of the game) can be
+    // grouped together for the "best lineup" calculations.
+    lineupStints: [],
   };
+}
+
+// Start a brand-new lineup stint for the given 5 players (sorted for stable
+// grouping later). Called on game start and after every confirmed substitution.
+function startNewStint(players) {
+  gameState.lineupStints.push({
+    players: [...players].sort((a, b) => a - b),
+    pointsFor: 0,
+    pointsAgainst: 0,
+    secondsPlayed: 0,
+    startedAtClockSec: gameState.clockSeconds,
+    startedAtQuarter: gameState.quarter,
+  });
+}
+
+// Returns the currently active stint (the last one), creating an initial
+// one if none exists yet (e.g. right after Game Start before any sub).
+function getCurrentStint() {
+  if (!gameState.lineupStints.length) {
+    startNewStint(getPlayersForSeg(gameState.confirmedSegIndex));
+  }
+  return gameState.lineupStints[gameState.lineupStints.length - 1];
 }
 
 function loadGameState() {
@@ -2668,6 +2709,11 @@ function startClockInterval() {
     if (!gameState.clockRunning) return;
     gameState.clockSeconds = Math.max(0, gameState.clockSeconds - 1);
     gameState.clockLastTick = Date.now();
+
+    // Track playing time against the currently active lineup stint
+    const stint = getCurrentStint();
+    stint.secondsPlayed = (stint.secondsPlayed || 0) + 1;
+
     saveGameState();
     renderClock();
     checkSubAlert();
@@ -2712,10 +2758,26 @@ function closeClockEdit() {
 function applyClockEdit() {
   const mins = parseInt(document.getElementById('clockEditMin').value, 10) || 0;
   const secs = parseInt(document.getElementById('clockEditSec').value, 10) || 0;
-  gameState.clockSeconds = Math.max(0, mins * 60 + secs);
+  const newClockSeconds = Math.max(0, mins * 60 + secs);
+  const oldClockSeconds = gameState.clockSeconds;
+
+  // If the clock has been moved BACKWARDS (counting down further, i.e. time
+  // has elapsed — newClockSeconds < oldClockSeconds), credit that elapsed
+  // time to the current lineup stint, same as if the clock had ticked down
+  // normally. If the clock was moved FORWARDS (correcting an overshoot),
+  // we don't subtract time already credited, to keep this simple and safe —
+  // worst case a stint's minutes are slightly over-counted, never lost.
+  if (newClockSeconds < oldClockSeconds) {
+    const elapsedSec = oldClockSeconds - newClockSeconds;
+    const stint = getCurrentStint();
+    stint.secondsPlayed = (stint.secondsPlayed || 0) + elapsedSec;
+  }
+
+  gameState.clockSeconds = newClockSeconds;
   gtVibrated = false;
   saveGameState();
   renderClock();
+  renderLineupStats();
   closeClockEdit();
 }
 
@@ -2739,27 +2801,71 @@ function renderClock() {
 // ── Substitution alerts ───────────────────────────────────────────────────────
 
 function checkSubAlert() {
-  const scheduledIdx = getScheduledSegIndex();
   const banner = document.getElementById('subAlertBanner');
 
-  if (scheduledIdx === gameState.confirmedSegIndex) {
-    // No change due — clear alert
+  const segsPerQ = getSegsPerQ();
+  const q = ftPlan[gameState.quarter - 1];
+  if (!q) { banner.classList.remove('visible'); banner.innerHTML=''; return; }
+
+  const elapsedSec = (quarterDuration * 60) - gameState.clockSeconds;
+  const elapsedMin  = elapsedSec / 60;
+
+  // Find the segment we're currently inside (i.e. what SHOULD be live right now)
+  let currentSegLocalIdx = q.segs.length - 1;
+  for (let si = 0; si < q.segs.length; si++) {
+    if (elapsedMin >= q.segs[si].start && elapsedMin < q.segs[si].end) { currentSegLocalIdx = si; break; }
+  }
+  const currentScheduledIdx = getGlobalSegIndex(gameState.quarter, currentSegLocalIdx);
+
+  // Case A: the lineup that should be live right now doesn't match what's
+  // confirmed — the sub boundary has already passed without confirmation.
+  // This takes priority over any "upcoming" check, since it's already due/overdue.
+  if (currentScheduledIdx !== gameState.confirmedSegIndex) {
+    const secsUntilChange = (q.segs[currentSegLocalIdx].start * 60) - elapsedSec; // will be <= 0
+    showSubBanner(currentScheduledIdx, secsUntilChange);
+    return;
+  }
+
+  // Case B: confirmed lineup matches right now — check if a FUTURE boundary
+  // (the next segment) is coming up within the next 60 seconds, for the
+  // green advance-warning banner.
+  const nextSegLocalIdx = currentSegLocalIdx + 1;
+  const hasNextSeg = nextSegLocalIdx < q.segs.length;
+
+  if (!hasNextSeg) {
     banner.classList.remove('visible');
     banner.innerHTML = '';
+    banner.classList.remove('upcoming');
     gameState.pendingSegIndex = null;
     return;
   }
 
-  // A change is due (or overdue). Show alert if within 60 sec of the segment
-  // boundary, or if we're already past it.
-  const q = ftPlan[gameState.quarter - 1];
-  const segsPerQ = getSegsPerQ();
-  const si = scheduledIdx % segsPerQ;
-  const elapsedSec = (quarterDuration * 60) - gameState.clockSeconds;
-  const segStartSec = (q.segs[si] ? q.segs[si].start : 0) * 60;
+  const scheduledIdx = getGlobalSegIndex(gameState.quarter, nextSegLocalIdx);
+  const segStartSec = q.segs[nextSegLocalIdx].start * 60;
   const secsUntilChange = segStartSec - elapsedSec;
 
-  if (secsUntilChange <= 60) {
+  if (secsUntilChange > 60) {
+    // Too early — no banner yet
+    banner.classList.remove('visible');
+    banner.innerHTML = '';
+    banner.classList.remove('upcoming');
+    gameState.pendingSegIndex = null;
+    return;
+  }
+
+  showSubBanner(scheduledIdx, secsUntilChange);
+}
+
+function showSubBanner(scheduledIdx, secsUntilChange) {
+  const banner = document.getElementById('subAlertBanner');
+
+  // Clock-remaining at the moment the sub is/was due (for the "X minute mark" label)
+  // Derived from secsUntilChange and the current clock, so it's correct
+  // regardless of which case (upcoming or already-passed) triggered this call.
+  const clockSecAtChange = gameState.clockSeconds + secsUntilChange;
+  const minuteMark = Math.max(0, Math.ceil(clockSecAtChange / 60));
+
+  {
     if (gameState.pendingSegIndex !== scheduledIdx) {
       gameState.pendingSegIndex = scheduledIdx;
       gtVibrated = false;
@@ -2773,14 +2879,23 @@ function checkSubAlert() {
 
     const exitNames  = exits.map(pi => ftActivePlayers[pi]?.name).filter(Boolean);
     const enterNames = enters.map(pi => ftActivePlayers[pi]?.name).filter(Boolean);
+    const subDetails = (exitNames.length || enterNames.length)
+      ? `<br><span style="font-size:13px;">OUT: ${exitNames.join(', ') || '—'} → IN: ${enterNames.join(', ') || '—'}</span>`
+      : '';
 
-    let msg = secsUntilChange > 0
-      ? `⏱ SUB DUE IN ${secsUntilChange}s`
-      : `⏱ SUB OVERDUE`;
-    if (exitNames.length || enterNames.length) {
-      msg += `<br><span style="font-size:13px;">OUT: ${exitNames.join(', ') || '—'} → IN: ${enterNames.join(', ') || '—'}</span>`;
+    let msg, isUpcoming;
+
+    if (secsUntilChange > 0) {
+      // ── Upcoming zone: from 60s down to 1s before — green heads-up banner ──
+      isUpcoming = true;
+      msg = `🔔 Next substitution scheduled for the ${minuteMark}-minute mark${subDetails}`;
+    } else {
+      // ── Overdue zone: time has passed — amber overdue banner ──
+      isUpcoming = false;
+      msg = `⏱ SUB OVERDUE${subDetails}`;
     }
 
+    banner.classList.toggle('upcoming', isUpcoming);
     banner.innerHTML = msg;
     banner.classList.add('visible');
 
@@ -2789,14 +2904,13 @@ function checkSubAlert() {
     confirmBtn.onclick = confirmSubstitution;
     banner.appendChild(confirmBtn);
 
-    // Vibrate once per alert (not every second)
+    // Vibrate once when the alert first appears for this scheduled change
+    // (i.e. on entering the green "upcoming" zone). Does not re-vibrate when
+    // the same alert later transitions to due/overdue.
     if (!gtVibrated && 'vibrate' in navigator) {
       navigator.vibrate([200, 100, 200]);
       gtVibrated = true;
     }
-  } else {
-    banner.classList.remove('visible');
-    banner.innerHTML = '';
   }
 }
 
@@ -2805,9 +2919,15 @@ function confirmSubstitution() {
   gameState.confirmedSegIndex = gameState.pendingSegIndex;
   gameState.pendingSegIndex = null;
   gtVibrated = false;
+
+  // Start a new lineup stint for the newly-confirmed 5 — all points scored
+  // from now on are attributed to this lineup combination until the next sub.
+  startNewStint(getPlayersForSeg(gameState.confirmedSegIndex));
+
   saveGameState();
   document.getElementById('subAlertBanner').classList.remove('visible');
   renderMyTeam();
+  renderLineupStats();
 }
 
 // ── Long-press helper ───────────────────────────────────────────────────────────
@@ -2873,10 +2993,17 @@ function adjustMyStat(playerIdx, field, delta) {
     if (delta > 0) getQuarterFoulTally().my += delta;
   } else {
     stat[field] = Math.max(0, (stat[field] || 0) + delta);
+    if (field === 'points') {
+      // Attribute these points to whichever lineup is currently on court
+      const stint = getCurrentStint();
+      stint.pointsFor = Math.max(0, stint.pointsFor + delta);
+    }
   }
 
   saveGameState();
   renderMyTeam();
+  if (field === 'pf') renderOppTeam(); // a foul on my team can put the opponent in the bonus
+  if (field === 'points') renderLineupStats();
 }
 
 function resetMyStat(playerIdx, field) {
@@ -2896,6 +3023,7 @@ function resetMyStat(playerIdx, field) {
 
   saveGameState();
   renderMyTeam();
+  if (field === 'pf') renderOppTeam();
 }
 
 function adjustOppStat(oppIdx, field, delta) {
@@ -2907,10 +3035,17 @@ function adjustOppStat(oppIdx, field, delta) {
     if (delta > 0) getQuarterFoulTally().opp += delta;
   } else {
     p[field] = Math.max(0, (p[field] || 0) + delta);
+    if (field === 'points') {
+      // Attribute conceded points to whichever of MY lineups is currently on court
+      const stint = getCurrentStint();
+      stint.pointsAgainst = Math.max(0, stint.pointsAgainst + delta);
+    }
   }
 
   saveGameState();
   renderOppTeam();
+  if (field === 'pf') renderMyTeam(); // a foul on the opponent can put my team in the bonus
+  if (field === 'points') renderLineupStats();
 }
 
 function resetOppStat(oppIdx, field) {
@@ -2927,6 +3062,7 @@ function resetOppStat(oppIdx, field) {
 
   saveGameState();
   renderOppTeam();
+  if (field === 'pf') renderMyTeam();
 }
 
 function setOppJersey(oppIdx, value) {
@@ -2972,8 +3108,78 @@ function renderGameTime() {
   renderClock();
   renderMyTeam();
   renderOppTeam();
+  renderLineupStats();
   checkSubAlert();
   if (gameState.clockRunning && !gtClockInterval) startClockInterval();
+}
+
+// ── Lineup stats (best offense / defence / net rating) ──────────────────────
+//
+// Groups all stints by their unique 5-player combination (order-independent),
+// sums points for/against and seconds played across every appearance of that
+// combination, then finds the best in each category.
+
+function getAggregatedLineups() {
+  const groups = {}; // key = sorted player indices joined by ','
+
+  gameState.lineupStints.forEach(stint => {
+    if (!stint.players || stint.players.length !== 5) return; // skip incomplete stints
+    const key = stint.players.join(',');
+    if (!groups[key]) {
+      groups[key] = { players: stint.players, pointsFor: 0, pointsAgainst: 0, secondsPlayed: 0 };
+    }
+    groups[key].pointsFor     += stint.pointsFor || 0;
+    groups[key].pointsAgainst += stint.pointsAgainst || 0;
+    groups[key].secondsPlayed += stint.secondsPlayed || 0;
+  });
+
+  return Object.values(groups).map(g => ({
+    ...g,
+    net: g.pointsFor - g.pointsAgainst,
+  }));
+}
+
+function formatLineupNames(playerIndices) {
+  return playerIndices
+    .map(pi => ftActivePlayers[pi]?.name)
+    .filter(Boolean)
+    .join(', ');
+}
+
+function formatMinSec(totalSeconds) {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function renderLineupStats() {
+  const container = document.getElementById('lineupStatsSection');
+  if (!container) return;
+
+  const lineups = getAggregatedLineups();
+
+  if (lineups.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--text-faint);text-align:center;padding:12px;">No lineup data yet — stats will appear once points are scored.</div>';
+    return;
+  }
+
+  const bestOffense = [...lineups].sort((a, b) => b.pointsFor - a.pointsFor)[0];
+  const bestDefence = [...lineups].sort((a, b) => a.pointsAgainst - b.pointsAgainst)[0];
+  const bestNet      = [...lineups].sort((a, b) => b.net - a.net)[0];
+
+  container.innerHTML = '';
+
+  function card(label, icon, lineup, statText, accentColor) {
+    const c = el('div', {class:'gt-lineup-card', style:`border-left:3px solid ${accentColor};`});
+    c.appendChild(el('div', {class:'gt-lineup-label'}, `${icon} ${label}`));
+    c.appendChild(el('div', {class:'gt-lineup-players'}, formatLineupNames(lineup.players)));
+    c.appendChild(el('div', {class:'gt-lineup-meta'}, `${statText} · ${formatMinSec(lineup.secondsPlayed)} played together`));
+    return c;
+  }
+
+  container.appendChild(card('BEST OFFENSE', '🏆', bestOffense, `${bestOffense.pointsFor} points scored`, 'var(--green)'));
+  container.appendChild(card('BEST DEFENCE', '🛡️', bestDefence, `${bestDefence.pointsAgainst} points conceded`, 'var(--blue)'));
+  container.appendChild(card('BEST NET RATING', '📊', bestNet, `${bestNet.net >= 0 ? '+' : ''}${bestNet.net} net (${bestNet.pointsFor}–${bestNet.pointsAgainst})`, 'var(--accent)'));
 }
 
 function renderMyTeam() {
@@ -2983,8 +3189,10 @@ function renderMyTeam() {
   const onCourt = getPlayersForSeg(gameState.confirmedSegIndex);
   let totalPoints = 0;
   Object.values(gameState.myStats).forEach(s => { totalPoints += (s.points || 0); });
-  document.getElementById('myTeamScore').innerHTML = totalPoints + (isInBonus('my') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
+  document.getElementById('myTeamScore').textContent = totalPoints;
   document.getElementById('myTeamName').textContent = (settingsState.selectedTeam || 'MY TEAM').toUpperCase();
+  const myFouls = getQuarterFoulTally().my;
+  document.getElementById('myTeamFouls').innerHTML = `Team fouls: ${myFouls}` + (isInBonus('my') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
 
   // Show ALL active players, with on-court players first (in their current
   // order) followed by bench players. Bench players are visually dimmed but
@@ -3055,8 +3263,10 @@ function renderOppTeam() {
   gameState.oppPlayers.forEach(p => { oppTotal += (p.points || 0); });
   gameState.oppScore = oppTotal;
 
-  document.getElementById('oppTeamScore').innerHTML = oppTotal + (isInBonus('opp') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
+  document.getElementById('oppTeamScore').textContent = oppTotal;
   document.getElementById('oppTeamName').textContent = (gameState.oppName || 'OPPONENT').toUpperCase();
+  const oppFouls = getQuarterFoulTally().opp;
+  document.getElementById('oppTeamFouls').innerHTML = `Team fouls: ${oppFouls}` + (isInBonus('opp') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
 
   gameState.oppPlayers.forEach((p, idx) => {
     const foulTrouble = isFoulTrouble(totalPF(p.pf));
@@ -3159,6 +3369,7 @@ renderRoster();
   if (gameState.myStats) Object.values(gameState.myStats).forEach(migratePf);
   if (gameState.oppPlayers) gameState.oppPlayers.forEach(migratePf);
   if (!gameState.quarterFouls) gameState.quarterFouls = {};
+  if (!gameState.lineupStints) gameState.lineupStints = [];
 
   // If the clock was running when the page closed, account for elapsed time
   if (gameState.clockRunning && gameState.clockLastTick) {
@@ -3299,7 +3510,10 @@ if ('serviceWorker' in navigator) {
   <div class="gt-team-section" id="myTeamSection">
     <div class="gt-team-header">
       <span class="gt-team-name" id="myTeamName">MY TEAM</span>
-      <span class="gt-team-score" id="myTeamScore">0</span>
+      <div class="gt-team-score-wrap">
+        <div class="gt-team-score" id="myTeamScore">0</div>
+        <div class="gt-team-fouls" id="myTeamFouls">Team fouls: 0</div>
+      </div>
     </div>
     <div class="gt-player-grid" id="myPlayerGrid"></div>
   </div>
@@ -3308,9 +3522,18 @@ if ('serviceWorker' in navigator) {
   <div class="gt-team-section" id="oppTeamSection">
     <div class="gt-team-header">
       <span class="gt-team-name" id="oppTeamName">OPPONENT</span>
-      <span class="gt-team-score" id="oppTeamScore">0</span>
+      <div class="gt-team-score-wrap">
+        <div class="gt-team-score" id="oppTeamScore">0</div>
+        <div class="gt-team-fouls" id="oppTeamFouls">Team fouls: 0</div>
+      </div>
     </div>
     <div class="gt-player-grid" id="oppPlayerGrid"></div>
+  </div>
+
+  <!-- Lineup performance stats -->
+  <div class="gt-lineup-section">
+    <div class="gt-lineup-section-title">LINEUP PERFORMANCE</div>
+    <div id="lineupStatsSection"></div>
   </div>
 
   <div class="gt-bottom-actions">
