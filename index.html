@@ -3414,7 +3414,7 @@ function applyUpdate() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const reg = await navigator.serviceWorker.register('./sw.js');
+      const reg = await navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' });
       _swRegistration = reg;
 
       // If a new SW is already waiting on first load, show banner immediately
