@@ -474,13 +474,13 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-27T01:19:09.000Z",
+        "date": "2026-06-27T01:19:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Redbacks U16 Pearl",
         "isHome": true,
         "roundName": "Round 11",
-        "status": "STARTED"
+        "status": "ENDED"
       }
     },
     "Redbacks U16 Onyx": {
@@ -516,13 +516,13 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-27T01:19:09.000Z",
+        "date": "2026-06-27T01:19:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Redbacks U16 Teal",
         "isHome": false,
         "roundName": "Round 11",
-        "status": "STARTED"
+        "status": "ENDED"
       }
     },
     "Redbacks U16 Grey": {
@@ -663,13 +663,13 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-28T08:15:48.000Z",
+        "date": "2026-06-28T08:13:23.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Tigers U18 Blue",
         "isHome": true,
         "roundName": "Round 11",
-        "status": "STARTED"
+        "status": "ENDED"
       }
     },
     "Redbacks U18 Grey": {
@@ -705,13 +705,13 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-28T08:10:00.000Z",
+        "date": "2026-06-28T08:17:51.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Redbacks U18 Silver",
         "isHome": true,
         "roundName": "Round 11",
-        "status": ""
+        "status": "ENDED"
       }
     },
     "Redbacks U18 Silver": {
@@ -726,15 +726,15 @@
         "status": ""
       },
       "lastGame": {
-        "date": "2026-06-28T08:10:00.000Z",
+        "date": "2026-06-28T08:17:51.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Redbacks U18 Black",
         "isHome": false,
         "roundName": "Round 11",
-        "status": ""
+        "status": "ENDED"
       }
     }
   },
-  "updatedAt": "2026-06-28T08:17:12.662Z"
+  "updatedAt": "2026-06-30T08:24:42.570Z"
 }
