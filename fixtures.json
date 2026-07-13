@@ -150,9 +150,9 @@
     "Redbacks U12 White": {
       "division": "U12 Boys Division 3",
       "nextGame": {
-        "date": "2026-07-17T23:40:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
+        "date": "2026-07-17T22:50:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 4",
         "opponent": "Bobcats U12 Green",
         "isHome": false,
         "roundName": "Round 12",
@@ -171,9 +171,9 @@
     "Redbacks U12 Grey": {
       "division": "U12 Boys Division 3",
       "nextGame": {
-        "date": "2026-07-18T00:40:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
+        "date": "2026-07-17T22:50:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 5",
         "opponent": "Bobcats U12 Red",
         "isHome": true,
         "roundName": "Round 12",
@@ -213,7 +213,7 @@
     "Redbacks U12 Silver": {
       "division": "U12 Boys Division 2",
       "nextGame": {
-        "date": "2026-07-18T00:40:00.000Z",
+        "date": "2026-07-17T23:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 5",
         "opponent": "Bobcats U12 Yellow",
@@ -234,7 +234,7 @@
     "Redbacks U14 Indigo": {
       "division": "U14 Boys  Division 6",
       "nextGame": {
-        "date": "2026-07-18T02:20:00.000Z",
+        "date": "2026-07-18T00:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Panthers U14 Green",
@@ -276,9 +276,9 @@
     "Redbacks U14 Pearl": {
       "division": "U14 Boys  Division 3",
       "nextGame": {
-        "date": "2026-07-18T01:30:00.000Z",
+        "date": "2026-07-18T00:30:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
+        "court": "Court 5",
         "opponent": "Devils U14 Teal",
         "isHome": false,
         "roundName": "Round 12",
@@ -297,9 +297,9 @@
     "Redbacks U14 Grey": {
       "division": "U14 Boys  Division 3",
       "nextGame": {
-        "date": "2026-07-18T02:20:00.000Z",
+        "date": "2026-07-18T01:30:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
+        "court": "Court 3",
         "opponent": "Hawks U14 Navy",
         "isHome": false,
         "roundName": "Round 12",
@@ -318,7 +318,7 @@
     "Redbacks U14 Amber": {
       "division": "U14 Boys  Division 5",
       "nextGame": {
-        "date": "2026-07-18T06:00:00.000Z",
+        "date": "2026-07-18T05:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Pythons U14 White",
@@ -339,7 +339,7 @@
     "Redbacks U16 Red": {
       "division": "U16 Boys  Division 2",
       "nextGame": {
-        "date": "2026-07-18T05:00:00.000Z",
+        "date": "2026-07-18T04:10:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U16 Black",
@@ -360,7 +360,7 @@
     "Redbacks U16 Black": {
       "division": "U16 Boys  Division 2",
       "nextGame": {
-        "date": "2026-07-18T05:00:00.000Z",
+        "date": "2026-07-18T04:10:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U16 Red",
@@ -402,9 +402,9 @@
     "Redbacks U14 White": {
       "division": "U14 Boys  Division 2",
       "nextGame": {
-        "date": "2026-07-18T01:30:00.000Z",
+        "date": "2026-07-18T00:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
+        "court": "Court 4",
         "opponent": "Devils U14 Green",
         "isHome": true,
         "roundName": "Round 12",
@@ -423,9 +423,9 @@
     "Redbacks U16 Amber": {
       "division": "U16 Boys  Division 7",
       "nextGame": {
-        "date": "2026-07-18T07:40:00.000Z",
+        "date": "2026-07-18T06:50:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
+        "court": "Court 2",
         "opponent": "Devils U16 Red",
         "isHome": false,
         "roundName": "Round 12",
@@ -444,9 +444,9 @@
     "Redbacks U14 Teal": {
       "division": "U14 Boys  Division 4",
       "nextGame": {
-        "date": "2026-07-18T03:20:00.000Z",
+        "date": "2026-07-18T02:20:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
+        "court": "Court 5",
         "opponent": "Bobcats U14 Red",
         "isHome": true,
         "roundName": "Round 12",
@@ -486,7 +486,7 @@
     "Redbacks U16 Onyx": {
       "division": "U16 Boys  Division 6",
       "nextGame": {
-        "date": "2026-07-18T06:50:00.000Z",
+        "date": "2026-07-18T06:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Hawks U16 Blue",
@@ -509,7 +509,7 @@
       "nextGame": {
         "date": "2026-07-18T07:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
+        "court": "Court 5",
         "opponent": "Tigers U16 Silver",
         "isHome": true,
         "roundName": "Round 12",
@@ -528,7 +528,7 @@
     "Redbacks U16 Grey": {
       "division": "U16 Boys  Division 5",
       "nextGame": {
-        "date": "2026-07-18T04:10:00.000Z",
+        "date": "2026-07-18T03:20:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 5",
         "opponent": "Devils U16 Teal",
@@ -549,7 +549,7 @@
     "Redbacks U16 Silver": {
       "division": "U16 Boys  Division 3",
       "nextGame": {
-        "date": "2026-07-18T04:10:00.000Z",
+        "date": "2026-07-18T03:20:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Hawks U16 Yellow",
@@ -572,7 +572,7 @@
       "nextGame": {
         "date": "2026-07-18T06:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
+        "court": "Court 5",
         "opponent": "Hawks U16 Silver",
         "isHome": false,
         "roundName": "Round 12",
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-07-12T07:24:50.033Z"
+  "updatedAt": "2026-07-13T08:10:26.974Z"
 }
