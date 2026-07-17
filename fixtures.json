@@ -3,43 +3,43 @@
     "Redbacks U12 Black": {
       "division": "U12 Boys Division 1",
       "nextGame": {
-        "date": "2026-07-17T07:10:00.000Z",
+        "date": "2026-07-24T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Timberwolves U12 Blue",
+        "isHome": true,
+        "roundName": "Round 13",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-17T07:07:38.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Redbacks U12 Red",
         "isHome": false,
         "roundName": "Round 12",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-06-26T07:10:05.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
-        "opponent": "Hawks U12 Purple",
-        "isHome": false,
-        "roundName": "Round 11",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U12 Red": {
       "division": "U12 Boys Division 1",
       "nextGame": {
-        "date": "2026-07-17T07:10:00.000Z",
+        "date": "2026-07-24T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Bobcats U12 Black",
+        "isHome": true,
+        "roundName": "Round 13",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-17T07:07:38.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Redbacks U12 Black",
         "isHome": true,
         "roundName": "Round 12",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-06-26T07:07:03.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Timberwolves U12 Blue",
-        "isHome": false,
-        "roundName": "Round 11",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U14 Black": {
@@ -381,21 +381,21 @@
     "Redbacks U14 Silver": {
       "division": "U14 Boys  Division 2",
       "nextGame": {
+        "date": "2026-07-18T00:40:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Bobcats U14 Yellow",
+        "isHome": false,
+        "roundName": "Round 12",
+        "status": ""
+      },
+      "lastGame": {
         "date": "2026-07-17T07:10:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Bye",
         "isHome": false,
         "roundName": "Round 10",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-06-27T01:21:45.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Hawks U14 Black",
-        "isHome": true,
-        "roundName": "Round 11",
         "status": "ENDED"
       }
     },
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-07-16T07:17:33.312Z"
+  "updatedAt": "2026-07-17T07:11:55.774Z"
 }
