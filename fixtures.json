@@ -591,150 +591,150 @@
     "Redbacks U18 Onyx": {
       "division": "U18 Boys  Division 4",
       "nextGame": {
-        "date": "2026-07-26T06:00:00.000Z",
+        "date": "2026-08-02T05:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Redbacks U18 Pearl",
+        "isHome": false,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T06:00:13.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 5",
         "opponent": "Bobcats U18 Blue",
         "isHome": false,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-17T09:40:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Bye",
-        "isHome": true,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Teal": {
       "division": "U18 Boys  Division 4",
       "nextGame": {
-        "date": "2026-07-26T05:00:00.000Z",
+        "date": "2026-08-02T05:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Hawks U18 Yellow",
+        "isHome": true,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T05:00:22.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Tigers U18 Teal",
         "isHome": true,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-18T22:00:38.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
-        "opponent": "Pythons U18 White",
-        "isHome": false,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Pearl": {
       "division": "U18 Boys  Division 4",
       "nextGame": {
-        "date": "2026-07-26T05:00:00.000Z",
+        "date": "2026-08-02T05:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Redbacks U18 Onyx",
+        "isHome": true,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T05:00:06.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 5",
         "opponent": "Timberwolves U18 Grey",
         "isHome": false,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-18T22:00:07.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
-        "opponent": "Devils U18 Green",
-        "isHome": true,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 White": {
       "division": "U18 Boys  Division 3",
       "nextGame": {
+        "date": "2026-08-02T07:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Panthers U18 Green",
+        "isHome": true,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
         "date": "2026-07-26T07:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Timberwolves U18 White",
         "isHome": true,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-19T07:59:38.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
-        "opponent": "Bobcats U18 White",
-        "isHome": false,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Grey": {
       "division": "U18 Boys  Division 3",
       "nextGame": {
-        "date": "2026-07-26T06:00:00.000Z",
+        "date": "2026-08-02T06:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bobcats U18 Green",
+        "isHome": false,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T05:51:23.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Hawks U18 Gold",
         "isHome": false,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-18T22:48:44.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Bobcats U18 Red",
-        "isHome": true,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Black": {
       "division": "U18 Boys  Division 2",
       "nextGame": {
-        "date": "2026-07-26T07:00:00.000Z",
+        "date": "2026-08-02T07:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Tigers U18 Blue",
+        "isHome": true,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T06:59:28.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Panthers U18 Green",
         "isHome": false,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-19T08:00:06.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Timberwolves U18 Green",
-        "isHome": false,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Silver": {
       "division": "U18 Boys  Division 2",
       "nextGame": {
-        "date": "2026-07-26T07:00:00.000Z",
+        "date": "2026-08-02T07:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Timberwolves U18 White",
+        "isHome": false,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-26T07:00:27.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 5",
         "opponent": "Bobcats U18 White",
         "isHome": true,
         "roundName": "Round 13",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-19T08:00:06.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
-        "opponent": "Tigers U18 Blue",
-        "isHome": true,
-        "roundName": "Round 12",
         "status": "ENDED"
       }
     }
   },
-  "updatedAt": "2026-07-25T07:10:44.338Z"
+  "updatedAt": "2026-07-27T08:22:39.223Z"
 }
