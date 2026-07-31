@@ -3,64 +3,64 @@
     "Redbacks U12 Black": {
       "division": "U12 Boys Division 1",
       "nextGame": {
-        "date": "2026-07-31T07:10:00.000Z",
+        "date": "2026-08-07T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bobcats U12 Black",
+        "isHome": false,
+        "roundName": "Round 15",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-31T07:10:06.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Pythons U12 Green",
         "isHome": true,
         "roundName": "Round 14",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-24T07:10:07.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Timberwolves U12 Blue",
-        "isHome": true,
-        "roundName": "Round 13",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U12 Red": {
       "division": "U12 Boys Division 1",
       "nextGame": {
-        "date": "2026-07-31T07:10:00.000Z",
+        "date": "2026-08-07T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Pythons U12 Green",
+        "isHome": false,
+        "roundName": "Round 15",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-31T07:10:01.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 2",
         "opponent": "Hawks U12 Purple",
         "isHome": false,
         "roundName": "Round 14",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-24T07:08:25.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Bobcats U12 Black",
-        "isHome": true,
-        "roundName": "Round 13",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U14 Black": {
       "division": "U14 Boys  Division 1",
       "nextGame": {
-        "date": "2026-07-31T07:10:00.000Z",
+        "date": "2026-08-07T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Pythons U14 Green",
+        "isHome": true,
+        "roundName": "Round 15",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-07-31T07:09:27.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Tigers U14 Orange",
         "isHome": false,
         "roundName": "Round 14",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-17T08:00:17.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
-        "opponent": "Redbacks U14 Red",
-        "isHome": true,
-        "roundName": "Round 12",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U14 Red": {
@@ -255,21 +255,21 @@
     "Redbacks U14 Onyx": {
       "division": "U14 Boys  Division 3",
       "nextGame": {
+        "date": "2026-08-01T02:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Bobcats U14 Green",
+        "isHome": false,
+        "roundName": "Round 14",
+        "status": ""
+      },
+      "lastGame": {
         "date": "2026-07-31T07:10:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 4",
         "opponent": "Bye",
         "isHome": false,
         "roundName": "Round 12",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-07-25T01:29:31.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
-        "opponent": "Tigers U14 Gold",
-        "isHome": true,
-        "roundName": "Round 13",
         "status": "ENDED"
       }
     },
@@ -736,5 +736,5 @@
       }
     }
   },
-  "updatedAt": "2026-07-30T07:28:22.206Z"
+  "updatedAt": "2026-07-31T07:45:27.702Z"
 }
