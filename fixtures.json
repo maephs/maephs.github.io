@@ -669,7 +669,7 @@
         "opponent": "Redbacks U18 Silver",
         "isHome": false,
         "roundName": "Round 15",
-        "status": "STARTED"
+        "status": "ENDED"
       }
     },
     "Redbacks U18 Grey": {
@@ -732,9 +732,9 @@
         "opponent": "Redbacks U18 White",
         "isHome": true,
         "roundName": "Round 15",
-        "status": "STARTED"
+        "status": "ENDED"
       }
     }
   },
-  "updatedAt": "2026-08-09T05:41:41.909Z"
+  "updatedAt": "2026-08-10T06:06:47.634Z"
 }
