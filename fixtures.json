@@ -282,7 +282,7 @@
         "opponent": "Bye",
         "isHome": true,
         "roundName": "Round 16",
-        "status": ""
+        "status": "ENDED"
       },
       "lastGame": {
         "date": "2026-08-22T07:41:01.000Z",
@@ -728,5 +728,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-24T05:30:41.128Z"
+  "updatedAt": "2026-08-25T05:23:38.797Z"
 }
