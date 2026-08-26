@@ -66,9 +66,9 @@
     "Redbacks U14 Red": {
       "division": "U14 Boys  Division 1",
       "nextGame": {
-        "date": "2026-08-28T07:10:00.000Z",
+        "date": "2026-08-28T08:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
+        "court": "Court 1",
         "opponent": "Tigers U14 Orange",
         "isHome": true,
         "roundName": "Round 18",
@@ -728,5 +728,5 @@
       }
     }
   },
-  "updatedAt": "2026-08-25T05:23:38.797Z"
+  "updatedAt": "2026-08-26T05:24:52.767Z"
 }
