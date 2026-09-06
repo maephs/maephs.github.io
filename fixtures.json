@@ -390,23 +390,15 @@
     },
     "Redbacks U18 Onyx": {
       "division": "U18 Boys  Division 4",
-      "nextGame": {
-        "date": "2026-09-06T08:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-06T08:42:27.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Redbacks U18 Pearl",
         "isHome": false,
         "roundName": "Finals - Round 1",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-08-30T05:00:45.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
-        "opponent": "Pythons U18 Black",
-        "isHome": true,
-        "roundName": "Round 18",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U18 Teal": {
@@ -424,23 +416,15 @@
     },
     "Redbacks U18 Pearl": {
       "division": "U18 Boys  Division 4",
-      "nextGame": {
-        "date": "2026-09-06T08:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-06T08:42:27.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Redbacks U18 Onyx",
         "isHome": true,
         "roundName": "Finals - Round 1",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-08-30T06:01:13.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Bobcats U18 Grey",
-        "isHome": true,
-        "roundName": "Round 18",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U18 White": {
@@ -471,46 +455,30 @@
     },
     "Redbacks U18 Black": {
       "division": "U18 Boys  Division 2",
-      "nextGame": {
-        "date": "2026-09-06T08:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-06T08:31:16.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U18 Silver",
         "isHome": true,
         "roundName": "Finals - Round 1",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-08-30T07:00:26.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Redbacks U18 Silver",
-        "isHome": false,
-        "roundName": "Round 18",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     },
     "Redbacks U18 Silver": {
       "division": "U18 Boys  Division 2",
-      "nextGame": {
-        "date": "2026-09-06T08:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-06T08:31:16.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
         "opponent": "Redbacks U18 Black",
         "isHome": false,
         "roundName": "Finals - Round 1",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-08-30T07:00:26.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Redbacks U18 Black",
-        "isHome": true,
-        "roundName": "Round 18",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     }
   },
-  "updatedAt": "2026-09-05T08:43:22.356Z"
+  "updatedAt": "2026-09-06T09:04:09.252Z"
 }
