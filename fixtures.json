@@ -2,43 +2,27 @@
   "fixtures": {
     "Redbacks U12 Black": {
       "division": "U12 Boys Division 1",
-      "nextGame": {
-        "date": "2026-09-11T07:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-11T07:29:12.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Redbacks U12 Red",
         "isHome": false,
         "roundName": "Finals - Round 2",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-09-04T07:08:53.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Bobcats U12 Black",
-        "isHome": false,
-        "roundName": "Finals - Round 1",
         "status": "ENDED"
       }
     },
     "Redbacks U12 Red": {
       "division": "U12 Boys Division 1",
-      "nextGame": {
-        "date": "2026-09-11T07:30:00.000Z",
+      "nextGame": null,
+      "lastGame": {
+        "date": "2026-09-11T07:29:12.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 1",
         "opponent": "Redbacks U12 Black",
         "isHome": true,
         "roundName": "Finals - Round 2",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-09-04T07:10:10.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Timberwolves U12 Blue",
-        "isHome": true,
-        "roundName": "Finals - Round 1",
         "status": "ENDED"
       }
     },
@@ -536,5 +520,5 @@
       }
     }
   },
-  "updatedAt": "2026-09-10T09:17:35.521Z"
+  "updatedAt": "2026-09-11T09:16:28.504Z"
 }
