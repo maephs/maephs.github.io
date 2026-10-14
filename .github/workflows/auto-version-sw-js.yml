@@ -8,7 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout repo
@@ -21,15 +21,3 @@ jobs:
           echo "Stamping sw.js with version: $VERSION"
           sed -i "s/AUTO_VERSION/$VERSION/" sw.js
           cat sw.js | grep CACHE_VERSION
-
-      - name: Commit versioned sw.js
-        run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sw.js
-          if git diff --staged --quiet; then
-            echo "No changes to sw.js"
-          else
-            git commit -m "chore: stamp sw.js version [${{ github.sha }}]"
-            git push
-          fi
