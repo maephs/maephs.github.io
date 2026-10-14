@@ -1,4 +1,4 @@
-name: Deploy
+name: PWA service worker auto-versioning
 
 on:
   push:
