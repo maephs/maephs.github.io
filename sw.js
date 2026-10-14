@@ -1,7 +1,8 @@
 // ── Service Worker — Basketball Rotation Planner ─────────────────────────────
-// 48725b6 is replaced by the GitHub Actions deploy workflow on every push.
+// AUTO_VERSION is replaced by the GitHub Actions deploy workflow on every push.
 // Changing it busts the cache and triggers the update notification banner.
-const CACHE_VERSION = '48725b6';
+// Note: the Github Action replaces the AUTO_VERSION placeholder in the live sw.js served through the hosted website - not in this source file.
+const CACHE_VERSION = 'AUTO_VERSION';
 const CACHE_NAME    = 'rotation-planner-' + CACHE_VERSION;
 
 const APP_SHELL = [
