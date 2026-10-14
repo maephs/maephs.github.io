@@ -3,8 +3,8 @@ const fs = require('fs');
 
 const TARGET_URL = 'https://registration.basketballconnect.com/liveScoreSeasonFixture' +
   '?organisationKey=155fb981-71f6-48a0-a53f-1da7ee78fb39' +
-  '&yearId=8' +
-  '&competitionUniqueKey=ae31672b-fa16-475f-b569-deda015aba60' +
+  '&yearId=9' +
+  '&competitionUniqueKey=708ed283-4049-4d87-919b-cbb8e75173cc' +
   '&divisionId=All' +
   '&teamId=-1';
 
