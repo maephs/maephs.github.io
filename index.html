@@ -208,11 +208,22 @@
     .team-option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--row-bg); cursor: pointer; transition: all 0.15s; }
     .team-option:hover { border-color: var(--accent); background: var(--chip-bg); }
     .team-option.selected { border-color: var(--accent); background: var(--chip-bg); }
-    .team-option .team-radio { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .team-option .team-radio { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
     .team-option.selected .team-radio { border-color: var(--accent); background: var(--accent); }
-    .team-option.selected .team-radio::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #111; }
+    .team-option.selected .team-radio::after { content: '✓'; font-size: 10px; color: #111; font-weight: 700; line-height: 1; }
     .team-option .team-name { font-size: 13px; color: var(--text-primary); flex: 1; }
+    .team-option.disabled { opacity: 0.45; cursor: default; }
     .team-loading { font-size: 12px; color: var(--text-muted); padding: 12px 0; text-align: center; }
+    /* Your Teams chip row */
+    .your-teams-section { margin: 8px 0 10px; }
+    .your-teams-chips { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .your-teams-chips::-webkit-scrollbar { height: 3px; }
+    .your-teams-chips::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+    .team-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border2); background: var(--row-bg); color: var(--text-secondary); font-size: 12px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
+    .team-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .team-chip.active { border-color: var(--accent); background: var(--accent); color: #111; font-weight: 700; }
+    .your-teams-prompt { font-size: 12px; color: var(--text-muted); padding: 6px 2px; }
+    .your-teams-fixture { margin-top: 8px; padding: 10px 12px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; }
     .team-error { font-size: 12px; color: var(--red); padding: 10px 12px; background: var(--row-bg); border-radius: 6px; border: 1px solid var(--border); }
     .settings-saved { font-size: 11px; color: var(--text-faint); margin-top: 10px; transition: opacity 0.5s; }
 
@@ -543,6 +554,14 @@
     </button>
   </div>
 
+  <!-- Your Teams section -->
+  <div class="your-teams-section" id="yourTeamsSection">
+    <div class="your-teams-chips" id="yourTeamsChips">
+      <span class="your-teams-prompt" id="yourTeamsPrompt">Tap ⚙ to select your team(s)</span>
+    </div>
+    <div id="yourTeamsFixture"></div>
+  </div>
+
   <!-- Roster card -->
   <div class="card">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
@@ -591,8 +610,8 @@
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent);letter-spacing:2px;margin-bottom:20px;">SETTINGS</h2>
 
     <div class="settings-section">
-      <h3>Your Team</h3>
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Select your team from the Redbacks competition (2026 season).</p>
+      <h3>Your Teams</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Select up to 3 teams from the Redbacks competition (2026 season). Tap a team on the main screen to switch between them.</p>
       <div id="teamListContainer">
         <div class="team-loading" id="teamLoadingMsg">Loading teams…</div>
       </div>
@@ -751,12 +770,42 @@ function getSubPoints(quarterDuration, mode) {
   return [t1, t2];
 }
 
+// ── Settings (must come before roster/finetune/gamestate persistence) ────────
+const SETTINGS_KEY = 'bball_settings_v1';
+let settingsState = { selectedTeams: [], activeTeam: null };
+
+function teamStorageKey(base, teamName) {
+  if (!teamName) return base;
+  return base + '__' + teamName;
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Migrate from old single-team format
+      if (parsed.selectedTeam && !parsed.selectedTeams) {
+        parsed.selectedTeams = [parsed.selectedTeam];
+        parsed.activeTeam = parsed.selectedTeam;
+        delete parsed.selectedTeam;
+      }
+      settingsState = { selectedTeams: [], activeTeam: null, ...parsed };
+    }
+  } catch(e) {}
+}
+
+loadSettings(); // load before roster/ft/gamestate so team key is available
+
 // ── Persistence ──────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'bball_roster_v2';
 
 function saveRoster() {
   try {
+    // Save to both global key (for backward compat) and team-scoped key
     localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+    const team = settingsState.activeTeam;
+    if (team) localStorage.setItem(teamStorageKey(STORAGE_KEY, team), JSON.stringify(players));
     const t = document.getElementById('savedToast');
     if (t) { t.textContent = '✓ saved'; t.style.opacity = '1'; setTimeout(() => { t.style.opacity = '0'; }, 1500); }
   } catch(e) {}
@@ -764,7 +813,12 @@ function saveRoster() {
 
 function loadRoster() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    // Prefer team-scoped key if an active team is set
+    const team = settingsState && settingsState.activeTeam;
+    const key = team ? teamStorageKey(STORAGE_KEY, team) : STORAGE_KEY;
+    let raw = localStorage.getItem(key);
+    // Fall back to global key for migration
+    if (!raw && team) raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const saved = JSON.parse(raw);
     if (!Array.isArray(saved) || saved.length < 1) return null;
@@ -785,10 +839,14 @@ let quarterDuration = 10;
 
 function resetRoster() {
   if (!confirm('Clear all saved names and roles and reset to defaults?')) return;
-  try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    const team = settingsState.activeTeam;
+    if (team) localStorage.removeItem(teamStorageKey(STORAGE_KEY, team));
+  } catch(e) {}
   players = Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
   clearOutput(); loadSettings();
-renderRoster();
+  renderRoster();
 }
 
 function addPlayer() {
@@ -1184,7 +1242,7 @@ function renderRoster() {
   // Show fill-in button only when a team is selected and < 7 players available
   const fillinBtn = document.getElementById('fillinBtn');
   if (fillinBtn) {
-    const showFillin = settingsState.selectedTeam && active.length < 7;
+    const showFillin = settingsState.activeTeam && active.length < 7;
     fillinBtn.style.display = showFillin ? 'inline-block' : 'none';
   }
 
@@ -1307,26 +1365,33 @@ let ftTotalMinutes = 0;
 
 function saveFtState() {
   try {
-    localStorage.setItem(FINETUNE_KEY, JSON.stringify({
-      plan: ftPlan,
-      edits: ftEdits,
-      activePlayers: ftActivePlayers,
-      totalMinutes: ftTotalMinutes,
-      numQuarters, quarterDuration, interchangeMode,
-    }));
+    const data = JSON.stringify({
+      plan: ftPlan, edits: ftEdits, activePlayers: ftActivePlayers,
+      totalMinutes: ftTotalMinutes, numQuarters, quarterDuration, interchangeMode,
+    });
+    localStorage.setItem(FINETUNE_KEY, data);
+    const team = settingsState.activeTeam;
+    if (team) localStorage.setItem(teamStorageKey(FINETUNE_KEY, team), data);
   } catch(e) {}
 }
 
 function loadFtState() {
   try {
-    const raw = localStorage.getItem(FINETUNE_KEY);
+    const team = settingsState && settingsState.activeTeam;
+    const key = team ? teamStorageKey(FINETUNE_KEY, team) : FINETUNE_KEY;
+    let raw = localStorage.getItem(key);
+    if (!raw && team) raw = localStorage.getItem(FINETUNE_KEY);
     if (!raw) return null;
     return JSON.parse(raw);
   } catch(e) { return null; }
 }
 
 function clearFtState() {
-  try { localStorage.removeItem(FINETUNE_KEY); } catch(e) {}
+  try {
+    localStorage.removeItem(FINETUNE_KEY);
+    const team = settingsState.activeTeam;
+    if (team) localStorage.removeItem(teamStorageKey(FINETUNE_KEY, team));
+  } catch(e) {}
 }
 
 // Compute minutes played from ftPlan
@@ -1832,18 +1897,12 @@ function playerRowEl(name, rlabel, rcls, color, qi, si, slot, pi) {
 }
 
 // ── Settings ─────────────────────────────────────────────────────────────────
-const SETTINGS_KEY   = 'bball_settings_v1';
 // Teams are loaded from teams.json (same-origin, no CORS issue).
 // teams.json is kept up to date by a GitHub Actions workflow (.github/workflows/fetch-teams.yml).
 let _teamsCache = null;
-let settingsState = { selectedTeam: null };
-
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (raw) settingsState = { ...settingsState, ...JSON.parse(raw) };
-  } catch(e) {}
-}
+// settingsState, SETTINGS_KEY, teamStorageKey and loadSettings are defined
+// earlier (before roster init) so the team-scoped storage key is available
+// when loadRoster() runs at startup.
 
 function saveSettings() {
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settingsState)); } catch(e) {}
@@ -1860,12 +1919,105 @@ function closeSettings() {
   document.getElementById('settingsModal').classList.remove('open');
 }
 
+// ── Save/load all per-team state ───────────────────────────────────────────
+function saveCurrentTeamState() {
+  const team = settingsState.activeTeam;
+  if (!team) return;
+  // Save roster
+  try { localStorage.setItem(teamStorageKey(STORAGE_KEY, team), JSON.stringify(players)); } catch(e) {}
+  // Save fine-tune
+  if (ftPlan) {
+    try {
+      localStorage.setItem(teamStorageKey(FINETUNE_KEY, team), JSON.stringify({
+        plan: ftPlan, edits: ftEdits, activePlayers: ftActivePlayers,
+        totalMinutes: ftTotalMinutes, numQuarters, quarterDuration, interchangeMode,
+      }));
+    } catch(e) {}
+  }
+  // Save game state
+  if (gameState) {
+    try { localStorage.setItem(teamStorageKey(GAME_STATE_KEY, team), JSON.stringify(gameState)); } catch(e) {}
+  }
+}
+
+function loadTeamState(team) {
+  // Roster
+  try {
+    const raw = localStorage.getItem(teamStorageKey(STORAGE_KEY, team));
+    if (raw) {
+      const saved = JSON.parse(raw);
+      if (Array.isArray(saved) && saved.length >= 1) {
+        players = saved.map((p, i) => ({
+          name: typeof p.name === 'string' && p.name.trim() ? p.name.trim() : `Player ${i+1}`,
+          role: ['guard','forward','big'].includes(p.role) ? p.role : 'guard',
+          available: typeof p.available === 'boolean' ? p.available : true,
+          starter: typeof p.starter === 'boolean' ? p.starter : false,
+        }));
+      } else {
+        players = Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
+      }
+    } else {
+      players = Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
+    }
+  } catch(e) {
+    players = Array.from({length: 8}, (_, i) => ({ name: 'Player ' + (i+1), role: 'guard', available: true, starter: false }));
+  }
+  // Fine-tune
+  ftPlan = null; ftEdits = {}; ftActive = false; ftActivePlayers = []; ftTotalMinutes = 0;
+  try {
+    const raw = localStorage.getItem(teamStorageKey(FINETUNE_KEY, team));
+    if (raw) {
+      const ft = JSON.parse(raw);
+      if (ft && ft.plan) {
+        ftPlan = ft.plan; ftEdits = ft.edits || {}; ftActivePlayers = ft.activePlayers || [];
+        ftTotalMinutes = ft.totalMinutes || 0;
+        if (ft.numQuarters) numQuarters = ft.numQuarters;
+        if (ft.quarterDuration) quarterDuration = ft.quarterDuration;
+        if (ft.interchangeMode) interchangeMode = ft.interchangeMode;
+      }
+    }
+  } catch(e) {}
+  // Game state
+  gameState = null;
+  try {
+    const raw = localStorage.getItem(teamStorageKey(GAME_STATE_KEY, team));
+    if (raw) gameState = JSON.parse(raw);
+  } catch(e) {}
+}
+
+// ── Switch active team ─────────────────────────────────────────────────────
+function switchTeam(teamName) {
+  if (!settingsState.selectedTeams.includes(teamName)) return;
+  if (teamName === settingsState.activeTeam) return;
+  // Stop clock if running
+  if (typeof gtClockInterval !== 'undefined' && gtClockInterval) {
+    clearInterval(gtClockInterval);
+    gtClockInterval = null;
+    if (gameState) { gameState.clockRunning = false; }
+  }
+  // Save current team state
+  saveCurrentTeamState();
+  // Switch
+  settingsState.activeTeam = teamName;
+  saveSettings();
+  // Load new team state
+  loadTeamState(teamName);
+  // Re-render everything
+  clearOutput();
+  renderRoster();
+  renderYourTeams();
+  if (ftPlan) reRenderOutput();
+}
+
 let _fixturesCache = null;
 
-async function loadTeamList() {
+async function loadTeamList(silent) {
   const container = document.getElementById('teamListContainer');
-  if (_teamsCache && _fixturesCache) { renderTeamList(_teamsCache, container); return; }
-  container.innerHTML = '<div class="team-loading">Loading teams…</div>';
+  if (_teamsCache && _fixturesCache) {
+    if (!silent && container) renderTeamList(_teamsCache, container);
+    return;
+  }
+  if (!silent && container) container.innerHTML = '<div class="team-loading">Loading teams…</div>';
   try {
     const [teamsResp, fixturesResp] = await Promise.all([
       fetch('./teams.json?v=' + Date.now()),
@@ -1882,9 +2034,10 @@ async function loadTeamList() {
     } else {
       _fixturesCache = {};
     }
-    renderTeamList(teams, container);
+    if (!silent && container) renderTeamList(teams, container);
+    renderYourTeams(); // update fixture info on main page now that cache is loaded
   } catch(e) {
-    container.innerHTML = `<div class="team-error">Could not load team list.<br><small style="opacity:0.6;">${e.message}</small></div>`;
+    if (!silent && container) container.innerHTML = `<div class="team-error">Could not load team list.<br><small style="opacity:0.6;">${e.message}</small></div>`;
   }
 }
 
@@ -1893,30 +2046,81 @@ async function loadTeamList() {
 function renderTeamList(teams, container) {
   container.innerHTML = '';
   const list = el('div', {class:'team-list'});
+  const MAX_TEAMS = 3;
 
   teams.forEach(teamName => {
-    const isSelected = settingsState.selectedTeam === teamName;
-    const opt = el('div', {class:'team-option' + (isSelected ? ' selected' : '')});
-    const radio = el('div', {class:'team-radio'});
+    const isSelected = settingsState.selectedTeams.includes(teamName);
+    const atMax = settingsState.selectedTeams.length >= MAX_TEAMS;
+    const isDisabled = !isSelected && atMax;
+    const opt = el('div', {class:'team-option' + (isSelected ? ' selected' : '') + (isDisabled ? ' disabled' : '')});
+    const checkbox = el('div', {class:'team-radio'});
     const name  = el('span', {class:'team-name'}, teamName);
-    opt.append(radio, name);
-    opt.onclick = () => {
-      settingsState.selectedTeam = teamName;
-      saveSettings();
-      renderTeamList(teams, container);
-    };
+    const badge = isDisabled ? el('span', {style:'font-size:10px;color:var(--text-faint);'}, 'max 3') : null;
+    opt.append(checkbox, name);
+    if (badge) opt.appendChild(badge);
+    if (!isDisabled) {
+      opt.onclick = () => {
+        if (isSelected) {
+          // Deselect
+          settingsState.selectedTeams = settingsState.selectedTeams.filter(t => t !== teamName);
+          if (settingsState.activeTeam === teamName) {
+            settingsState.activeTeam = settingsState.selectedTeams[0] || null;
+          }
+        } else {
+          if (settingsState.selectedTeams.length < MAX_TEAMS) {
+            settingsState.selectedTeams.push(teamName);
+            // If first selection or no active team, load this team's state immediately
+            if (!settingsState.activeTeam) {
+              settingsState.activeTeam = teamName;
+              loadTeamState(teamName);
+              clearOutput();
+              renderRoster();
+            }
+          }
+        }
+        saveSettings();
+        renderTeamList(teams, container);
+        renderYourTeams();
+      };
+    }
     list.appendChild(opt);
   });
 
   container.appendChild(list);
+  const note = el('div', {style:'font-size:11px;color:var(--text-faint);margin-top:8px;'}, `${settingsState.selectedTeams.length} / ${MAX_TEAMS} teams selected`);
+  container.appendChild(note);
+}
 
-  // Show fixture details for selected team below the list
-  const existingInfo = document.getElementById('teamFixtureInfo');
-  if (existingInfo) existingInfo.remove();
+// ── Your Teams chip row (main page) ────────────────────────────────────────
+function renderYourTeams() {
+  const chipsEl = document.getElementById('yourTeamsChips');
+  const fixtureEl = document.getElementById('yourTeamsFixture');
+  if (!chipsEl || !fixtureEl) return;
 
-  if (settingsState.selectedTeam && _fixturesCache) {
-    const info = renderFixtureInfo(settingsState.selectedTeam);
-    if (info) container.appendChild(info);
+  chipsEl.innerHTML = '';
+  fixtureEl.innerHTML = '';
+
+  if (!settingsState.selectedTeams || settingsState.selectedTeams.length === 0) {
+    const prompt = el('span', {class:'your-teams-prompt'}, 'Tap ⚙ to select your team(s)');
+    chipsEl.appendChild(prompt);
+    return;
+  }
+
+  settingsState.selectedTeams.forEach(teamName => {
+    const isActive = teamName === settingsState.activeTeam;
+    const chip = el('button', {class:'team-chip' + (isActive ? ' active' : ''), type:'button'}, teamName);
+    chip.onclick = () => switchTeam(teamName);
+    chipsEl.appendChild(chip);
+  });
+
+  // Show fixture info for active team
+  if (settingsState.activeTeam && _fixturesCache) {
+    const info = renderFixtureInfo(settingsState.activeTeam);
+    if (info) {
+      info.id = '';
+      info.className = 'your-teams-fixture';
+      fixtureEl.appendChild(info);
+    }
   }
 }
 
@@ -2528,7 +2732,7 @@ function buildFillinMessage(teamName, availableCount) {
 
 function copyFillinRequest() {
   const active = players.filter(p => p.available);
-  const msg = buildFillinMessage(settingsState.selectedTeam, active.length);
+  const msg = buildFillinMessage(settingsState.activeTeam, active.length);
 
   navigator.clipboard.writeText(msg).then(() => {
     const toast = document.getElementById('fillinToast');
@@ -2565,8 +2769,8 @@ function defaultGameState() {
     confirmedSegIndex: 0, // which global segment index is "live" right now (confirmed by coach)
     pendingSegIndex: null, // segment the coach has been alerted about but not yet confirmed
     myStats: {},   // { playerIdx: { points, pf: {1: n, 2: n, ...}, t } } — pf is per-quarter breakdown
-    oppName: (settingsState.selectedTeam && _fixturesCache && _fixturesCache[settingsState.selectedTeam] && _fixturesCache[settingsState.selectedTeam].nextGame)
-      ? _fixturesCache[settingsState.selectedTeam].nextGame.opponent
+    oppName: (settingsState.activeTeam && _fixturesCache && _fixturesCache[settingsState.activeTeam] && _fixturesCache[settingsState.activeTeam].nextGame)
+      ? _fixturesCache[settingsState.activeTeam].nextGame.opponent
       : null,
     oppScore: 0,
     oppPlayers: Array.from({length: 10}, () => ({ jersey: null, points: 0, pf: {}, t: 0 })),
@@ -2608,14 +2812,22 @@ function getCurrentStint() {
 
 function loadGameState() {
   try {
-    const raw = localStorage.getItem(GAME_STATE_KEY);
+    const team = settingsState && settingsState.activeTeam;
+    const key = team ? teamStorageKey(GAME_STATE_KEY, team) : GAME_STATE_KEY;
+    let raw = localStorage.getItem(key);
+    if (!raw && team) raw = localStorage.getItem(GAME_STATE_KEY);
     if (raw) return JSON.parse(raw);
   } catch(e) {}
   return null;
 }
 
 function saveGameState() {
-  try { localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState)); } catch(e) {}
+  try {
+    const data = JSON.stringify(gameState);
+    localStorage.setItem(GAME_STATE_KEY, data);
+    const team = settingsState.activeTeam;
+    if (team) localStorage.setItem(teamStorageKey(GAME_STATE_KEY, team), data);
+  } catch(e) {}
 }
 
 function openGameTime() {
@@ -3197,7 +3409,7 @@ function renderMyTeam() {
   let totalPoints = 0;
   Object.values(gameState.myStats).forEach(s => { totalPoints += (s.points || 0); });
   document.getElementById('myTeamScore').textContent = totalPoints;
-  document.getElementById('myTeamName').textContent = (settingsState.selectedTeam || 'MY TEAM').toUpperCase();
+  document.getElementById('myTeamName').textContent = (settingsState.activeTeam || 'MY TEAM').toUpperCase();
   const myFouls = getQuarterFoulTally().my;
   document.getElementById('myTeamFouls').innerHTML = `Team fouls: ${myFouls}` + (isInBonus('my') ? ' <span class="gt-bonus-indicator">BONUS</span>' : '');
 
@@ -3329,6 +3541,12 @@ function refreshGameTimeFromPlan() {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 renderRoster();
+renderYourTeams();
+// Pre-load team/fixture data so the Your Teams section shows fixture info
+// without needing to open settings first.
+if (settingsState.selectedTeams.length > 0) {
+  loadTeamList(true).catch(() => {});
+}
 
 // Restore fine-tune state if present (e.g. after page refresh)
 (function restoreFtState() {
