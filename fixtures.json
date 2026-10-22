@@ -318,9 +318,9 @@
     "Redbacks U14 Amber": {
       "division": "U14 Boys  Division 5",
       "nextGame": {
-        "date": "2026-10-24T01:55:00.000Z",
+        "date": "2026-10-24T03:00:00.000Z",
         "venue": "South Pine Sports Complex",
-        "court": "Court 4",
+        "court": "Court 1",
         "opponent": "Panthers U14 Red",
         "isHome": false,
         "roundName": "Round 3",
@@ -339,7 +339,7 @@
     "Redbacks U14 Teal": {
       "division": "U14 Boys  Division 5",
       "nextGame": {
-        "date": "2026-10-24T03:45:00.000Z",
+        "date": "2026-10-24T04:50:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 2",
         "opponent": "Devils U14 Yellow",
@@ -360,7 +360,7 @@
     "Redbacks U14 Grey": {
       "division": "U14 Boys  Division 3",
       "nextGame": {
-        "date": "2026-10-24T02:20:00.000Z",
+        "date": "2026-10-24T03:25:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 1",
         "opponent": "Tigers U14 Gold",
@@ -381,7 +381,7 @@
     "Redbacks U14 White": {
       "division": "U14 Boys  Division 3",
       "nextGame": {
-        "date": "2026-10-24T02:55:00.000Z",
+        "date": "2026-10-24T03:50:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 2",
         "opponent": "Devils U14 Teal",
@@ -444,7 +444,7 @@
     "Redbacks U14 Onyx": {
       "division": "U14 Boys  Division 4",
       "nextGame": {
-        "date": "2026-10-24T04:10:00.000Z",
+        "date": "2026-10-24T05:15:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 2",
         "opponent": "Pythons U14 White",
@@ -465,7 +465,7 @@
     "Redbacks U14 Pearl": {
       "division": "U14 Boys  Division 4",
       "nextGame": {
-        "date": "2026-10-24T04:10:00.000Z",
+        "date": "2026-10-24T05:15:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 3",
         "opponent": "Devils U14 Yellow",
@@ -570,7 +570,7 @@
     "Redbacks U16 Ruby": {
       "division": "U16 Boys  Division 6",
       "nextGame": {
-        "date": "2026-10-24T05:00:00.000Z",
+        "date": "2026-10-24T06:05:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 1",
         "opponent": "Bobcats U16 Grey",
@@ -591,12 +591,12 @@
     "Redbacks U16 Amber": {
       "division": "U16 Boys  Division 6",
       "nextGame": {
-        "date": "2026-10-24T06:00:00.000Z",
+        "date": "2026-10-24T06:35:00.000Z",
         "venue": "South Pine Sports Complex",
         "court": "Court 3",
-        "opponent": "Devils U16 Red",
+        "opponent": "Hawks U16 Red",
         "isHome": true,
-        "roundName": "Round 4",
+        "roundName": "Round 3",
         "status": ""
       },
       "lastGame": {
@@ -841,5 +841,5 @@
       }
     }
   },
-  "updatedAt": "2026-10-21T09:45:11.532Z"
+  "updatedAt": "2026-10-22T09:46:05.183Z"
 }
