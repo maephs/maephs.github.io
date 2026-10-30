@@ -1,0 +1,814 @@
+<title>Redbacks Fill-ins Request</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap">
+
+<style>
+/* ── Design tokens ──────────────────────────────────────────────────────────
+   Layout: single centered column, max 480px, card-per-section
+   Color: dark court tones, red accent matching Redbacks brand
+   Type: Bebas Neue for headings/labels, DM Sans for body, DM Mono for message
+*/
+:root {
+  --bg:        #0f1114;
+  --surface:   #181c22;
+  --surface2:  #1e242d;
+  --border:    #2a3040;
+  --border2:   #3a4358;
+  --accent:    #e0312a;
+  --accent-lt: #ff4f47;
+  --green:     #4caf7d;
+  --amber:     #f5a623;
+  --text:      #e8ecf2;
+  --text2:     #8f9baf;
+  --text3:     #5a6578;
+  --mono:      'DM Mono', monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:        #f2f4f7;
+    --surface:   #ffffff;
+    --surface2:  #eef0f5;
+    --border:    #d8dce8;
+    --border2:   #c0c6d8;
+    --accent:    #c8221c;
+    --accent-lt: #e0312a;
+    --green:     #2e7d52;
+    --amber:     #c8850a;
+    --text:      #1a1e28;
+    --text2:     #4a5468;
+    --text3:     #8a93a8;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg:        #f2f4f7;
+  --surface:   #ffffff;
+  --surface2:  #eef0f5;
+  --border:    #d8dce8;
+  --border2:   #c0c6d8;
+  --accent:    #c8221c;
+  --accent-lt: #e0312a;
+  --green:     #2e7d52;
+  --amber:     #c8850a;
+  --text:      #1a1e28;
+  --text2:     #4a5468;
+  --text3:     #8a93a8;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg:        #0f1114;
+  --surface:   #181c22;
+  --surface2:  #1e242d;
+  --border:    #2a3040;
+  --border2:   #3a4358;
+  --accent:    #e0312a;
+  --accent-lt: #ff4f47;
+  --green:     #4caf7d;
+  --amber:     #f5a623;
+  --text:      #e8ecf2;
+  --text2:     #8f9baf;
+  --text3:     #5a6578;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  padding-left:  max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 32px;
+  min-height: 100%;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.header {
+  padding-block: 28px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.header-eyebrow {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  color: var(--accent-lt);
+  margin-bottom: 4px;
+}
+.header h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px, 8vw, 48px);
+  letter-spacing: 2px;
+  color: var(--text);
+  margin: 0 0 4px;
+  text-wrap: balance;
+}
+.header-sub {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ── Section card ───────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+
+/* ── Dropdowns ──────────────────────────────────────────────────────────── */
+.select-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.select-wrap {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.select-wrap label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+select {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238f9baf' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  transition: border-color 0.15s;
+}
+select:focus {
+  outline: none;
+  border-color: var(--accent-lt);
+}
+select:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ── Player count selector ──────────────────────────────────────────────── */
+.count-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.count-btn {
+  flex: 1;
+  min-width: 40px;
+  padding: 8px 4px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text2);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+}
+.count-btn:hover { border-color: var(--accent-lt); color: var(--text); }
+.count-btn.selected {
+  border-color: var(--accent-lt);
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Fixture info ───────────────────────────────────────────────────────── */
+.fixture-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.fixture-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.fixture-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.fixture-detail {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 1px;
+}
+.fixture-venue {
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.fixture-none {
+  font-size: 13px;
+  color: var(--text3);
+  font-style: italic;
+}
+.division-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent-lt);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-bottom: 8px;
+}
+
+/* ── Message output ─────────────────────────────────────────────────────── */
+.message-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 80px;
+}
+.message-placeholder {
+  color: var(--text3);
+  font-style: italic;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+}
+
+/* ── Eligible team list ─────────────────────────────────────────────────── */
+.team-line { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
+.team-bullet { color: var(--accent-lt); flex-shrink: 0; }
+.team-name-text { font-size: 13px; font-weight: 500; color: var(--text); }
+.clash-note { font-size: 11px; color: var(--amber); }
+.no-eligible { font-size: 13px; color: var(--text3); font-style: italic; }
+
+/* ── CTA button ─────────────────────────────────────────────────────────── */
+.copy-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.copy-btn:hover { background: var(--accent-lt); }
+.copy-btn:active { transform: scale(0.98); }
+.copy-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+.copy-icon { font-size: 16px; }
+
+/* ── Toast ──────────────────────────────────────────────────────────────── */
+.toast {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  opacity: 0;
+  transition: opacity 0.3s;
+  height: 20px;
+  margin-top: 8px;
+}
+.toast.show { opacity: 1; }
+
+/* ── State pills ────────────────────────────────────────────────────────── */
+.state-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.pill-ok   { background: color-mix(in srgb, var(--green) 18%, transparent); color: var(--green); }
+.pill-warn { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+
+/* ── Loading ────────────────────────────────────────────────────────────── */
+.loading-msg {
+  font-size: 13px;
+  color: var(--text3);
+  text-align: center;
+  padding: 20px 0;
+}
+.error-msg {
+  font-size: 13px;
+  color: var(--accent-lt);
+  text-align: center;
+  padding: 12px 0;
+}
+
+.section-gap { margin-bottom: 24px; }
+
+/* ── Divider ────────────────────────────────────────────────────────────── */
+hr.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 14px 0;
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+.footer a {
+  color: var(--text3);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+</style>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-eyebrow">REDBACKS BASKETBALL</div>
+  <h1>Request Fill-ins</h1>
+  <div class="header-sub">Find eligible fill-in players for your team's next game.</div>
+</div>
+
+<!-- Step 1: Select team -->
+<div class="card section-gap">
+  <div class="card-label">SELECT YOUR TEAM</div>
+  <div class="select-row">
+    <div class="select-wrap">
+      <label for="ageSelect">Age Group</label>
+      <select id="ageSelect" onchange="onAgeChange()">
+        <option value="">— Age Group —</option>
+      </select>
+    </div>
+    <div class="select-wrap">
+      <label for="teamSelect">Team</label>
+      <select id="teamSelect" onchange="onTeamChange()" disabled>
+        <option value="">— Select age first —</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Fixture info for selected team -->
+  <div id="fixtureArea" style="margin-top:14px;" hidden></div>
+</div>
+
+<!-- Step 2: Players available -->
+<div class="card section-gap" id="playersCard" style="display:none;">
+  <div class="card-label">PLAYERS AVAILABLE</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">
+    How many players does your team have confirmed for this game?
+  </div>
+  <div class="count-row" id="countRow"></div>
+  <div style="margin-top:10px;font-size:12px;color:var(--text3);" id="fillinsNeededLabel"></div>
+</div>
+
+<!-- Step 3: Message + copy -->
+<div class="card section-gap" id="messageCard" style="display:none;">
+  <div class="card-label">FILL-INS REQUEST</div>
+
+  <div id="eligibleSection" style="margin-bottom:12px;"></div>
+
+  <hr class="divider">
+
+  <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Message ready to copy and share:</div>
+  <div class="message-box" id="messageBox">
+    <span class="message-placeholder">Select your team and player count above.</span>
+  </div>
+
+  <div style="margin-top:12px;">
+    <button class="copy-btn" id="copyBtn" onclick="copyMessage()" disabled>
+      <span class="copy-icon">📋</span> Copy Message
+    </button>
+    <div class="toast" id="toast">✓ Copied to clipboard!</div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div id="loadingArea" class="loading-msg">Loading teams…</div>
+<div id="errorArea" class="error-msg" hidden></div>
+
+<div class="footer">
+  Also manage rotations with the&nbsp;<a href="./index.html">Rotation Planner →</a>
+</div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+let teamsData   = [];   // array of team name strings
+let fixturesData = {};  // { teamName: { division, nextGame, lastGame } }
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let selectedTeam   = null;
+let availableCount = null;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function parseAgeGroup(str) {
+  const m = str.match(/U(\d+)/i);
+  return m ? parseInt(m[1]) : null;
+}
+
+function parseDivision(str) {
+  if (!str) return null;
+  const m = str.match(/Division\s+(\d+)/i);
+  return m ? parseInt(m[1]) : null;
+}
+
+const AGE_GROUP_ORDER = [10, 12, 14, 16, 18];
+
+function getEligibleTeams(requestingTeam) {
+  const reqFixture  = fixturesData[requestingTeam];
+  const reqAgeGroup = parseAgeGroup(requestingTeam);
+  const reqDivision = reqFixture ? parseDivision(reqFixture.division) : null;
+
+  if (!reqAgeGroup || !reqDivision) return [];
+
+  const nextYoungerAge = (() => {
+    const idx = AGE_GROUP_ORDER.indexOf(reqAgeGroup);
+    return idx > 0 ? AGE_GROUP_ORDER[idx - 1] : null;
+  })();
+
+  const eligible = [];
+
+  for (const [teamName, fd] of Object.entries(fixturesData)) {
+    if (teamName === requestingTeam) continue;
+    const teamAge = parseAgeGroup(teamName);
+    const teamDiv = parseDivision(fd.division);
+    if (!teamAge || !teamDiv) continue;
+
+    // Same age group: higher division (lower skill) may fill in
+    if (teamAge === reqAgeGroup && teamDiv > reqDivision) {
+      eligible.push(teamName); continue;
+    }
+
+    // Next-younger age group
+    if (nextYoungerAge && teamAge === nextYoungerAge) {
+      if (teamDiv === 1) {
+        if (reqDivision <= 2) eligible.push(teamName);
+      } else {
+        if (teamDiv >= reqDivision - 2) eligible.push(teamName);
+      }
+    }
+  }
+
+  return eligible.sort((a, b) => {
+    const ageA = parseAgeGroup(a), ageB = parseAgeGroup(b);
+    if (ageB !== ageA) return ageB - ageA;
+    const divA = parseDivision((fixturesData[a] || {}).division);
+    const divB = parseDivision((fixturesData[b] || {}).division);
+    return (divA || 99) - (divB || 99);
+  });
+}
+
+function brisbaneDate(utcStr) {
+  const d = new Date(new Date(utcStr).getTime() + 10 * 60 * 60 * 1000);
+  return d.toISOString().slice(0, 10);
+}
+
+function brisbaneTime(utcStr) {
+  return new Date(utcStr).toLocaleTimeString('en-AU', {
+    hour: 'numeric', minute: '2-digit', hour12: true,
+    timeZone: 'Australia/Brisbane'
+  });
+}
+
+function getClashNote(reqGame, eligibleTeamName) {
+  const fd = fixturesData[eligibleTeamName];
+  if (!fd || !fd.nextGame) return 'fixture not yet published';
+  const elGame = fd.nextGame;
+  const reqDate = brisbaneDate(reqGame.date);
+  const elDate  = brisbaneDate(elGame.date);
+  if (reqDate !== elDate) return null;
+  const reqVenue  = (reqGame.venue  || '').trim().toLowerCase();
+  const elVenue   = (elGame.venue   || '').trim().toLowerCase();
+  const sameVenue = reqVenue && elVenue && reqVenue === elVenue;
+  const threshold = sameVenue ? 50 : 80;
+  const gapMin = Math.abs(new Date(reqGame.date) - new Date(elGame.date)) / 60000;
+  if (gapMin < threshold) {
+    const timeStr  = brisbaneTime(elGame.date);
+    const venueStr = [elGame.venue, elGame.court].filter(Boolean).join(', ');
+    return `schedule clash: ${timeStr}${venueStr ? ' at ' + venueStr : ''}`;
+  }
+  return null;
+}
+
+function buildMessage(teamName, count) {
+  const fillinsNeeded = 7 - count;
+  const fd = fixturesData[teamName];
+
+  let gameDetails = null;
+  let reqGame = null;
+  if (fd && fd.nextGame) {
+    reqGame = fd.nextGame;
+    const d = new Date(reqGame.date);
+    const dateStr = d.toLocaleDateString('en-AU', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      timeZone: 'Australia/Brisbane'
+    });
+    const timeStr = brisbaneTime(reqGame.date);
+    const venue = [reqGame.venue, reqGame.court].filter(Boolean).join(', ');
+    gameDetails = `${dateStr} at ${timeStr}${venue ? ', ' + venue : ''}`;
+  }
+
+  const eligible = getEligibleTeams(teamName);
+  const teamLines = eligible.map(t => {
+    if (!reqGame) return `  • ${t}`;
+    const clash = getClashNote(reqGame, t);
+    return clash ? `  • ${t} (${clash})` : `  • ${t}`;
+  });
+
+  const lines = [
+    `Fill-ins requested for ${teamName}.`,
+    `We have ${count} player${count !== 1 ? 's' : ''} available and could use up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
+    ``,
+    gameDetails
+      ? `Our next game is on ${gameDetails}.`
+      : `Our next game details have not yet been published.`,
+    ``,
+    `Teams that are eligible to provide fill-ins:`,
+    ...(teamLines.length ? teamLines : [`  (no eligible teams found)`]),
+  ];
+
+  return lines.join('\n').trim();
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function renderAgeDropdown() {
+  const ages = [...new Set(teamsData.map(parseAgeGroup).filter(Boolean))].sort((a,b) => a-b);
+  const sel = document.getElementById('ageSelect');
+  sel.innerHTML = '<option value="">— Age Group —</option>';
+  ages.forEach(age => {
+    const opt = document.createElement('option');
+    opt.value = age;
+    opt.textContent = `Under ${age}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onAgeChange() {
+  const age = parseInt(document.getElementById('ageSelect').value);
+  const teamSel = document.getElementById('teamSelect');
+  selectedTeam = null;
+  availableCount = null;
+
+  if (!age) {
+    teamSel.innerHTML = '<option value="">— Select age first —</option>';
+    teamSel.disabled = true;
+    updateUI();
+    return;
+  }
+
+  const filtered = teamsData.filter(t => parseAgeGroup(t) === age);
+  teamSel.innerHTML = '<option value="">— Select team —</option>';
+  filtered.forEach(t => {
+    // Display just the color name after "Redbacks U{age} "
+    const colorName = t.replace(/^Redbacks U\d+\s+/i, '');
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = colorName;
+    teamSel.appendChild(opt);
+  });
+  teamSel.disabled = false;
+  updateUI();
+}
+
+function onTeamChange() {
+  const val = document.getElementById('teamSelect').value;
+  selectedTeam = val || null;
+  availableCount = null;
+  // Clear count selection
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  updateUI();
+}
+
+function setCount(n) {
+  availableCount = n;
+  document.querySelectorAll('.count-btn').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.dataset.n) === n);
+  });
+  updateUI();
+}
+
+function renderFixture() {
+  const area = document.getElementById('fixtureArea');
+  if (!selectedTeam) { area.hidden = true; return; }
+
+  const fd = fixturesData[selectedTeam];
+  area.hidden = false;
+
+  if (!fd) {
+    area.innerHTML = `<div class="fixture-box"><div class="fixture-none">No fixture data available for this team.</div></div>`;
+    return;
+  }
+
+  let html = `<div class="fixture-box">`;
+  if (fd.division) {
+    html += `<div class="division-badge">${fd.division}</div>`;
+  }
+
+  if (fd.nextGame) {
+    const g = fd.nextGame;
+    const d = new Date(g.date);
+    const dateStr = d.toLocaleDateString('en-AU', {
+      weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+      timeZone: 'Australia/Brisbane'
+    });
+    const timeStr = brisbaneTime(g.date);
+    const vs = g.isHome ? `vs ${g.opponent} (Home)` : `vs ${g.opponent} (Away)`;
+    html += `<div class="fixture-label">NEXT GAME</div>`;
+    html += `<div class="fixture-date">${dateStr} at ${timeStr}</div>`;
+    html += `<div class="fixture-detail">${vs}</div>`;
+    if (g.venue) {
+      const venueStr = g.court ? `${g.venue} — ${g.court}` : g.venue;
+      html += `<div class="fixture-venue">📍 ${venueStr}</div>`;
+    }
+    if (g.roundName) {
+      html += `<div style="font-size:11px;color:var(--text3);margin-top:3px;">${g.roundName}</div>`;
+    }
+  } else {
+    html += `<div class="fixture-none">Next game not yet scheduled.</div>`;
+  }
+
+  html += `</div>`;
+  area.innerHTML = html;
+}
+
+function renderPlayerCount() {
+  const card  = document.getElementById('playersCard');
+  const row   = document.getElementById('countRow');
+  const label = document.getElementById('fillinsNeededLabel');
+
+  if (!selectedTeam) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  // Counts: 1–6 need fill-ins; 7+ means enough players
+  if (!row.children.length) {
+    [1, 2, 3, 4, 5, 6].forEach(n => {
+      const btn = document.createElement('button');
+      btn.className = 'count-btn';
+      btn.dataset.n = n;
+      btn.textContent = n;
+      btn.onclick = () => setCount(n);
+      row.appendChild(btn);
+    });
+  }
+
+  if (availableCount !== null) {
+    const needed = 7 - availableCount;
+    label.innerHTML = `<span class="state-pill pill-warn">⚠ ${needed} fill-in${needed !== 1 ? 's' : ''} needed</span>`;
+  } else {
+    label.textContent = '';
+  }
+}
+
+function renderMessage() {
+  const card    = document.getElementById('messageCard');
+  const box     = document.getElementById('messageBox');
+  const copyBtn = document.getElementById('copyBtn');
+  const eligSec = document.getElementById('eligibleSection');
+
+  if (!selectedTeam || availableCount === null) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+
+  const msg = buildMessage(selectedTeam, availableCount);
+  box.textContent = msg;
+
+  // Eligible teams panel
+  const eligible = getEligibleTeams(selectedTeam);
+  const fd = fixturesData[selectedTeam];
+  const reqGame = fd && fd.nextGame ? fd.nextGame : null;
+
+  if (eligible.length === 0) {
+    eligSec.innerHTML = `<div class="no-eligible">No eligible teams found for this team.</div>`;
+  } else {
+    let h = `<div style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Eligible Teams</div>`;
+    eligible.forEach(t => {
+      const clash = reqGame ? getClashNote(reqGame, t) : null;
+      h += `<div class="team-line">
+        <span class="team-bullet">•</span>
+        <span class="team-name-text">${t}</span>
+        ${clash ? `<span class="clash-note">(${clash})</span>` : ''}
+      </div>`;
+    });
+    eligSec.innerHTML = h;
+  }
+
+  copyBtn.disabled = false;
+}
+
+function updateUI() {
+  renderFixture();
+  renderPlayerCount();
+  renderMessage();
+}
+
+// ── Copy ──────────────────────────────────────────────────────────────────────
+function copyMessage() {
+  if (!selectedTeam || availableCount === null) return;
+  const msg = buildMessage(selectedTeam, availableCount);
+  const toast = document.getElementById('toast');
+  const btn   = document.getElementById('copyBtn');
+
+  navigator.clipboard.writeText(msg).then(() => {
+    toast.classList.add('show');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => {
+      toast.classList.remove('show');
+      btn.innerHTML = '<span class="copy-icon">📋</span> Copy Message';
+    }, 2200);
+  }).catch(() => {
+    // Fallback: select the text box
+    const box = document.getElementById('messageBox');
+    const range = document.createRange();
+    range.selectNodeContents(box);
+    const sel = window.getSelection();
+    if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+    toast.textContent = 'Select and copy the text above';
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✓ Copied to clipboard!'; }, 2500);
+  });
+}
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+async function init() {
+  const loadingArea = document.getElementById('loadingArea');
+  const errorArea   = document.getElementById('errorArea');
+
+  try {
+    const [teamsResp, fixturesResp] = await Promise.all([
+      fetch('./teams.json?v=' + Date.now()),
+      fetch('./fixtures.json?v=' + Date.now()),
+    ]);
+    if (!teamsResp.ok) throw new Error(`teams.json: HTTP ${teamsResp.status}`);
+    const td = await teamsResp.json();
+    teamsData = Array.isArray(td.teams) ? td.teams : [];
+    if (!teamsData.length) throw new Error('No teams found.');
+
+    if (fixturesResp.ok) {
+      const fd = await fixturesResp.json();
+      fixturesData = fd.fixtures || {};
+    }
+
+    loadingArea.hidden = true;
+    renderAgeDropdown();
+  } catch(e) {
+    loadingArea.hidden = true;
+    errorArea.hidden = false;
+    errorArea.textContent = `Couldn't load team data. Please try refreshing. (${e.message})`;
+  }
+}
+
+init();
+</script>
