@@ -2,7 +2,15 @@
   "fixtures": {
     "Redbacks U12 Red": {
       "division": "U12 Boys Division 1 ",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T07:10:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 3",
+        "opponent": "Hawks U12 Purple",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T07:09:48.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -15,7 +23,15 @@
     },
     "Redbacks U12 Black": {
       "division": "U12 Boys Division 1 ",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Tigers U12 Orange",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T07:10:41.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -28,7 +44,15 @@
     },
     "Redbacks U14 Black": {
       "division": "U14 Boys  Division 1 ",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-20T08:00:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 1",
+        "opponent": "Bye",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T07:59:54.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -41,7 +65,15 @@
     },
     "Redbacks U14 Red": {
       "division": "U14 Boys  Division 1 ",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Bobcats U14 Yellow",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T08:02:00.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -54,7 +86,15 @@
     },
     "Redbacks U18 Red": {
       "division": "U18 Boys  Division 1 ",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T09:40:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Bobcats U18 Black",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T10:32:53.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -67,7 +107,15 @@
     },
     "Redbacks U10 Black": {
       "division": "U10 Boys Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T22:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Pythons U10 Green",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T22:00:26.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -80,7 +128,15 @@
     },
     "Redbacks U10 Red": {
       "division": "U10 Boys Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T22:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Bobcats U10 White",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T22:00:39.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -93,7 +149,15 @@
     },
     "Redbacks U12 Pearl": {
       "division": "U12 Boys Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T22:50:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Tigers U12 Gold",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T23:39:25.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -106,7 +170,15 @@
     },
     "Redbacks U12 Onyx": {
       "division": "U12 Boys Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T23:40:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bobcats U12 White",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T23:39:31.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -119,7 +191,15 @@
     },
     "Redbacks U12 Grey": {
       "division": "U12 Boys Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-06T23:40:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Bobcats U12 Red",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T00:39:13.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -132,7 +212,15 @@
     },
     "Redbacks U12 Silver": {
       "division": "U12 Boys Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T01:30:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Timberwolves U12 Blue",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-30T23:42:40.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -145,7 +233,15 @@
     },
     "Redbacks U12 White": {
       "division": "U12 Boys Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T00:40:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Bobcats U12 Green",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T00:40:04.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -158,7 +254,15 @@
     },
     "Redbacks U14 Silver": {
       "division": "U14 Boys  Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T01:30:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Timberwolves U14 Green",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T01:31:17.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -171,7 +275,15 @@
     },
     "Redbacks U14 Amber": {
       "division": "U14 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T04:10:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 3",
+        "opponent": "Timberwolves U14 Orange",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T02:20:19.000Z",
         "venue": "South Pine Sports Complex",
@@ -184,7 +296,15 @@
     },
     "Redbacks U14 Pearl": {
       "division": "U14 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T02:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Pythons U14 White",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T02:22:34.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -197,7 +317,15 @@
     },
     "Redbacks U14 Onyx": {
       "division": "U14 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T03:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Devils U14 Teal",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T02:22:37.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -210,7 +338,15 @@
     },
     "Redbacks U14 Teal": {
       "division": "U14 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T02:20:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 2",
+        "opponent": "Hawks U14 White",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T03:20:05.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -223,7 +359,15 @@
     },
     "Redbacks U14 White": {
       "division": "U14 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T03:20:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 2",
+        "opponent": "Tigers U14 Gold",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T03:13:17.000Z",
         "venue": "South Pine Sports Complex",
@@ -236,7 +380,15 @@
     },
     "Redbacks U14 Grey": {
       "division": "U14 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T03:20:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 1",
+        "opponent": "Timberwolves U14 White",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T03:13:25.000Z",
         "venue": "South Pine Sports Complex",
@@ -249,7 +401,15 @@
     },
     "Redbacks U16 Silver": {
       "division": "U16 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T03:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Tigers U16 Gold",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T03:19:29.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -262,7 +422,15 @@
     },
     "Redbacks U16 White": {
       "division": "U16 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T03:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Hawks U16 Yellow",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T04:10:23.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -275,7 +443,15 @@
     },
     "Redbacks U14 Ruby": {
       "division": "U14 Boys  Division 6",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T05:00:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 3",
+        "opponent": "Panthers U14 Yellow",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:00:02.000Z",
         "venue": "South Pine Sports Complex",
@@ -288,7 +464,15 @@
     },
     "Redbacks U16 Pearl": {
       "division": "U16 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:50:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Devils U16 Yellow",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T04:08:12.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -301,7 +485,15 @@
     },
     "Redbacks U16 Grey": {
       "division": "U16 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Timberwolves U16 Orange",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T04:12:15.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -314,7 +506,15 @@
     },
     "Redbacks U16 Black": {
       "division": "U16 Boys  Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Hawks U16 White",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T04:58:25.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -327,7 +527,15 @@
     },
     "Redbacks U16 Red": {
       "division": "U16 Boys  Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T04:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Tigers U16 Orange",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T06:51:17.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -340,7 +548,15 @@
     },
     "Redbacks U16 Jade": {
       "division": "U16 Boys  Division 7",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 1",
+        "opponent": "Devils U16 White",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:00:29.000Z",
         "venue": "South Pine Sports Complex",
@@ -353,7 +569,15 @@
     },
     "Redbacks U16 Navy": {
       "division": "U16 Boys  Division 7",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Hawks U16 Red",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:59:38.000Z",
         "venue": "South Pine Sports Complex",
@@ -366,7 +590,15 @@
     },
     "Redbacks U16 Indigo": {
       "division": "U16 Boys  Division 7",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 3",
+        "opponent": "Panthers U16 Yellow",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:59:38.000Z",
         "venue": "South Pine Sports Complex",
@@ -379,7 +611,15 @@
     },
     "Redbacks U16 Amber": {
       "division": "U16 Boys  Division 6",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T05:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Devils U16 Red",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:06:39.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -392,7 +632,15 @@
     },
     "Redbacks U16 Ruby": {
       "division": "U16 Boys  Division 6",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T04:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Hawks U16 Pearl",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T06:49:33.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -405,7 +653,15 @@
     },
     "Redbacks U16 Onyx": {
       "division": "U16 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T06:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Pythons U16 White",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T05:59:48.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -418,7 +674,15 @@
     },
     "Redbacks U16 Teal": {
       "division": "U16 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-07T05:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Devils U16 Orange",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-10-31T06:00:21.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -431,7 +695,15 @@
     },
     "Redbacks U18 Black": {
       "division": "U18 Boys  Division 2",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Hawks U18 Gold",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T07:34:09.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -444,7 +716,15 @@
     },
     "Redbacks U18 Grey": {
       "division": "U18 Boys  Division 4",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T07:10:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 3",
+        "opponent": "Tigers U18 Teal",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T06:40:51.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -457,7 +737,15 @@
     },
     "Redbacks U18 Pearl": {
       "division": "U18 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T06:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Devils U18 Red",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T05:48:42.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -470,7 +758,15 @@
     },
     "Redbacks U18 Onyx": {
       "division": "U18 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T06:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Redbacks U18 Teal",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T05:49:48.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -483,7 +779,15 @@
     },
     "Redbacks U18 Teal": {
       "division": "U18 Boys  Division 5",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T06:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 4",
+        "opponent": "Redbacks U18 Onyx",
+        "isHome": true,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T05:50:13.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -496,7 +800,15 @@
     },
     "Redbacks U18 Silver": {
       "division": "U18 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 5",
+        "opponent": "Hawks U18 Navy",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T07:34:09.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -509,7 +821,15 @@
     },
     "Redbacks U18 White": {
       "division": "U18 Boys  Division 3",
-      "nextGame": null,
+      "nextGame": {
+        "date": "2026-11-08T06:20:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Devils U18 Teal",
+        "isHome": false,
+        "roundName": "Round 6",
+        "status": ""
+      },
       "lastGame": {
         "date": "2026-11-01T07:35:08.000Z",
         "venue": "Northside Indoor Sports Centre",
@@ -521,5 +841,5 @@
       }
     }
   },
-  "updatedAt": "2026-11-03T12:30:30.847Z"
+  "updatedAt": "2026-11-04T12:41:03.358Z"
 }
