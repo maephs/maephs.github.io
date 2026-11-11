@@ -237,7 +237,7 @@
         "date": "2026-11-14T00:40:00.000Z",
         "venue": "Northside Indoor Sports Centre",
         "court": "Court 3",
-        "opponent": "Bobcats U12 Green",
+        "opponent": "Bobcats U12 Yellow",
         "isHome": false,
         "roundName": "Round 7",
         "status": ""
@@ -841,5 +841,5 @@
       }
     }
   },
-  "updatedAt": "2026-11-10T13:08:35.153Z"
+  "updatedAt": "2026-11-11T12:17:47.283Z"
 }
