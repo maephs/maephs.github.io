@@ -45,10 +45,10 @@
     "Redbacks U14 Black": {
       "division": "U14 Boys  Division 1 ",
       "nextGame": {
-        "date": "2026-11-20T08:50:00.000Z",
+        "date": "2026-11-20T08:00:00.000Z",
         "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Pythons U14 Green",
+        "court": "Court 4",
+        "opponent": "Bobcats U14 Black",
         "isHome": true,
         "roundName": "Round 8",
         "status": ""
@@ -841,5 +841,5 @@
       }
     }
   },
-  "updatedAt": "2026-11-16T13:15:48.961Z"
+  "updatedAt": "2026-11-17T13:59:28.566Z"
 }
