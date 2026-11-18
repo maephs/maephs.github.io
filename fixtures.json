@@ -802,8 +802,8 @@
       "division": "U18 Boys  Division 3",
       "nextGame": {
         "date": "2026-11-22T07:30:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
+        "venue": "Brisbane Entertainment Centre - Boondall",
+        "court": "Court 3",
         "opponent": "Tigers U18 Gold",
         "isHome": false,
         "roundName": "Round 8",
@@ -823,8 +823,8 @@
       "division": "U18 Boys  Division 3",
       "nextGame": {
         "date": "2026-11-22T07:30:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
+        "venue": "Brisbane Entertainment Centre - Boondall",
+        "court": "Court 1",
         "opponent": "Timberwolves U18 White",
         "isHome": false,
         "roundName": "Round 8",
@@ -841,5 +841,5 @@
       }
     }
   },
-  "updatedAt": "2026-11-17T13:59:28.566Z"
+  "updatedAt": "2026-11-18T13:34:38.677Z"
 }
