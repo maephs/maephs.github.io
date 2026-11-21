@@ -5,11 +5,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap">
 
 <style>
-/* ── Design tokens ──────────────────────────────────────────────────────────
-   Layout: single centered column, max 480px, card-per-section
-   Color: dark court tones, red accent matching Redbacks brand
-   Type: Bebas Neue for headings/labels, DM Sans for body, DM Mono for message
-*/
 :root {
   --bg:        #0f1114;
   --surface:   #181c22;
@@ -81,65 +76,91 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', system-ui, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
   padding-left:  max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 0 32px;
+  /* Bottom padding accounts for sticky button bar */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   min-height: 100%;
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
 .header {
-  padding-block: 28px 20px;
+  padding-block: 20px 16px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+.header-text { flex: 1; }
 .header-eyebrow {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   letter-spacing: 2.5px;
   color: var(--accent-lt);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .header h1 {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(32px, 8vw, 48px);
+  font-size: clamp(28px, 7vw, 40px);
   letter-spacing: 2px;
   color: var(--text);
-  margin: 0 0 4px;
-  text-wrap: balance;
-}
-.header-sub {
-  font-size: 13px;
-  color: var(--text2);
+  margin: 0;
+  line-height: 1;
 }
 
 /* ── Section card ───────────────────────────────────────────────────────── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin-bottom: 14px;
 }
 .card-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+
+/* ── Step number badge ──────────────────────────────────────────────────── */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.step-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 13px;
   letter-spacing: 2px;
   color: var(--text3);
-  margin-bottom: 12px;
 }
 
 /* ── Dropdowns ──────────────────────────────────────────────────────────── */
 .select-row {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
 }
 .select-wrap {
   flex: 1;
-  min-width: 120px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -153,20 +174,21 @@ body {
 }
 select {
   width: 100%;
-  padding: 9px 12px;
-  border-radius: 7px;
+  /* 48px min height for mobile tap targets */
+  min-height: 48px;
+  padding: 10px 36px 10px 14px;
+  border-radius: 8px;
   border: 1.5px solid var(--border2);
   background: var(--surface2);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238f9baf' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  background-position: right 14px center;
   transition: border-color 0.15s;
 }
 select:focus {
@@ -174,7 +196,7 @@ select:focus {
   border-color: var(--accent-lt);
 }
 select:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
   cursor: default;
 }
 
@@ -182,24 +204,25 @@ select:disabled {
 .count-row {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
 }
 .count-btn {
   flex: 1;
-  min-width: 40px;
-  padding: 8px 4px;
-  border-radius: 7px;
+  /* 52px height for comfortable thumb tapping */
+  min-height: 52px;
+  padding: 0;
+  border-radius: 8px;
   border: 1.5px solid var(--border2);
   background: var(--surface2);
   color: var(--text2);
   font-family: 'DM Mono', monospace;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
   cursor: pointer;
   text-align: center;
   transition: all 0.12s;
+  -webkit-tap-highlight-color: transparent;
 }
-.count-btn:hover { border-color: var(--accent-lt); color: var(--text); }
+.count-btn:active { opacity: 0.7; }
 .count-btn.selected {
   border-color: var(--accent-lt);
   background: var(--accent);
@@ -212,6 +235,7 @@ select:disabled {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 14px 16px;
+  margin-top: 14px;
 }
 .fixture-label {
   font-size: 10px;
@@ -219,26 +243,26 @@ select:disabled {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text3);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
 .fixture-date {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 2px;
 }
 .fixture-detail {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text2);
   margin-bottom: 1px;
 }
 .fixture-venue {
   font-size: 12px;
   color: var(--text3);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 .fixture-none {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text3);
   font-style: italic;
 }
@@ -256,6 +280,33 @@ select:disabled {
   margin-bottom: 8px;
 }
 
+/* ── Fill-ins needed pill ───────────────────────────────────────────────── */
+.state-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  margin-top: 12px;
+}
+.pill-warn { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
+
+/* ── Eligible team list (in page) ───────────────────────────────────────── */
+.elig-group { margin-bottom: 6px; }
+.elig-age {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 2px;
+}
+.elig-names { font-size: 14px; color: var(--text); line-height: 1.4; }
+.clash-summary { font-size: 12px; color: var(--amber); margin-top: 4px; }
+.no-eligible { font-size: 14px; color: var(--text3); font-style: italic; }
+
 /* ── Message output ─────────────────────────────────────────────────────── */
 .message-box {
   background: var(--surface2);
@@ -268,87 +319,63 @@ select:disabled {
   color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
-  min-height: 80px;
-}
-.message-placeholder {
-  color: var(--text3);
-  font-style: italic;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  min-height: 60px;
 }
 
-/* ── Eligible team list ─────────────────────────────────────────────────── */
-.team-line { display: flex; align-items: baseline; gap: 6px; margin-bottom: 3px; }
-.team-bullet { color: var(--accent-lt); flex-shrink: 0; }
-.team-name-text { font-size: 13px; font-weight: 500; color: var(--text); }
-.clash-note { font-size: 11px; color: var(--amber); }
-.no-eligible { font-size: 13px; color: var(--text3); font-style: italic; }
-
-/* ── CTA button ─────────────────────────────────────────────────────────── */
+/* ── Sticky copy bar ────────────────────────────────────────────────────── */
+.sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px max(16px, env(safe-area-inset-left, 0px));
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  display: none;
+  z-index: 10;
+}
+.sticky-bar.visible { display: block; }
 .copy-btn {
   width: 100%;
-  padding: 14px;
-  border-radius: 8px;
+  min-height: 52px;
+  border-radius: 10px;
   border: none;
   background: var(--accent);
   color: #fff;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: 2px;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  -webkit-tap-highlight-color: transparent;
 }
-.copy-btn:hover { background: var(--accent-lt); }
-.copy-btn:active { transform: scale(0.98); }
-.copy-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
-.copy-icon { font-size: 16px; }
+.copy-btn:active { background: var(--accent-lt); }
+.copy-btn:disabled { opacity: 0.35; cursor: default; }
 
 /* ── Toast ──────────────────────────────────────────────────────────────── */
 .toast {
-  text-align: center;
-  font-size: 13px;
+  position: fixed;
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--green);
+  color: #fff;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--green);
+  padding: 8px 20px;
+  border-radius: 20px;
   opacity: 0;
-  transition: opacity 0.3s;
-  height: 20px;
-  margin-top: 8px;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  white-space: nowrap;
+  z-index: 20;
 }
 .toast.show { opacity: 1; }
-
-/* ── State pills ────────────────────────────────────────────────────────── */
-.state-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-  letter-spacing: 0.3px;
-}
-.pill-ok   { background: color-mix(in srgb, var(--green) 18%, transparent); color: var(--green); }
-.pill-warn { background: color-mix(in srgb, var(--amber) 18%, transparent); color: var(--amber); }
-
-/* ── Loading ────────────────────────────────────────────────────────────── */
-.loading-msg {
-  font-size: 13px;
-  color: var(--text3);
-  text-align: center;
-  padding: 20px 0;
-}
-.error-msg {
-  font-size: 13px;
-  color: var(--accent-lt);
-  text-align: center;
-  padding: 12px 0;
-}
-
-.section-gap { margin-bottom: 24px; }
 
 /* ── Divider ────────────────────────────────────────────────────────────── */
 hr.divider {
@@ -357,83 +384,91 @@ hr.divider {
   margin: 14px 0;
 }
 
+/* ── Loading / error ────────────────────────────────────────────────────── */
+.loading-msg {
+  font-size: 14px;
+  color: var(--text3);
+  text-align: center;
+  padding: 24px 0;
+}
+.error-msg {
+  font-size: 14px;
+  color: var(--accent-lt);
+  text-align: center;
+  padding: 14px 0;
+}
+
 /* ── Footer ─────────────────────────────────────────────────────────────── */
 .footer {
   text-align: center;
   font-size: 12px;
   color: var(--text3);
-  padding-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--border);
-  margin-top: 8px;
 }
-.footer a {
-  color: var(--text3);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
+.footer a { color: var(--text3); text-decoration: underline; text-underline-offset: 2px; }
 </style>
 
 <!-- Header -->
 <div class="header">
-  <div class="header-eyebrow">REDBACKS BASKETBALL</div>
-  <h1>Request Fill-ins</h1>
-  <div class="header-sub">Find eligible fill-in players for your team's next game.</div>
+  <div class="header-text">
+    <div class="header-eyebrow">REDBACKS BASKETBALL</div>
+    <h1>Request Fill-ins</h1>
+  </div>
 </div>
 
 <!-- Step 1: Select team -->
-<div class="card section-gap">
-  <div class="card-label">SELECT YOUR TEAM</div>
+<div class="card">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div class="step-title">SELECT YOUR TEAM</div>
+  </div>
   <div class="select-row">
     <div class="select-wrap">
       <label for="ageSelect">Age Group</label>
       <select id="ageSelect" onchange="onAgeChange()">
-        <option value="">— Age Group —</option>
+        <option value="">Age…</option>
       </select>
     </div>
     <div class="select-wrap">
       <label for="teamSelect">Team</label>
       <select id="teamSelect" onchange="onTeamChange()" disabled>
-        <option value="">— Select age first —</option>
+        <option value="">Team…</option>
       </select>
     </div>
   </div>
-
-  <!-- Fixture info for selected team -->
-  <div id="fixtureArea" style="margin-top:14px;" hidden></div>
+  <div id="fixtureArea"></div>
 </div>
 
 <!-- Step 2: Players available -->
-<div class="card section-gap" id="playersCard" style="display:none;">
-  <div class="card-label">PLAYERS AVAILABLE</div>
-  <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">
-    How many players does your team have confirmed for this game?
+<div class="card" id="playersCard" style="display:none;">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div class="step-title">CONFIRMED PLAYERS</div>
+  </div>
+  <div style="font-size:14px;color:var(--text2);margin-bottom:12px;">
+    How many players do you have confirmed for this game?
   </div>
   <div class="count-row" id="countRow"></div>
-  <div style="margin-top:10px;font-size:12px;color:var(--text3);" id="fillinsNeededLabel"></div>
+  <div id="fillinsNeededLabel"></div>
 </div>
 
 <!-- Step 3: Message + copy -->
-<div class="card section-gap" id="messageCard" style="display:none;">
-  <div class="card-label">FILL-INS REQUEST</div>
+<div class="card" id="messageCard" style="display:none;">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div class="step-title">FILL-INS REQUEST</div>
+  </div>
 
-  <div id="eligibleSection" style="margin-bottom:12px;"></div>
+  <div id="eligibleSection"></div>
 
   <hr class="divider">
 
-  <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Message ready to copy and share:</div>
-  <div class="message-box" id="messageBox">
-    <span class="message-placeholder">Select your team and player count above.</span>
-  </div>
-
-  <div style="margin-top:12px;">
-    <button class="copy-btn" id="copyBtn" onclick="copyMessage()" disabled>
-      <span class="copy-icon">📋</span> Copy Message
-    </button>
-    <div class="toast" id="toast">✓ Copied to clipboard!</div>
-  </div>
+  <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Message to copy and share:</div>
+  <div class="message-box" id="messageBox"></div>
 </div>
 
-<!-- Loading state -->
+<!-- Loading / error -->
 <div id="loadingArea" class="loading-msg">Loading teams…</div>
 <div id="errorArea" class="error-msg" hidden></div>
 
@@ -441,10 +476,20 @@ hr.divider {
   Also manage rotations with the&nbsp;<a href="./index.html">Rotation Planner →</a>
 </div>
 
+<!-- Sticky copy button -->
+<div class="sticky-bar" id="stickyBar">
+  <button class="copy-btn" id="copyBtn" onclick="copyMessage()" disabled>
+    📋 Copy Message
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ Copied!</div>
+
 <script>
 // ── Data ─────────────────────────────────────────────────────────────────────
-let teamsData   = [];   // array of team name strings
-let fixturesData = {};  // { teamName: { division, nextGame, lastGame } }
+let teamsData    = [];
+let fixturesData = {};
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let selectedTeam   = null;
@@ -468,7 +513,6 @@ function getEligibleTeams(requestingTeam) {
   const reqFixture  = fixturesData[requestingTeam];
   const reqAgeGroup = parseAgeGroup(requestingTeam);
   const reqDivision = reqFixture ? parseDivision(reqFixture.division) : null;
-
   if (!reqAgeGroup || !reqDivision) return [];
 
   const nextYoungerAge = (() => {
@@ -477,19 +521,14 @@ function getEligibleTeams(requestingTeam) {
   })();
 
   const eligible = [];
-
   for (const [teamName, fd] of Object.entries(fixturesData)) {
     if (teamName === requestingTeam) continue;
     const teamAge = parseAgeGroup(teamName);
     const teamDiv = parseDivision(fd.division);
     if (!teamAge || !teamDiv) continue;
-
-    // Same age group: higher division (lower skill) may fill in
     if (teamAge === reqAgeGroup && teamDiv > reqDivision) {
       eligible.push(teamName); continue;
     }
-
-    // Next-younger age group
     if (nextYoungerAge && teamAge === nextYoungerAge) {
       if (teamDiv === 1) {
         if (reqDivision <= 2) eligible.push(teamName);
@@ -522,7 +561,7 @@ function brisbaneTime(utcStr) {
 
 function getClashNote(reqGame, eligibleTeamName) {
   const fd = fixturesData[eligibleTeamName];
-  if (!fd || !fd.nextGame) return 'fixture not yet published';
+  if (!fd || !fd.nextGame) return 'no fixture yet';
   const elGame = fd.nextGame;
   const reqDate = brisbaneDate(reqGame.date);
   const elDate  = brisbaneDate(elGame.date);
@@ -535,11 +574,37 @@ function getClashNote(reqGame, eligibleTeamName) {
   if (gapMin < threshold) {
     const timeStr  = brisbaneTime(elGame.date);
     const venueStr = [elGame.venue, elGame.court].filter(Boolean).join(', ');
-    return `schedule clash: ${timeStr}${venueStr ? ' at ' + venueStr : ''}`;
+    return `clash ${timeStr}${venueStr ? ' at ' + venueStr : ''}`;
   }
   return null;
 }
 
+// ── Split eligible into available vs clashing, grouped by age ────────────────
+function buildEligibleGroups(teamName) {
+  const fd = fixturesData[teamName];
+  const reqGame = fd && fd.nextGame ? fd.nextGame : null;
+  const eligible = getEligibleTeams(teamName);
+
+  // { age: { available: [colorName,...], clashing: [colorName,...] } }
+  const groups = {};
+  for (const t of eligible) {
+    const age = parseAgeGroup(t);
+    const colorName = t.replace(/^Redbacks U\d+\s+/i, '');
+    const clash = reqGame ? getClashNote(reqGame, t) : null;
+    if (!groups[age]) groups[age] = { available: [], clashing: [] };
+    if (clash) {
+      groups[age].clashing.push(colorName);
+    } else {
+      groups[age].available.push(colorName);
+    }
+  }
+
+  // Sort age keys descending (older first)
+  const sortedAges = Object.keys(groups).map(Number).sort((a, b) => b - a);
+  return { groups, sortedAges, reqGame, eligible };
+}
+
+// ── Build the condensed plain-text message ────────────────────────────────────
 function buildMessage(teamName, count) {
   const fillinsNeeded = 7 - count;
   const fd = fixturesData[teamName];
@@ -558,37 +623,51 @@ function buildMessage(teamName, count) {
     gameDetails = `${dateStr} at ${timeStr}${venue ? ', ' + venue : ''}`;
   }
 
-  const eligible = getEligibleTeams(teamName);
-  const teamLines = eligible.map(t => {
-    if (!reqGame) return `  • ${t}`;
-    const clash = getClashNote(reqGame, t);
-    return clash ? `  • ${t} (${clash})` : `  • ${t}`;
-  });
+  const { groups, sortedAges } = buildEligibleGroups(teamName);
+  const teamLines = [];
+  let totalClashing = 0;
+
+  for (const age of sortedAges) {
+    const g = groups[age];
+    totalClashing += g.clashing.length;
+    if (g.available.length > 0) {
+      teamLines.push(`U${age}: ${g.available.join(', ')}`);
+    }
+  }
 
   const lines = [
     `Fill-ins requested for ${teamName}.`,
-    `We have ${count} player${count !== 1 ? 's' : ''} available and could use up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
+    `We have ${count} player${count !== 1 ? 's' : ''} confirmed and need up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
     ``,
     gameDetails
-      ? `Our next game is on ${gameDetails}.`
-      : `Our next game details have not yet been published.`,
+      ? `Next game: ${gameDetails}.`
+      : `Next game details not yet published.`,
     ``,
-    `Teams that are eligible to provide fill-ins:`,
-    ...(teamLines.length ? teamLines : [`  (no eligible teams found)`]),
+    `Teams eligible to provide fill-ins:`,
   ];
+
+  if (teamLines.length > 0) {
+    lines.push(...teamLines);
+  } else {
+    lines.push('(none available)');
+  }
+
+  if (totalClashing > 0) {
+    lines.push(`Not listed: ${totalClashing} team${totalClashing !== 1 ? 's' : ''} with schedule conflicts.`);
+  }
 
   return lines.join('\n').trim();
 }
 
 // ── Rendering ─────────────────────────────────────────────────────────────────
 function renderAgeDropdown() {
-  const ages = [...new Set(teamsData.map(parseAgeGroup).filter(Boolean))].sort((a,b) => a-b);
+  const ages = [...new Set(teamsData.map(parseAgeGroup).filter(Boolean))].sort((a, b) => a - b);
   const sel = document.getElementById('ageSelect');
-  sel.innerHTML = '<option value="">— Age Group —</option>';
+  sel.innerHTML = '<option value="">Age…</option>';
   ages.forEach(age => {
     const opt = document.createElement('option');
     opt.value = age;
-    opt.textContent = `Under ${age}`;
+    opt.textContent = `U${age}`;
     sel.appendChild(opt);
   });
 }
@@ -598,18 +677,18 @@ function onAgeChange() {
   const teamSel = document.getElementById('teamSelect');
   selectedTeam = null;
   availableCount = null;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
 
   if (!age) {
-    teamSel.innerHTML = '<option value="">— Select age first —</option>';
+    teamSel.innerHTML = '<option value="">Team…</option>';
     teamSel.disabled = true;
     updateUI();
     return;
   }
 
   const filtered = teamsData.filter(t => parseAgeGroup(t) === age);
-  teamSel.innerHTML = '<option value="">— Select team —</option>';
+  teamSel.innerHTML = '<option value="">Team…</option>';
   filtered.forEach(t => {
-    // Display just the color name after "Redbacks U{age} "
     const colorName = t.replace(/^Redbacks U\d+\s+/i, '');
     const opt = document.createElement('option');
     opt.value = t;
@@ -621,10 +700,8 @@ function onAgeChange() {
 }
 
 function onTeamChange() {
-  const val = document.getElementById('teamSelect').value;
-  selectedTeam = val || null;
+  selectedTeam = document.getElementById('teamSelect').value || null;
   availableCount = null;
-  // Clear count selection
   document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
   updateUI();
 }
@@ -639,25 +716,20 @@ function setCount(n) {
 
 function renderFixture() {
   const area = document.getElementById('fixtureArea');
-  if (!selectedTeam) { area.hidden = true; return; }
+  if (!selectedTeam) { area.innerHTML = ''; return; }
 
   const fd = fixturesData[selectedTeam];
-  area.hidden = false;
-
   if (!fd) {
-    area.innerHTML = `<div class="fixture-box"><div class="fixture-none">No fixture data available for this team.</div></div>`;
+    area.innerHTML = `<div class="fixture-box" style="margin-top:14px;"><div class="fixture-none">No fixture data for this team.</div></div>`;
     return;
   }
 
   let html = `<div class="fixture-box">`;
-  if (fd.division) {
-    html += `<div class="division-badge">${fd.division}</div>`;
-  }
+  if (fd.division) html += `<div class="division-badge">${fd.division}</div>`;
 
   if (fd.nextGame) {
     const g = fd.nextGame;
-    const d = new Date(g.date);
-    const dateStr = d.toLocaleDateString('en-AU', {
+    const dateStr = new Date(g.date).toLocaleDateString('en-AU', {
       weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
       timeZone: 'Australia/Brisbane'
     });
@@ -667,8 +739,7 @@ function renderFixture() {
     html += `<div class="fixture-date">${dateStr} at ${timeStr}</div>`;
     html += `<div class="fixture-detail">${vs}</div>`;
     if (g.venue) {
-      const venueStr = g.court ? `${g.venue} — ${g.court}` : g.venue;
-      html += `<div class="fixture-venue">📍 ${venueStr}</div>`;
+      html += `<div class="fixture-venue">📍 ${g.court ? g.venue + ' — ' + g.court : g.venue}</div>`;
     }
     if (g.roundName) {
       html += `<div style="font-size:11px;color:var(--text3);margin-top:3px;">${g.roundName}</div>`;
@@ -689,7 +760,6 @@ function renderPlayerCount() {
   if (!selectedTeam) { card.style.display = 'none'; return; }
   card.style.display = 'block';
 
-  // Counts: 1–6 need fill-ins; 7+ means enough players
   if (!row.children.length) {
     [1, 2, 3, 4, 5, 6].forEach(n => {
       const btn = document.createElement('button');
@@ -705,7 +775,7 @@ function renderPlayerCount() {
     const needed = 7 - availableCount;
     label.innerHTML = `<span class="state-pill pill-warn">⚠ ${needed} fill-in${needed !== 1 ? 's' : ''} needed</span>`;
   } else {
-    label.textContent = '';
+    label.innerHTML = '';
   }
 }
 
@@ -714,38 +784,49 @@ function renderMessage() {
   const box     = document.getElementById('messageBox');
   const copyBtn = document.getElementById('copyBtn');
   const eligSec = document.getElementById('eligibleSection');
+  const bar     = document.getElementById('stickyBar');
 
   if (!selectedTeam || availableCount === null) {
     card.style.display = 'none';
+    bar.classList.remove('visible');
+    copyBtn.disabled = true;
     return;
   }
 
   card.style.display = 'block';
+  bar.classList.add('visible');
+  copyBtn.disabled = false;
 
-  const msg = buildMessage(selectedTeam, availableCount);
-  box.textContent = msg;
+  box.textContent = buildMessage(selectedTeam, availableCount);
 
-  // Eligible teams panel
-  const eligible = getEligibleTeams(selectedTeam);
-  const fd = fixturesData[selectedTeam];
-  const reqGame = fd && fd.nextGame ? fd.nextGame : null;
+  // Eligible teams panel (grouped, with clash summary)
+  const { groups, sortedAges, eligible } = buildEligibleGroups(selectedTeam);
+  let totalClashing = 0;
+  let hasAvailable = false;
 
   if (eligible.length === 0) {
     eligSec.innerHTML = `<div class="no-eligible">No eligible teams found for this team.</div>`;
   } else {
-    let h = `<div style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Eligible Teams</div>`;
-    eligible.forEach(t => {
-      const clash = reqGame ? getClashNote(reqGame, t) : null;
-      h += `<div class="team-line">
-        <span class="team-bullet">•</span>
-        <span class="team-name-text">${t}</span>
-        ${clash ? `<span class="clash-note">(${clash})</span>` : ''}
-      </div>`;
-    });
+    let h = `<div style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Eligible Teams</div>`;
+    for (const age of sortedAges) {
+      const g = groups[age];
+      totalClashing += g.clashing.length;
+      if (g.available.length > 0) {
+        hasAvailable = true;
+        h += `<div class="elig-group">
+          <div class="elig-age">U${age}</div>
+          <div class="elig-names">${g.available.join(', ')}</div>
+        </div>`;
+      }
+    }
+    if (!hasAvailable) {
+      h += `<div class="no-eligible">No teams available without schedule conflicts.</div>`;
+    }
+    if (totalClashing > 0) {
+      h += `<div class="clash-summary">⚠ ${totalClashing} team${totalClashing !== 1 ? 's' : ''} not shown due to schedule conflicts.</div>`;
+    }
     eligSec.innerHTML = h;
   }
-
-  copyBtn.disabled = false;
 }
 
 function updateUI() {
@@ -766,18 +847,17 @@ function copyMessage() {
     btn.textContent = '✓ Copied!';
     setTimeout(() => {
       toast.classList.remove('show');
-      btn.innerHTML = '<span class="copy-icon">📋</span> Copy Message';
+      btn.innerHTML = '📋 Copy Message';
     }, 2200);
   }).catch(() => {
-    // Fallback: select the text box
     const box = document.getElementById('messageBox');
     const range = document.createRange();
     range.selectNodeContents(box);
     const sel = window.getSelection();
     if (sel) { sel.removeAllRanges(); sel.addRange(range); }
-    toast.textContent = 'Select and copy the text above';
+    toast.textContent = 'Long-press the message text to copy';
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✓ Copied to clipboard!'; }, 2500);
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = '✓ Copied!'; }, 2800);
   });
 }
 
@@ -806,7 +886,7 @@ async function init() {
   } catch(e) {
     loadingArea.hidden = true;
     errorArea.hidden = false;
-    errorArea.textContent = `Couldn't load team data. Please try refreshing. (${e.message})`;
+    errorArea.textContent = `Couldn't load team data. Try refreshing. (${e.message})`;
   }
 }
 
