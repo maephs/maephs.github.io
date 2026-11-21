@@ -2708,24 +2708,46 @@ function buildFillinMessage(teamName, availableCount) {
 
   const eligible = getEligibleTeams(teamName);
 
-  // Build team lines with optional clash notes
-  const teamLines = eligible.map(t => {
-    if (!reqGame) return `  • ${t}`;
-    const clash = getClashNote(reqGame, t);
-    return clash ? `  • ${t} (${clash})` : `  • ${t}`;
-  });
+  // Group eligible teams by age, separating clashing ones
+  const groups = {};
+  let totalClashing = 0;
+  for (const t of eligible) {
+    const age = parseAgeGroup(t);
+    const colorName = t.replace(/^Redbacks U\d+\s+/i, '');
+    const clash = reqGame ? getClashNote(reqGame, t) : null;
+    if (!groups[age]) groups[age] = { available: [], clashing: [] };
+    if (clash) {
+      groups[age].clashing.push(colorName);
+      totalClashing++;
+    } else {
+      groups[age].available.push(colorName);
+    }
+  }
+
+  // Age groups descending (older first), one line each
+  const sortedAges = Object.keys(groups).map(Number).sort((a, b) => b - a);
+  const teamLines = [];
+  for (const age of sortedAges) {
+    if (groups[age].available.length > 0) {
+      teamLines.push(`U${age}: ${groups[age].available.join(', ')}`);
+    }
+  }
 
   const lines = [
     `Fill-ins requested for ${teamName}.`,
-    `We have ${availableCount} player${availableCount !== 1 ? 's' : ''} available and could use up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
+    `We have ${availableCount} player${availableCount !== 1 ? 's' : ''} confirmed and need up to ${fillinsNeeded} fill-in${fillinsNeeded !== 1 ? 's' : ''}.`,
     ``,
     gameDetails
-      ? `Our next game is on ${gameDetails}.`
-      : `Our next game details have not yet been published.`,
+      ? `Next game: ${gameDetails}.`
+      : `Next game details not yet published.`,
     ``,
-    `Teams that are eligible to provide fill-ins:`,
-    ...(teamLines.length ? teamLines : [`  (no eligible teams found)`]),
+    `Teams eligible to provide fill-ins:`,
+    ...(teamLines.length ? teamLines : [`(none available)`]),
   ];
+
+  if (totalClashing > 0) {
+    lines.push(`Not listed: ${totalClashing} team${totalClashing !== 1 ? 's' : ''} with schedule conflicts.`);
+  }
 
   return lines.join('\n').trim();
 }
