@@ -696,150 +696,150 @@
     "Redbacks U18 Black": {
       "division": "U18 Boys  Division 2",
       "nextGame": {
-        "date": "2026-11-22T05:00:00.000Z",
+        "date": "2026-11-29T06:10:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 4",
+        "opponent": "Bobcats U18 Green",
+        "isHome": false,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T05:11:01.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 1",
         "opponent": "Bobcats U18 Red",
         "isHome": true,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T08:28:49.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Devils U18 Green",
-        "isHome": true,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Grey": {
       "division": "U18 Boys  Division 4",
       "nextGame": {
-        "date": "2026-11-22T06:40:00.000Z",
+        "date": "2026-11-29T08:00:00.000Z",
+        "venue": "South Pine Sports Complex",
+        "court": "Court 1",
+        "opponent": "Bye",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T07:02:07.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 2",
         "opponent": "Hawks U18 White",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T06:42:00.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Timberwolves U18 Orange",
-        "isHome": false,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Pearl": {
       "division": "U18 Boys  Division 5",
       "nextGame": {
-        "date": "2026-11-22T05:50:00.000Z",
+        "date": "2026-11-29T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bye",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T06:09:03.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 3",
         "opponent": "Redbacks U18 Onyx",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T05:52:35.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 5",
-        "opponent": "Hawks U18 Orange",
-        "isHome": false,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Onyx": {
       "division": "U18 Boys  Division 5",
       "nextGame": {
-        "date": "2026-11-22T05:50:00.000Z",
+        "date": "2026-11-29T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bye",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T06:09:03.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 3",
         "opponent": "Redbacks U18 Pearl",
         "isHome": true,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T05:48:52.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 1",
-        "opponent": "Devils U18 Orange",
-        "isHome": true,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Teal": {
       "division": "U18 Boys  Division 5",
       "nextGame": {
-        "date": "2026-11-22T05:50:00.000Z",
+        "date": "2026-11-29T08:00:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Bye",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T06:09:24.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 2",
         "opponent": "Tigers U18 Silver",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T05:51:20.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 4",
-        "opponent": "Hawks U18 Cyan",
-        "isHome": false,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 Silver": {
       "division": "U18 Boys  Division 3",
       "nextGame": {
-        "date": "2026-11-22T07:30:00.000Z",
+        "date": "2026-11-29T07:30:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 2",
+        "opponent": "Bobcats U18 Blue",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T07:53:06.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 2",
         "opponent": "Timberwolves U18 Grey",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T07:34:37.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 2",
-        "opponent": "Devils U18 Teal",
-        "isHome": true,
-        "roundName": "Round 7",
         "status": "ENDED"
       }
     },
     "Redbacks U18 White": {
       "division": "U18 Boys  Division 3",
       "nextGame": {
-        "date": "2026-11-22T07:30:00.000Z",
+        "date": "2026-11-29T07:30:00.000Z",
+        "venue": "Northside Indoor Sports Centre",
+        "court": "Court 1",
+        "opponent": "Timberwolves U18 Grey",
+        "isHome": true,
+        "roundName": "Round 9",
+        "status": ""
+      },
+      "lastGame": {
+        "date": "2026-11-22T07:57:54.000Z",
         "venue": "Brisbane Entertainment Centre - Boondall",
         "court": "Court 1",
         "opponent": "Hawks U18 Navy",
         "isHome": false,
         "roundName": "Round 8",
-        "status": ""
-      },
-      "lastGame": {
-        "date": "2026-11-15T06:44:53.000Z",
-        "venue": "Northside Indoor Sports Centre",
-        "court": "Court 3",
-        "opponent": "Bobcats U18 Blue",
-        "isHome": true,
-        "roundName": "Round 7",
-        "status": "ENDED"
+        "status": "STARTED"
       }
     }
   },
-  "updatedAt": "2026-11-21T13:09:30.055Z"
+  "updatedAt": "2026-11-22T12:57:01.900Z"
 }
